@@ -72,23 +72,44 @@ class  Allocator : public  std::allocator<T>
 
 };
 
+
+template <class T>
+void display_index(T tab, size_t l)
+{
+	size_t	i = 0;
+	while (i < l && tab && tab[i])
+		std::cout << tab[i++] << "\n";
+	std::cout << "\n" << std::endl;
+}
+
 int main()
 {
 	{
-		ft::vector<int, Allocator<int> > pp((size_t)5, 100);
-		ft::vector<int, Allocator<int> > v2;
+		ft::vector<int, Allocator<int> > pp((size_t)5, 5);
+		std::vector<int, Allocator<int> > v((size_t)5, 5);
 
-		v2 = pp;
-		(void)pp;
+		const int & ref = v.front();
 
-		int *t = v2.begin();
-		size_t l;
-		l = 0;
-		while (l < v2.size())
+		std::cout << ref << std::endl;
+
+		/* try
 		{
-			std::cout << *t++ << std::endl;
-			l++;
+			std::cout << ref << std::endl;
 		}
+		catch (std::out_of_range &e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+		 */
+		/* {
+			display_index<int *>(pp.begin(), pp.size());
+		}
+		{
+			std::cout <<"\n";
+			ft::vector<int, Allocator<int> > v2(pp);
+			display_index<int *>(v2.begin(), v2.size());
+		}
+ */
 
 	}
 

@@ -36,30 +36,29 @@
 
 
             explicit vector(const allocator_type& alloc = allocator_type()) :
-                allocator(alloc), _begin(NULL), end(NULL), _nb_construct(0), _nb_allocate(0)
+                allocator(alloc), _begin(NULL), _end(NULL), _nb_construct(0), _nb_allocate(0)
             
             {}
 
             explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) :
-                allocator(alloc), _begin(NULL), end(NULL), _nb_construct(n), _nb_allocate(n)
+                allocator(alloc), _begin(NULL), _end(NULL), _nb_construct(n), _nb_allocate(n)
 
             {
                 size_type i;
 
                 i = 0;
-                _begin = allocator.allocate(n);
-                while (i < n)
+                if (n > 0)
                 {
-                    allocator.construct(_begin + i, val);
-                    //std::cout << _begin[i] << std::endl;
-                    i++;
+                    _begin = allocator.allocate(n);
+                    while (i < n)
+                        allocator.construct(_begin + i++, val);
+                    _end = _begin + --i;
                 }
             }
 
             template <class InputIterator>
             vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) :
                 _begin(NULL)
-            
             {
                 (void)first;
                 (void)last;
@@ -68,7 +67,7 @@
             }
 
             vector(const vector& x) : 
-                allocator(x.allocator), _begin(NULL), end(NULL),
+                allocator(x.allocator), _begin(NULL), _end(NULL),
                 _nb_construct(x._nb_construct), _nb_allocate(x._nb_allocate)
             {
                 std::cout << " Copy constructor called (FT::VECTOR) " << std::endl;
@@ -77,22 +76,28 @@
                 l = 0;
                 if (this != &x)
                 {
-                    _begin = allocator.allocate(x.size());
-                    while (l < x.size())
+                    if (x.size() > 0)
                     {
-                        this->_begin[l] = x[l];
-                        l++;
+                        _begin = allocator.allocate(x.size());
+                        _end = _begin + x.size() - 1;
+                        while (l < x.size())
+                        {
+                            this->_begin[l] = x[l];
+                            l++;
+                        }
+                        _nb_allocate = x.size();
+                        _nb_construct = _nb_allocate;
                     }
                 }
             }
 
             ~vector() 
             {
-                //if (_begin)
-                    //allocator.deallocate(_begin, _nb_allocate);
+                if (_nb_allocate > 0 && _begin)
+                    allocator.deallocate(_begin, _nb_allocate);
             }
 
-            ///////////////////////        OPERATORS            ///////////////////////////////////
+            ////////////////////             ELEMENT OPRATOR       ////////////////////////
 
             vector<value_type, Allocator>& operator=(const vector<value_type, Allocator> & nv)
             {
@@ -104,25 +109,110 @@
                 if (this != &nv)
                 {
                     if (_nb_construct > 0)
-                        this->destroy(_begin, _nb_construct);
-                    if (!this->_begin)
-                        this->_begin = allocator.allocate(nv.size());
+                        destroy(_begin, _nb_construct);
+                    if (!_begin)
+                    {
+                        _begin = allocator.allocate(nv.size());
+                        _end = _begin + nv.size() - 1;
+                        _nb_allocate = nv.size();
+                    }
                     while (l < nv.size())
                     {
-                        this->_begin[l] = nv[l];
+                        _begin[l] = nv[l];
                         l++;
                     }
-                    this->_nb_construct = nv.size();
+                    _nb_construct = nv.size();
                 }
                 return (*this);
             }
 
-            value_type&  operator[](size_type i) const
+            value_type&         operator[](size_type i) const
             {
                 return (*(_begin + i));
             }
 
-            //////////////////////      MEMBERS FUNCTIONS       //////////////////////////////////
+            reference           at(size_type n)
+            {
+                if (_begin && _nb_construct && n < _nb_construct)
+                {
+                    std::cout << "inside" << std::endl;
+                    return (_begin[n]);
+                }
+                else
+                {
+                    throw std::out_of_range("vector: error: out_of_range: n (wich is " + std::to_string(n) + 
+                    ") >= this->size() (wich is " + std::to_string(this->size()) + ")");
+                }
+            }
+
+            const_reference     at(size_type n) const
+            {
+                if (_begin && _nb_construct && n < _nb_construct)
+                {
+                    std::cout << "inside" << std::endl;
+                    return (_begin[n]);
+                }
+                else
+                {
+                    throw std::out_of_range("vector: error: out_of_range: n (wich is " + std::to_string(n) + 
+                    ") >= this->size() (wich is " + std::to_string(this->size()) + ")");
+                }
+            }
+
+            reference           front(void)
+            {
+                return (*_begin);
+            } 
+
+            const_reference     front(void) const
+            {
+                return (*_begin);
+            }
+
+            reference           back(void)
+            {
+                return (*_end);
+            } 
+
+            const_reference     back(void) const
+            {
+                return (*_end);
+            } 
+
+            //////////////////////////////////////////////////////////////////////////////////////
+            /////                        MEMBERS FUNCTIONS                                   /////
+            //////////////////////////////////////////////////////////////////////////////////////
+
+
+            ////////////////////             CAPACITY       ////////////////////////
+
+            size_type   size(void) const
+            {
+                return (_nb_construct);
+            }
+
+            size_type   max_size(void) const
+            {
+                return (_nb_allocate - _nb_construct);
+            }
+
+            // resize ()
+
+            size_type   capacity(void) const
+            {
+                return (_nb_allocate);
+            }
+
+            bool        empty(void) const
+            {
+                return (_nb_construct > 0 ? false : true);
+            }
+
+            // reserve()
+
+            //shrink_to_fit()
+
+
 
             void    destroy(pointer p, size_type n)
             {
@@ -133,10 +223,6 @@
                     allocator.destroy(p + i++);
             }
 
-            size_type   size(void) const
-            {
-                return (_nb_construct);
-            }
 
             void    push_back(const value_type & val)
             {
@@ -171,7 +257,7 @@
 
             allocator_type  allocator;
             pointer         _begin;
-            pointer         end;
+            pointer         _end;
             size_type       _nb_construct;
             size_type       _nb_allocate;
             
