@@ -179,6 +179,16 @@
                 return (*_end);
             } 
 
+            pointer             data(void) noexcept
+            {
+                return (_begin);
+            }
+
+            const_pointer       data(void) const noexcept
+            {
+                return (_begin);
+            }
+
             //////////////////////////////////////////////////////////////////////////////////////
             /////                        MEMBERS FUNCTIONS                                   /////
             //////////////////////////////////////////////////////////////////////////////////////
@@ -197,6 +207,11 @@
             }
 
             // resize ()
+            void        resize(size_type n, value_type val = value_type())
+            {
+                (void)n;
+                (void)val;
+            }
 
             size_type   capacity(void) const
             {

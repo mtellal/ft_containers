@@ -72,12 +72,11 @@ class  Allocator : public  std::allocator<T>
 
 };
 
-
 template <class T>
 void display_index(T tab, size_t l)
 {
 	size_t	i = 0;
-	while (i < l && tab && tab[i])
+	while (i < l)
 		std::cout << tab[i++] << "\n";
 	std::cout << "\n" << std::endl;
 }
@@ -85,12 +84,19 @@ void display_index(T tab, size_t l)
 int main()
 {
 	{
-		ft::vector<int, Allocator<int> > pp((size_t)5, 5);
-		std::vector<int, Allocator<int> > v((size_t)5, 5);
+		ft::vector<int, Allocator<int> > pp;
+		std::vector<int, Allocator<int> > v(10, 5);
 
-		const int & ref = v.front();
+		std::cout << (int)v.capacity() << std::endl;
 
-		std::cout << ref << std::endl;
+		v.resize(2, 15);
+		std::cout << (int)v.capacity() << std::endl;
+
+		size_t i = 0;
+		while (i < v.capacity())
+			std::cout << v[i++] << "\n";
+		//ref = 10000;
+		//display_index<int*>(pp.data(), pp.size());
 
 		/* try
 		{
