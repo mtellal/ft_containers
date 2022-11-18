@@ -81,73 +81,56 @@ void display_index(T tab, size_t l)
 	std::cout << "\n" << std::endl;
 }
 
+namespace p
+{
+struct entier
+{
+	int i;
+	entier() : i(0) {}
+	entier(int n) : i (n) {}
+
+	bool operator==(const entier & obj)
+	{
+		std::cout << "wdfw" << std::endl;
+		return (obj.i == i);
+	}
+
+	bool operator!=(const entier & obj)
+	{
+		return (obj.i != i);
+	}
+
+	friend std::ostream & operator<<(std::ostream& output, const entier & obj)
+	{
+		output << obj.i;
+		return (output);
+	}
+};
+}
+
 int main()
 {
 	{
-		ft::vector<int, Allocator<int> > pp;
-		std::vector<int, Allocator<int> > v(10, 5);
+		ft::vector<p::entier> pp((size_t)10, 5);
+		std::vector<p::entier > v(10, 5);
 
-		std::cout << (int)v.capacity() << std::endl;
+		ft::vIterator<p::entier> it = pp.begin();
+		std::vector<p::entier>::iterator it2 = v.begin();
 
-		v.resize(2, 15);
-		std::cout << (int)v.capacity() << std::endl;
+		(void)it;
+		(void)it2;
+		*(it + 3) = 2;
+		it += 3;
+		std::cout << *it << std::endl;
 
-		size_t i = 0;
-		while (i < v.capacity())
-			std::cout << v[i++] << "\n";
-		//ref = 10000;
-		//display_index<int*>(pp.data(), pp.size());
 
-		/* try
-		{
-			std::cout << ref << std::endl;
-		}
-		catch (std::out_of_range &e)
-		{
-			std::cout << e.what() << std::endl;
-		}
-		 */
-		/* {
-			display_index<int *>(pp.begin(), pp.size());
-		}
-		{
-			std::cout <<"\n";
-			ft::vector<int, Allocator<int> > v2(pp);
-			display_index<int *>(v2.begin(), v2.size());
-		}
- */
+		(void)pp;
+		(void)v;
+		
 
 	}
 
 	std::cout << "\n";
-	/* {
-		std::vector<int, Allocator<int> > p(5, 100);	
-		
-		std::vector<int, Allocator<int> >::iterator it;
-		size_t l;
-
-		it = p.begin();
-		l = 0;
-		while (l < p.size())
-		{
-			std::cout << *it << std::endl;
-			it++;
-			l++;
-		}
-
-		p.push_back(10);p.push_back(10);p.push_back(10);p.push_back(10);
-		p.push_back(10);p.push_back(10);p.push_back(10);p.push_back(10);
-		p.push_back(10);p.push_back(10);p.push_back(10);p.push_back(10);
-	} */
-
-	//p.push_back(10);p.push_back(10);p.push_back(10);
-
-/* 	size_t i = 0;
-	while (i < p.size())
-	{
-		std::cout << p[i] << std::endl;
-		i++;
-	} */
  
 	return (0);
 }

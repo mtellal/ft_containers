@@ -13,6 +13,66 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
+    template <class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
+    class vIterator : public std::iterator<std::random_access_iterator_tag, T, Distance, Pointer, Reference>
+    {
+        typedef typename std::iterator<std::random_access_iterator_tag, T>  iterator_category;
+        typedef T                                                           value_type;
+        typedef Distance                                                    difference_type;
+        typedef Pointer                                                     pointer;
+        typedef Reference                                                   reference;
+
+        public:
+
+            vIterator(void) : it(NULL) {};
+            vIterator(const pointer & p) : it(p) {};
+            vIterator(const vIterator & v) : it(v.it) {};
+            ~vIterator(void) {};
+            vIterator &     operator=(const vIterator & o)
+            {
+                if (this != &o)
+                    it = o.it;
+                return (*this);
+            }
+
+            ////////////////////             IN/DECREMENTATION OPRATORS       ////////////////////////
+
+            vIterator& operator++(void) { it++; return (*this); }
+            vIterator& operator--(void){ it--; return (*this); }
+            vIterator operator++(int) {vIterator old(*this); it++; return (old); }
+            vIterator operator--(int) {vIterator old(*this); it--; return (old); }
+
+            ////////////////////             ACCESS/DEFERENCE OPRATORS       ////////////////////////
+
+            reference   operator*(void) const { return (*it); }
+            pointer    operator->(void) const { return (it); }
+
+            ////////////////////             ARITHMETIC OPRATORS       ////////////////////////
+
+           // operator+()
+           vIterator     operator+(const difference_type & n) const { return (it + n); }
+           vIterator     operator-(const difference_type & n) const { return (it - n); }
+           vIterator &     operator+=(const difference_type & n) { it += n; return (*this); }
+           vIterator &   operator-=(const difference_type & n) { it -= n; return (*this); }
+
+            ////////////////////             LOGICAL OPRATORS       ////////////////////////
+
+            bool    operator==(const vIterator & obj) const { return (*it == *obj.it); }
+            bool    operator!=(const vIterator & obj) const { return (*it != *obj.it); }
+            bool    operator<(const vIterator & obj) const { return (*it < *obj.it); }
+            bool    operator<=(const vIterator & obj) const { return (*it <= *obj.it); }
+            bool    operator>(const vIterator & obj) const { return (*it > *obj.it); }
+            bool    operator>=(const vIterator & obj) const { return (*it >= *obj.it); }
+
+            ////////////////////             OFFSET OPRATORS       ////////////////////////
+
+            const reference    operator[](const difference_type n) const { return *(it + n); }
+        
+        private:
+
+            pointer it;
+    };
+
     template < class T, class Allocator = std::allocator<T> >
     class vector
     {
@@ -29,7 +89,7 @@
 
         public:
 
-            typedef typename std::iterator<std::random_access_iterator_tag, value_type>         iterator;
+            typedef typename ft::vIterator<value_type>                                          iterator;
             typedef typename std::iterator<std::random_access_iterator_tag, const value_type>   const_iterator;
             typedef typename std::reverse_iterator<iterator>                                    reverse_iterator;
             typedef typename std::reverse_iterator<const_iterator>                              const_reverse_iterator;
@@ -193,6 +253,13 @@
             /////                        MEMBERS FUNCTIONS                                   /////
             //////////////////////////////////////////////////////////////////////////////////////
 
+            ////////////////////             ITERATORS       ////////////////////////
+
+            iterator begin()
+            {
+                return (_begin);
+            }
+
 
             ////////////////////             CAPACITY       ////////////////////////
 
@@ -258,11 +325,6 @@
                 // sinon -> allouer + de place + construct
                 
                 //si oui -> allocator.construct(p, val)
-            }
-            
-            pointer begin()
-            {
-                return _begin;
             }
 
 
