@@ -63,8 +63,12 @@ class  Allocator : public  std::allocator<T>
 
 	void destroy(_pointer p)
 	{
+		std::cout << "called ?" << std::endl;
 		if (p)
+		{
 			p->~T();
+			delete p;
+		}
 		p = NULL;
 	} */
 
@@ -111,9 +115,27 @@ struct entier
 int main()
 {
 	{
-		ft::vector<p::entier> pp((size_t)10, 5);
+		ft::vector<p::entier> pp((size_t)2, 5);
 		std::vector<p::entier > v(10, 5);
 
+		pp.push_back(p::entier(8));
+
+		size_t i = 0;
+		while (i < pp.size())
+		{
+			std::cout << pp[i++] << std::endl;
+		}
+
+		v.clear();
+		std::cout << "vector after .clear() =>" << std::endl;
+		i = 0;
+		while (i < v.size())
+		{
+			std::cout << v[i++] << std::endl;
+		}
+		std::cout << "v.capacity() = " << v.capacity() << std::endl;
+
+/* 
 		ft::vIterator<p::entier> it = pp.begin();
 		std::vector<p::entier>::iterator it2 = v.begin();
 
@@ -122,7 +144,7 @@ int main()
 		*(it + 3) = 2;
 		it += 3;
 		std::cout << *it << std::endl;
-
+ */
 
 		(void)pp;
 		(void)v;
