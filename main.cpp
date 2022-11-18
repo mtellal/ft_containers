@@ -118,7 +118,15 @@ int main()
 		ft::vector<p::entier> pp((size_t)2, 5);
 		std::vector<p::entier > v(10, 5);
 
+		std::cout << pp.size() << " = size / capacity = " << pp.capacity() << std::endl;
+
 		pp.push_back(p::entier(8));
+
+		std::cout << pp.size() << " = size / capacity = " << pp.capacity() << std::endl;
+
+		pp.push_back(p::entier(8)); pp.push_back(p::entier(8));
+
+		std::cout << pp.size() << " = size / capacity = " << pp.capacity() << std::endl;
 
 		size_t i = 0;
 		while (i < pp.size())

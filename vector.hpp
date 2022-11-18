@@ -254,6 +254,8 @@
 
             ////////////////////             ITERATORS       ////////////////////////
 
+            allocator_type      get_allocator(void) const { return (allocator); }
+
             template <class InputIterator>
             void        assign(InputIterator first, InputIterator last)
             {  
@@ -284,11 +286,25 @@
                     clear();
                     allocator.deallocate(_begin, _nb_allocate);
                     _begin = allocator.allocate(_nb_construct * 2);
-                    _nb_allocate = _nb_construct * 2;
+                    _nb_allocate = old._nb_construct * 2;
                     *this = old;
+                } 
+                else if (!_begin)
+                {
+                    _begin = allocator.allocate(1);
+                    _nb_allocate = 1;
                 }
                 allocator.construct(_begin + old_nb_cons, val);
                 _nb_construct++;
+            }
+
+            void        pop_back(void)
+            {
+                if (_end && _nb_construct >= 1)
+                {
+                    allocator.destroy(_end, 1);
+                    _nb_construct--;
+                }
             }
 
             void        clear(void)
