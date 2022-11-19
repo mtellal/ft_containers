@@ -35,6 +35,8 @@
                 return (*this);
             }
 
+            pointer     _pointer(void) const { return (it); }        
+
             ////////////////////             IN/DECREMENTATION OPRATORS       ////////////////////////
 
             vIterator& operator++(void) { it++; return (*this); }
@@ -368,6 +370,67 @@
                     *itn++ = *position++;
                 _n._nb_construct = size() + n;
                 *this = _n;
+            }
+
+            iterator        erase(iterator position)
+            {
+                size_type   l;
+                vector  _n;
+
+                if (position >= end())
+                    return (end());
+                if (position < begin())
+                    return (begin());
+                l = ft::distance(begin(), position);
+                _n._begin = allocator.allocate(l);
+                _n._end = _begin + l;
+                _n._nb_construct = l;
+                _n._nb_allocate = l;
+                ft::copy(begin(), position, _n.begin());
+                *this = _n;
+                return (end() - 1);
+            }
+
+            iterator        erase(iterator first, iterator last)
+            {
+                size_type   l;
+                vector      _n;
+                iterator    it;
+                iterator    itn;
+
+                if (first >= end())
+                    return (end());
+                else if (last < begin())
+                    return (begin());
+                else if (first > last)
+                    return (last);
+
+                l = ft::distance(begin(), first);
+                if (last != end())
+                   l += ft::distance(last + 1, end());
+                _n._begin = allocator.allocate(l);
+                _n._end = _begin + l;
+                _n._nb_construct = l;
+                _n._nb_allocate = l;
+
+                it = begin();
+                itn = _n.begin();
+                while (it < first)
+                    *itn++ = *it++;
+                while (it != last)
+                    it++;
+                if (last != end())
+                    it++;
+                while (it < end())
+                    *itn++ = *it++;
+                *this = _n;
+                return (end() - 1);
+            }
+
+            void        swap(vector & x)
+            {
+                (void)x;
+
             }
 
             void        clear(void)

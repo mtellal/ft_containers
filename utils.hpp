@@ -26,5 +26,15 @@ size_t       distance(InputIterator first, InputIterator last)
     return (l);
 }
 
+template<class Iterator>
+Iterator copy(Iterator first, Iterator last, Iterator result)
+{
+  while (first!=last)
+  {
+    *result = *first;
+    ++result; ++first;
+  }
+  return result;
+}
 
 #endif

@@ -126,13 +126,18 @@ int main()
 
 		display_index<std::vector<p::entier> >(v, v.size());
 		v.insert(v.end(), v2d.begin(), v2d.end());
+		//v.erase(v.begin() - 1);
 		display_index<std::vector<p::entier> >(v, v.size());
 
 		std::cout << "////////////////////////" << std::endl;
 		display_index<ft::vector<p::entier> >(fv, fv.size());
-		fv.insert(fv.end(), _2d.begin(), _2d.end());
+		fv.insert(fv.end(), v2d.begin(), v2d.end());
+		fv.insert(fv.end(), 6546354);
+		fv.insert(fv.end(), 999);
+		std::cout << "size = " << fv.size() << std::endl;
+		fv.erase(fv.end() - 5, fv.end() - 5);
 		display_index<ft::vector<p::entier> >(fv, fv.size());
-
+		std::cout << "size = " << fv.size() << std::endl;
 
 		(void)it;
 		(void)it2;
