@@ -57,12 +57,12 @@
 
             ////////////////////             LOGICAL OPRATORS       ////////////////////////
 
-            bool    operator==(const vIterator & obj) const { return (*it == *obj.it); }
-            bool    operator!=(const vIterator & obj) const { return (*it != *obj.it); }
-            bool    operator<(const vIterator & obj) const { return (*it < *obj.it); }
-            bool    operator<=(const vIterator & obj) const { return (*it <= *obj.it); }
-            bool    operator>(const vIterator & obj) const { return (*it > *obj.it); }
-            bool    operator>=(const vIterator & obj) const { return (*it >= *obj.it); }
+            bool    operator==(const vIterator & obj) const { return (it == obj.it); }
+            bool    operator!=(const vIterator & obj) const { return (it != obj.it); }
+            bool    operator<(const vIterator & obj) const { return (it < obj.it); }
+            bool    operator<=(const vIterator & obj) const { return (it <= obj.it); }
+            bool    operator>(const vIterator & obj) const { return (it > obj.it); }
+            bool    operator>=(const vIterator & obj) const { return (it >= obj.it); }
 
             ////////////////////             OFFSET OPRATORS       ////////////////////////
 
@@ -111,7 +111,7 @@
                 {
                     _begin = allocator.allocate(n);
                     _construct(n, val);
-                    _end = _begin + n - 1;
+                    _end = _begin + n;
                 }
             }
 
@@ -129,21 +129,13 @@
                 allocator(x.allocator), _begin(NULL), _end(NULL),
                 _nb_construct(x._nb_construct), _nb_allocate(x._nb_allocate)
             {
-                std::cout << " Copy constructor called (FT::VECTOR) " << std::endl;
-                size_type   l;
-
-                l = 0;
                 if (this != &x)
                 {
                     if (x.size() > 0)
                     {
                         _begin = allocator.allocate(x.size());
-                        _end = _begin + x.size() - 1;
-                        while (l < x.size())
-                        {
-                            allocator.construct(_begin + l, x.at(l));
-                            l++;
-                        }
+                        _end = _begin + x.size();
+                        std::copy(x._begin, x._end, _begin);
                         _nb_allocate = x.size();
                         _nb_construct = _nb_allocate;
                     }
@@ -165,12 +157,16 @@
                 l = 0;
                 if (this != &nv)
                 {
-                    if (_nb_construct > 0)
-                        clear();
+                    clear();
+                    if (_nb_allocate && _begin)
+                    {
+                        allocator.deallocate(_begin, _nb_allocate);
+                        _begin = NULL;
+                    }
                     if (!_begin)
                     {
                         _begin = allocator.allocate(nv.size());
-                        _end = _begin + nv.size() - 1;
+                        _end = _begin + nv.size();
                         _nb_allocate = nv.size();
                     }
                     while (l < nv.size())
@@ -182,6 +178,8 @@
                 }
                 return (*this);
             }
+
+            pointer           operator+(const size_type n) const { return (_begin + n); }
 
             value_type&         operator[](size_type i) const { return (*(_begin + i)); }
 
@@ -214,8 +212,8 @@
             reference           front(void) { return (*_begin); }
             const_reference     front(void) const { return (*_begin); }
 
-            reference           back(void) { return (*_end); }
-            const_reference     back(void) const { return (*_end); }
+            reference           back(void) { return (*(_end - 1)); }
+            const_reference     back(void) const { return (*(_end - 1)); }
             
             pointer             data(void) noexcept { return (_begin); }
             const_pointer       data(void) const noexcept { return (_begin); }
@@ -225,10 +223,10 @@
             //////////////////////////////////////////////////////////////////////////////////////
 
             ////////////////////             ITERATORS       ////////////////////////
+        
+            iterator begin() const { return (_begin); }
 
-            iterator begin() { return (_begin); }
-
-            iterator    end(void) { return (_end); }
+            iterator    end(void) const { return (_end); }
 
             ////////////////////             CAPACITY       ////////////////////////
 
@@ -300,11 +298,76 @@
 
             void        pop_back(void)
             {
-                if (_end && _nb_construct >= 1)
+                if (_end && (_end - 1) && _nb_construct >= 1)
                 {
-                    allocator.destroy(_end, 1);
+                    allocator.destroy(_end - 1);
                     _nb_construct--;
                 }
+            }
+
+            iterator    insert(iterator position, const value_type & val)
+            {
+                insert(position, 1, val);
+                return (position);
+            }
+
+            void        insert(iterator position, size_type n, const value_type & val)
+            {
+                vector      _n;
+                iterator    it;
+                iterator    itn;
+                size_type   i;
+
+                i = 0;
+                if (_nb_construct + n > _nb_allocate)
+                {
+                    while (_nb_allocate && _nb_construct + n > _nb_allocate)
+                        _nb_allocate *= 2;
+                    _n._begin = allocator.allocate(_nb_allocate ? _nb_allocate : 1);
+                    _n._nb_allocate = _nb_allocate ? _nb_allocate : 1;
+                    _n._nb_construct = size();
+                }
+                it = _begin;
+                itn = _n._begin;
+                while (_begin && it != position) 
+                    *itn++ = *it++; 
+                for (size_type i = 0; i < n; i++)
+                    *itn++ = val;
+                while (_end && position != _end)
+                    *itn++ = *position++;
+                _n._nb_construct = size() + n;
+                *this = _n;
+            }
+
+            template <class InputIterator>
+            void        insert(iterator position, InputIterator first, InputIterator last)
+            {
+                vector      _n;
+                iterator    it;
+                iterator    itn;
+                size_type   i;
+                size_type   n;
+
+                i = 0;
+                n = ft::distance(first, last);
+                if (_nb_construct + n > _nb_allocate)
+                {
+                    while (_nb_allocate && _nb_construct + n > _nb_allocate)
+                        _nb_allocate *= 2;
+                    _n._begin = allocator.allocate(_nb_allocate ? _nb_allocate : 1);
+                    _n._nb_allocate = _nb_allocate ? _nb_allocate : 1;
+                    _n._nb_construct = size();
+                }
+                it = _begin;
+                itn = _n._begin;
+                while (_begin && it != position) 
+                    *itn++ = *it++; 
+                while (first != last)
+                    *itn++ = *first++;
+                while (_end && position != _end)
+                    *itn++ = *position++;
+                _n._nb_construct = size() + n;
+                *this = _n;
             }
 
             void        clear(void)

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   main.cfv                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtellal <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -95,7 +95,6 @@ struct entier
 
 	bool operator==(const entier & obj)
 	{
-		std::cout << "wdfw" << std::endl;
 		return (obj.i == i);
 	}
 
@@ -115,36 +114,40 @@ struct entier
 int main()
 {
 	{
-		ft::vector<p::entier> pp((size_t)2, 5);
+		ft::vector<p::entier> _2d((size_t)10, 200);
+		ft::vector<p::entier> fv((size_t)10, 5);
+
+		std::vector<p::entier> v2d(10, 200);
 		std::vector<p::entier > v(10, 5);
 
-		std::cout << pp.size() << " = size / capacity = " << pp.capacity() << std::endl;
+		//fv[5] = 654654;
+		ft::vector<p::entier>::iterator it = fv + 5;
+		std::vector<p::entier>::iterator it2 = v.begin() + 5;
 
-		pp.push_back(p::entier(8));
+		display_index<std::vector<p::entier> >(v, v.size());
+		v.insert(v.end(), v2d.begin(), v2d.end());
+		display_index<std::vector<p::entier> >(v, v.size());
 
-		std::cout << pp.size() << " = size / capacity = " << pp.capacity() << std::endl;
+		std::cout << "////////////////////////" << std::endl;
+		display_index<ft::vector<p::entier> >(fv, fv.size());
+		fv.insert(fv.end(), _2d.begin(), _2d.end());
+		display_index<ft::vector<p::entier> >(fv, fv.size());
 
-		pp.push_back(p::entier(8)); pp.push_back(p::entier(8));
 
-		std::cout << pp.size() << " = size / capacity = " << pp.capacity() << std::endl;
+		(void)it;
+		(void)it2;
 
-		size_t i = 0;
-		while (i < pp.size())
-		{
-			std::cout << pp[i++] << std::endl;
-		}
-
-		v.clear();
+		/* v.clear();
 		std::cout << "vector after .clear() =>" << std::endl;
 		i = 0;
 		while (i < v.size())
 		{
 			std::cout << v[i++] << std::endl;
 		}
-		std::cout << "v.capacity() = " << v.capacity() << std::endl;
+		std::cout << "v.capacity() = " << v.capacity() << std::endl; */
 
 /* 
-		ft::vIterator<p::entier> it = pp.begin();
+		ft::vIterator<p::entier> it = fv.begin();
 		std::vector<p::entier>::iterator it2 = v.begin();
 
 		(void)it;
@@ -154,7 +157,7 @@ int main()
 		std::cout << *it << std::endl;
  */
 
-		(void)pp;
+		(void)fv;
 		(void)v;
 		
 
