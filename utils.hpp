@@ -13,6 +13,16 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+template <class Iterator>
+class iterator_traits
+{
+  typedef Iterator                              value_type;
+  typedef typename Iterator::difference_type    difference_type;
+  typedef typename Iterator::pointer            pointer;
+  typedef typename Iterator::reference          reference;
+  typedef typename Iterator::iterator_category  iterator_category;
+};
+
 template <class InputIterator>
 size_t       distance(InputIterator first, InputIterator last)
 {

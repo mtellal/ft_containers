@@ -23,6 +23,9 @@
 namespace ft
 {
 	#include "utils.hpp"
+
+	#include "reverse_iterator.hpp"
+
 	#include "vector.hpp"
 
 }

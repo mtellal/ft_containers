@@ -82,7 +82,8 @@ void display_index(T tab, size_t l)
 	size_t	i = 0;
 	while (i < l)
 	{
-		std::cout << tab[i++] << "\n";
+		std::cout << "[" << i << "] =	" << tab[i] << "\n";
+		i++;
 	}
 
 	std::cout << "\n" << std::endl;
@@ -137,40 +138,40 @@ int main()
 		ft::vector<p::entier> _2d((size_t)10, 200);
 		ft::vector<p::entier> fv((size_t)10, 5);
 
-		ft::vector<p::entier> v2d(10, 200);
-		ft::vector< p::entier> v2((size_t)2, 5);
-	
-		std::cout << "	v2 " << std::endl;
-		display_index<ft::vector< p::entier> >(v2, v2.size());
-		
-		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
-		
-		v2.assign(_2d.begin(), _2d.begin() + 5);
+		std::vector<p::entier> v2((size_t)1, 5);
+		ft::vector<p::entier> fv2((size_t)2, 50);
+		ft::vector<p::entier> fv3(fv2);
 
-		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
-		display_index<ft::vector< p::entier> >(v2, v2.size());
 
-		/* v.clear();
-		std::cout << "vector after .clear() =>" << std::endl;
-		i = 0;
-		while (i < v.size())
-		{
-			std::cout << v[i++] << std::endl;
-		}
-		std::cout << "v.capacity() = " << v.capacity() << std::endl; */
+		display_index<ft::vector< p::entier > >(fv3, fv3.size());
+
+		fv3.assign(5, p::entier(99));
+		display_index<ft::vector< p::entier > >(fv3, fv3.size());
 
 /* 
-		ft::vIterator<p::entier> it = fv.begin();
-		std::vector<p::entier>::iterator it2 = v.begin();
+		std::cout << "	v2 " << std::endl;
 
-		(void)it;
-		(void)it2;
-		*(it + 3) = 2;
-		it += 3;
-		std::cout << *it << std::endl;
+		display_index<std::vector<p::entier> >(v2, v2.size());
+		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
+		
+		//v2.reserve(-1);
+
+		display_index<std::vector<p::entier> >(v2, v2.size());
+		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
  */
 
+/* 		std::cout << "	fv2 " << std::endl;
+
+		display_index<ft::vector< p::entier > >(fv2, fv2.size());
+		std::cout << "	fv2 " << " size = " << fv2.size() << " capacity = " << fv2.capacity() <<  std::endl;
+		
+		fv2.reserve(2);
+
+		display_index<ft::vector< p::entier > >(fv2, fv2.size());
+		std::cout << "	fv2 " << " size = " << fv2.size() << " capacity = " << fv2.capacity() <<  std::endl;
+ */
 		(void)fv;
+		(void)fv2;
 		
 
 	}

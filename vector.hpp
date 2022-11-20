@@ -16,18 +16,20 @@
     template <class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
     class vIterator : public std::iterator<std::random_access_iterator_tag, T, Distance, Pointer, Reference>
     {
-        typedef typename std::iterator<std::random_access_iterator_tag, T>  iterator_category;
-        typedef T                                                           value_type;
-        typedef Distance                                                    difference_type;
-        typedef Pointer                                                     pointer;
-        typedef Reference                                                   reference;
 
         public:
+
+            typedef typename std::iterator<std::random_access_iterator_tag, T>  iterator_category;
+            typedef T                                                           value_type;
+            typedef Distance                                                    difference_type;
+            typedef Pointer                                                     pointer;
+            typedef Reference                                                   reference;
 
             vIterator(void) : it(NULL) {};
             vIterator(const pointer & p) : it(p) {};
             vIterator(const vIterator & v) : it(v.it) {};
             ~vIterator(void) {};
+
             vIterator &     operator=(const vIterator & o)
             {
                 if (this != &o)
@@ -35,40 +37,40 @@
                 return (*this);
             }
 
-            pointer     _pointer(void) const { return (it); }        
+            pointer         _pointer(void) const { return (it); }        
 
             ////////////////////             IN/DECREMENTATION OPRATORS       ////////////////////////
 
-            vIterator& operator++(void) { it++; return (*this); }
-            vIterator& operator--(void){ it--; return (*this); }
-            vIterator operator++(int) {vIterator old(*this); it++; return (old); }
-            vIterator operator--(int) {vIterator old(*this); it--; return (old); }
+            vIterator&      operator++(void) { it++; return (*this); }
+            vIterator       operator++(int) {vIterator old(*this); it++; return (old); }
+            vIterator&      operator--(void){ it--; return (*this); }
+            vIterator       operator--(int) {vIterator old(*this); it--; return (old); }
 
             ////////////////////             ACCESS/DEFERENCE OPRATORS       ////////////////////////
 
-            reference   operator*(void) const { return (*it); }
-            pointer    operator->(void) const { return (it); }
+            reference       operator*(void) const { return (*it); }
+            pointer         operator->(void) const { return (it); }
 
             ////////////////////             ARITHMETIC OPRATORS       ////////////////////////
 
            // operator+()
-           vIterator     operator+(const difference_type & n) const { return (it + n); }
-           vIterator     operator-(const difference_type & n) const { return (it - n); }
-           vIterator &     operator+=(const difference_type & n) { it += n; return (*this); }
-           vIterator &   operator-=(const difference_type & n) { it -= n; return (*this); }
+           vIterator        operator+(const difference_type & n) const { return (it + n); }
+           vIterator        operator-(const difference_type & n) const { return (it - n); }
+           vIterator &      operator+=(const difference_type & n) { it += n; return (*this); }
+           vIterator &      operator-=(const difference_type & n) { it -= n; return (*this); }
 
             ////////////////////             LOGICAL OPRATORS       ////////////////////////
 
-            bool    operator==(const vIterator & obj) const { return (it == obj.it); }
-            bool    operator!=(const vIterator & obj) const { return (it != obj.it); }
-            bool    operator<(const vIterator & obj) const { return (it < obj.it); }
-            bool    operator<=(const vIterator & obj) const { return (it <= obj.it); }
-            bool    operator>(const vIterator & obj) const { return (it > obj.it); }
-            bool    operator>=(const vIterator & obj) const { return (it >= obj.it); }
+            bool            operator==(const vIterator & obj) const { return (it == obj.it); }
+            bool            operator!=(const vIterator & obj) const { return (it != obj.it); }
+            bool            operator<(const vIterator & obj) const { return (it < obj.it); }
+            bool            operator<=(const vIterator & obj) const { return (it <= obj.it); }
+            bool            operator>(const vIterator & obj) const { return (it > obj.it); }
+            bool            operator>=(const vIterator & obj) const { return (it >= obj.it); }
 
             ////////////////////             OFFSET OPRATORS       ////////////////////////
 
-            const reference    operator[](const difference_type n) const { return *(it + n); }
+            const reference operator[](const difference_type n) const { return *(it + n); }
         
         private:
 
@@ -76,30 +78,27 @@
     };
 
 
-
-
     template < class T, class Allocator = std::allocator<T> >
     class vector
     {
-        typedef T                                           value_type;
-
-        typedef Allocator                               allocator_type;
-        typedef typename Allocator::reference           reference;
-        typedef typename Allocator::const_reference     const_reference;
-        typedef typename Allocator::pointer             pointer;
-        typedef typename Allocator::const_pointer       const_pointer;
-
-        typedef typename Allocator::difference_type    difference_type;
-        typedef typename Allocator::size_type          size_type;    
 
         public:
 
-            typedef typename ft::vIterator<value_type>                                          iterator;
-            typedef typename std::iterator<std::random_access_iterator_tag, const value_type>   const_iterator;
-            typedef typename std::reverse_iterator<iterator>                                    reverse_iterator;
-            typedef typename std::reverse_iterator<const_iterator>                              const_reverse_iterator;
+            typedef T                                           value_type;
 
+            typedef Allocator                               allocator_type;
+            typedef typename Allocator::reference           reference;
+            typedef typename Allocator::const_reference     const_reference;
+            typedef typename Allocator::pointer             pointer;
+            typedef typename Allocator::const_pointer       const_pointer;
 
+            typedef typename Allocator::difference_type    difference_type;
+            typedef typename Allocator::size_type          size_type;    
+
+            typedef typename ft::vIterator<value_type>              iterator;
+            typedef typename ft::vIterator<const value_type>        const_iterator;
+            typedef typename ft::reverse_iterator<iterator>         reverse_iterator;
+            typedef typename ft::reverse_iterator<const iterator>   const_reverse_iterator;
 
             //////////////////////////////////////////////////////////////////////////////////////
             /////                         CONSTRUCTORS / DESTRUCTOR                          /////
@@ -153,7 +152,7 @@
                     {
                         _begin = allocator.allocate(x.size());
                         _end = _begin + x.size();
-                        ft::copy(x._begin, x._end, _begin);
+                        std::copy(x._begin, x._end, _begin);
                         _nb_allocate = x.size();
                         _nb_construct = _nb_allocate;
                     }
@@ -204,7 +203,7 @@
                 size_type   l;
                 InputIterator   it;
 
-                l = ft::distance(first, last);
+                l = std::distance(first, last);
                 clear();
                 if (l > _nb_allocate)
                 {
@@ -290,41 +289,101 @@
 
 
             //////////////////////////////////////////////////////////////////////////////////////
-            /////                        MEMBERS FUNCTIONS                                   /////
+            /////                               ITERATORS                                    /////
             //////////////////////////////////////////////////////////////////////////////////////
 
-            ////////////////////             ITERATORS       ////////////////////////
         
             iterator            begin() const { return (_begin); }
 
             iterator            end(void) const { return (_end); }
 
             // rbegin()
+            
+            /* reverse_iterator    rbegin()
+            {
+                
+            }
+
+            const_reverse_iterator  rbegin() const
+            {
+                
+            } */
+
             //rend()
 
-            ////////////////////             CAPACITY       ////////////////////////
+
+            //////////////////////////////////////////////////////////////////////////////////////
+            /////                               CAPACITY                                     /////
+            //////////////////////////////////////////////////////////////////////////////////////
+
 
             size_type           size(void) const { return (_nb_construct); }
 
-            size_type           max_size(void) const { return (_nb_allocate - _nb_construct); }
-
-            // resize ()
+            size_type           max_size(void) const { return (allocator.max_size()); }
 
             void                resize(size_type n, value_type val = value_type())
             {
-                (void)n;
-                (void)val;
+                if (n == _nb_construct)
+                    return ;
+                if (n < _nb_construct)
+                {
+                    for (size_type i = 0; n + i < _nb_construct; i++)
+                        allocator.destroy(_begin + n + i);
+                    _nb_construct -= (_nb_construct - n);
+                }
+                else if (n > _nb_allocate)
+                {
+                    vector          _n(*this);
+
+                    clear();
+                    if (n > _nb_allocate)
+                    {
+                        allocator.deallocate(_begin, _nb_allocate);
+                        while (_nb_allocate && _nb_allocate < n)
+                            _nb_allocate *= 2;
+                        _begin = allocator.allocate(_nb_allocate ? _nb_allocate : 1);
+                        _end = _begin + n;
+                        _nb_construct = n;
+                    }
+                    for (size_type i = 0; i < _n._nb_construct; i++)
+                        allocator.construct(_begin + i, _n._begin[i]);
+                    for (size_type i = _n.size(); i < n; i++)
+                        allocator.construct(_begin + i, val);
+                }
+                else if (n > _nb_construct)
+                {
+                    for (size_type i = 0; i < (n - _nb_construct); i++)
+                        allocator.construct(_begin + i, val);
+                }
             }
 
             size_type           capacity(void) const { return (_nb_allocate) ;}
 
-            bool                empty(void) const { return (_nb_construct > 0); }
+            bool                empty(void) const { return (!_nb_construct); }
 
-            // reserve()
+            void                reserve(size_type n)
+            {
+                if (n > max_size())
+                    throw std::length_error("vector::reverse()");
+                else if (n > _nb_allocate)
+                {
+                    vector  _n(*this);
 
-            //shrink_to_fit()
-
-            ////////////////////             ITERATORS       ////////////////////////
+                    clear();
+                    allocator.deallocate(_begin, _nb_allocate);
+                    while (_nb_allocate && _nb_allocate < n)
+                        _nb_allocate *= 2;
+                    _begin = allocator.allocate(_nb_allocate);
+                    _end = _begin + _n._nb_construct;
+                    _nb_construct = _n._nb_construct;
+                    for (size_type i = 0; i < _n._nb_construct; i++)
+                        *(_begin + i) = *(_n._begin + i);
+                }
+            }
+           
+            //////////////////////////////////////////////////////////////////////////////////////
+            /////                               MODIFIERS                                    /////
+            //////////////////////////////////////////////////////////////////////////////////////
 
             void                push_back(const value_type & val)
             {
@@ -438,12 +497,12 @@
                     return (end());
                 if (position < begin())
                     return (begin());
-                l = ft::distance(begin(), position);
+                l = std::distance(begin(), position);
                 _n._begin = allocator.allocate(l);
                 _n._end = _begin + l;
                 _n._nb_construct = l;
                 _n._nb_allocate = l;
-                ft::copy(begin(), position, _n.begin());
+                std::copy(begin(), position, _n.begin());
                 *this = _n;
                 return (end() - 1);
             }
@@ -462,9 +521,9 @@
                 else if (first > last)
                     return (last);
 
-                l = ft::distance(begin(), first);
+                l = std::distance(begin(), first);
                 if (last != end())
-                   l += ft::distance(last + 1, end());
+                   l += std::distance(last + 1, end());
                 _n._begin = allocator.allocate(l);
                 _n._end = _begin + l;
                 _n._nb_construct = l;
