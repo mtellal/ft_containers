@@ -81,7 +81,10 @@ void display_index(T tab, size_t l)
 {
 	size_t	i = 0;
 	while (i < l)
+	{
 		std::cout << tab[i++] << "\n";
+	}
+
 	std::cout << "\n" << std::endl;
 }
 
@@ -111,36 +114,41 @@ struct entier
 };
 }
 
+struct d
+{
+	int i;
+	d(): i(5) {};
+	d(int n): i(n) {};
+	friend std::ostream & operator<<(std::ostream & output, const d & obj)
+	{
+		output << obj.i; 
+		return (output);
+	}
+};
+
+void	print(const d & obj)
+{
+	std::cout << obj << std::endl;
+}
+
 int main()
 {
 	{
 		ft::vector<p::entier> _2d((size_t)10, 200);
 		ft::vector<p::entier> fv((size_t)10, 5);
 
-		std::vector<p::entier> v2d(10, 200);
-		std::vector<p::entier > v(10, 5);
+		ft::vector<p::entier> v2d(10, 200);
+		ft::vector< p::entier> v2((size_t)2, 5);
+	
+		std::cout << "	v2 " << std::endl;
+		display_index<ft::vector< p::entier> >(v2, v2.size());
+		
+		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
+		
+		v2.assign(_2d.begin(), _2d.begin() + 5);
 
-		//fv[5] = 654654;
-		ft::vector<p::entier>::iterator it = fv + 5;
-		std::vector<p::entier>::iterator it2 = v.begin() + 5;
-
-		display_index<std::vector<p::entier> >(v, v.size());
-		v.insert(v.end(), v2d.begin(), v2d.end());
-		//v.erase(v.begin() - 1);
-		display_index<std::vector<p::entier> >(v, v.size());
-
-		std::cout << "////////////////////////" << std::endl;
-		display_index<ft::vector<p::entier> >(fv, fv.size());
-		fv.insert(fv.end(), v2d.begin(), v2d.end());
-		fv.insert(fv.end(), 6546354);
-		fv.insert(fv.end(), 999);
-		std::cout << "size = " << fv.size() << std::endl;
-		fv.erase(fv.end() - 5, fv.end() - 5);
-		display_index<ft::vector<p::entier> >(fv, fv.size());
-		std::cout << "size = " << fv.size() << std::endl;
-
-		(void)it;
-		(void)it2;
+		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
+		display_index<ft::vector< p::entier> >(v2, v2.size());
 
 		/* v.clear();
 		std::cout << "vector after .clear() =>" << std::endl;
@@ -163,7 +171,6 @@ int main()
  */
 
 		(void)fv;
-		(void)v;
 		
 
 	}
