@@ -44,15 +44,13 @@ template <class T, bool v>
 struct integral_constant {
   typedef T value_type;
   typedef integral_constant<T,v> type;
-  static constexpr bool value = v;
-  constexpr operator T() { return v; }
+  static const bool value = v;
+  operator T() { return v; }
 };
 
 template <class T>  struct is_integral :               public     ft::integral_constant<T, false> {};
 template <>         struct is_integral<bool> :                    ft::integral_constant<bool, true> {};
 template <>         struct is_integral<char> :                    ft::integral_constant<bool, true> {};
-template <>         struct is_integral<char16_t> :                ft::integral_constant<bool, true> {};
-template <>         struct is_integral<char32_t> :                ft::integral_constant<bool, true> {};
 template <>         struct is_integral<wchar_t> :                 ft::integral_constant<bool, true> {};
 template <>         struct is_integral<signed char> :             ft::integral_constant<bool, true> {};
 template <>         struct is_integral<short int> :               ft::integral_constant<bool, true> {};

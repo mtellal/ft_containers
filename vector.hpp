@@ -129,9 +129,9 @@
             }
 
 
-            template <class InputIterator, 
-                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0>
-            vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) 
+            template <class InputIterator>
+            vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0) 
                 
                 : allocator(alloc)
             {
@@ -206,9 +206,9 @@
             }
 
 
-            template <class InputIterator, 
-                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0>
-            void                assign(InputIterator first, InputIterator last)
+            template <class InputIterator>
+            void                assign(InputIterator first, InputIterator last,
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0)
             {
                 size_type   l;
                 InputIterator   it;
@@ -265,9 +265,9 @@
                 else
                 {
                     throw std::out_of_range("vector: error: out_of_range: n (wich is "
-                    + std::to_string(n)
+                    + std::string(n)
                     + ") >= this->size() (wich is "
-                    + std::to_string(this->size()) + ")");
+                    + std::string(this->size()) + ")");
                 }
             }
 
@@ -279,9 +279,9 @@
                 else
                 {
                     throw std::out_of_range("vector: error: out_of_range: n (wich is "
-                    + std::to_string(n)
+                    + std::string(n)
                     + ") >= this->size() (wich is "
-                    + std::to_string(this->size()) + ")");
+                    + std::string(this->size()) + ")");
                 }
             }
 
@@ -294,8 +294,8 @@
             const_reference     back(void) const { return (*(_end - 1)); }
             
 
-            pointer             data(void) noexcept { return (_begin); }
-            const_pointer       data(void) const noexcept { return (_begin); }
+            pointer             data(void) { return (_begin); }
+            const_pointer       data(void) const { return (_begin); }
 
 
             //////////////////////////////////////////////////////////////////////////////////////
