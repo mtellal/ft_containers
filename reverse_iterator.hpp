@@ -30,13 +30,13 @@ class reverse_iterator
         explicit reverse_iterator(iterator_type x) : it(x) {}
 
         template<class U>
-        reverse_iterator (const reverse_iterator<U> & other) : it(other.it) {}
+        reverse_iterator (const reverse_iterator<U> & other) : it(other.base()) {}
 
         iterator_type   base(void) const { return (it); }
 
         reference           operator*(void) const { return (*(it - 1)); }
-        reverse_iterator    operator+(difference_type n) const { return (it - n); }
-        reverse_iterator    operator-(difference_type n) const { return (it + n); }
+        reverse_iterator    operator+(difference_type n) const { return (reverse_iterator(it - n)); }
+        reverse_iterator    operator-(difference_type n) const { return reverse_iterator(it + n); }
 
 
         reverse_iterator    operator++(void) { return (--it); }

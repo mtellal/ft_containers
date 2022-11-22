@@ -129,14 +129,23 @@
             }
 
 
-            template <class InputIterator>
-            vector(InputIterator first, InputIterator last, 
-                const allocator_type& alloc = allocator_type()) : _begin(NULL)
+            template <class InputIterator, 
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0>
+            vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) 
+                
+                : allocator(alloc)
             {
-                (void)first;
-                (void)last;
-                (void)alloc;
-                std::cout << " vector template constructor called " << std::endl;
+                std::cout << "template function called" << std::endl;
+
+                size_type       l;
+
+                l = std::distance(first, last);
+                _begin = allocator.allocate(l);
+                _end = _begin + l;
+                _nb_construct = l;
+                _nb_allocate = l;
+                while (first < last)
+                    allocator.construct(_begin + --l, *first++);
             }
 
 
@@ -197,7 +206,8 @@
             }
 
 
-            template <class InputIterator>
+            template <class InputIterator, 
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0>
             void                assign(InputIterator first, InputIterator last)
             {
                 size_type   l;
@@ -294,23 +304,14 @@
 
         
             iterator            begin() const { return (_begin); }
-
             iterator            end(void) const { return (_end); }
-
-            // rbegin()
             
-            /* reverse_iterator    rbegin()
-            {
-                
-            }
+            reverse_iterator    rbegin(void) { return (reverse_iterator(end())); }
+            const_reverse_iterator  rbegin(void) const { return (const_reverse_iterator(end())); }
 
-            const_reverse_iterator  rbegin() const
-            {
-                
-            } */
-
-            //rend()
-
+            // need more tests
+            reverse_iterator    rend(void) { return (reverse_iterator(begin() - 1)); }
+            const_reverse_iterator  rend(void) const { return (const_reverse_iterator(begin() - 1)); }
 
             //////////////////////////////////////////////////////////////////////////////////////
             /////                               CAPACITY                                     /////

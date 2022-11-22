@@ -138,15 +138,14 @@ int main()
 		ft::vector<p::entier> _2d((size_t)10, 200);
 		ft::vector<p::entier> fv((size_t)10, 5);
 
-		std::vector<p::entier> v2((size_t)1, 5);
-		ft::vector<p::entier> fv2((size_t)2, 50);
-		ft::vector<p::entier> fv3(fv2);
 
+		std::vector<p::entier> v2(1, 50);
+		ft::vector<p::entier> fv2(v2.begin() , v2.begin() + 1);
 
-		display_index<ft::vector< p::entier > >(fv3, fv3.size());
+		display_index(fv2, fv2.size());
+		
 
-		fv3.assign(5, p::entier(99));
-		display_index<ft::vector< p::entier > >(fv3, fv3.size());
+	
 
 /* 
 		std::cout << "	v2 " << std::endl;
