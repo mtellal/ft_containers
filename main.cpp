@@ -115,60 +115,29 @@ struct entier
 };
 }
 
-struct d
-{
-	int i;
-	d(): i(5) {};
-	d(int n): i(n) {};
-	friend std::ostream & operator<<(std::ostream & output, const d & obj)
-	{
-		output << obj.i; 
-		return (output);
-	}
-};
-
-void	print(const d & obj)
-{
-	std::cout << obj << std::endl;
-}
 
 int main()
 {
+
 	{
 		ft::vector<p::entier> _2d((size_t)10, 200);
 		ft::vector<p::entier> fv((size_t)10, 5);
 
 
-		std::vector<p::entier> v2(1, 50);
+		std::vector<p::entier> v2(2, 50);
 		ft::vector<p::entier> fv2(v2.begin() , v2.begin() + 1);
+
+		std::vector<p::entier>::iterator it = v2.begin();
+		std::vector<p::entier>::iterator it2 = v2.begin() + 1;
+
+		std::cout << *(it = it2) << std::endl;
+
+
+
 
 		display_index(fv2, fv2.size());
 		
 
-	
-
-/* 
-		std::cout << "	v2 " << std::endl;
-
-		display_index<std::vector<p::entier> >(v2, v2.size());
-		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
-		
-		//v2.reserve(-1);
-
-		display_index<std::vector<p::entier> >(v2, v2.size());
-		std::cout << "	v2 " << " size = " << v2.size() << " capacity = " << v2.capacity() <<  std::endl;
- */
-
-/* 		std::cout << "	fv2 " << std::endl;
-
-		display_index<ft::vector< p::entier > >(fv2, fv2.size());
-		std::cout << "	fv2 " << " size = " << fv2.size() << " capacity = " << fv2.capacity() <<  std::endl;
-		
-		fv2.reserve(2);
-
-		display_index<ft::vector< p::entier > >(fv2, fv2.size());
-		std::cout << "	fv2 " << " size = " << fv2.size() << " capacity = " << fv2.capacity() <<  std::endl;
- */
 		(void)fv;
 		(void)fv2;
 		

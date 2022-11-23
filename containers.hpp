@@ -26,6 +26,8 @@ namespace ft
 {
 	#include "utils.hpp"
 
+	#include "random_access_iterator.hpp"
+
 	#include "reverse_iterator.hpp"
 
 	#include "vector.hpp"
