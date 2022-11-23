@@ -12,6 +12,9 @@
 
 #include "containers.hpp"
 #include <cstddef>
+#include <vector>
+#include <map>
+#include <stack>
 
 
 template < class T >
@@ -91,56 +94,38 @@ void display_index(T tab, size_t l)
 
 namespace p
 {
-struct entier
-{
-	int i;
-	entier() : i(0) {}
-	entier(int n) : i (n) {}
-
-	bool operator==(const entier & obj)
+	struct entier
 	{
-		return (obj.i == i);
-	}
+		int i;
+		entier() : i(0) {}
+		entier(int n) : i (n) {}
 
-	bool operator!=(const entier & obj)
-	{
-		return (obj.i != i);
-	}
+		bool operator==(const entier & obj)
+		{
+			return (obj.i == i);
+		}
 
-	friend std::ostream & operator<<(std::ostream& output, const entier & obj)
-	{
-		output << obj.i;
-		return (output);
-	}
-};
+		bool operator!=(const entier & obj)
+		{
+			return (obj.i != i);
+		}
+
+		friend std::ostream & operator<<(std::ostream& output, const entier & obj)
+		{
+			output << obj.i;
+			return (output);
+		}
+	};
 }
-
 
 int main()
 {
 
 	{
-		ft::vector<p::entier> _2d((size_t)10, 200);
-		ft::vector<p::entier> fv((size_t)10, 5);
-
-
-		std::vector<p::entier> v2(2, 50);
-		ft::vector<p::entier> fv2(v2.begin() , v2.begin() + 1);
-
-		std::vector<p::entier>::iterator it = v2.begin();
-		std::vector<p::entier>::iterator it2 = v2.begin() + 1;
-
-		std::cout << *(it = it2) << std::endl;
-
-
-
-
-		display_index(fv2, fv2.size());
+		ft::map<int, int> m;
+		//ft::map<int, int>::value_compare vc = m.value_comp(); 
 		
-
-		(void)fv;
-		(void)fv2;
-		
+		//(void)vc;
 
 	}
 

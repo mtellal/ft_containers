@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <memory>
 #include <algorithm>
 #include <iterator>
@@ -24,13 +23,15 @@
 
 namespace ft
 {
-	#include "utils.hpp"
+	#include "implements.hpp"
 
 	#include "random_access_iterator.hpp"
 
 	#include "reverse_iterator.hpp"
 
 	#include "vector.hpp"
+
+	#include "map.hpp"
 
 }
 

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
+/*   implements.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtellal <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef IMPLEMENTS_HPP
+#define IMPLEMENTS_HPP
 
 //////////////////////////////////////////////////////////////////////////////////////
 /////                               ::ITERATOR_TRAITS                            /////
@@ -34,7 +34,7 @@ struct  bidirectional_iterator_tag : public forward_iterator_tag {};
 struct  random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 template <class Iterator>
-class iterator_traits
+struct iterator_traits
 {
   typedef typename Iterator::value_type         value_type;
   typedef typename Iterator::difference_type    difference_type;
@@ -120,7 +120,7 @@ bool  equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2,
 {
   while (first1 != last1)
   {
-    if (!pred(first1++, first2++))
+    if (!pred(*first1++, *first2++))
       return (false);
   }
   return (true);
@@ -151,8 +151,8 @@ bool  lexicographical_compare (InputIterator1 first1, InputIterator1 last1,
 {
   while (first1 != last1)
   {
-    if (first2 == last2 || !comp(first1, first2)) return (false);
-    else if (comp(first1, first2)) return (true);
+    if (first2 == last2 || !comp(*first1, *first2)) return (false);
+    else if (comp(*first1, *first2)) return (true);
       return (false);
   }
   return (first2 != last2);

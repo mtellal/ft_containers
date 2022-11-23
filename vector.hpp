@@ -27,8 +27,8 @@
             typedef typename Allocator::pointer             pointer;
             typedef typename Allocator::const_pointer       const_pointer;
 
-            typedef typename Allocator::difference_type    difference_type;
-            typedef typename Allocator::size_type          size_type;    
+            typedef typename Allocator::difference_type     difference_type;
+            typedef size_t                                  size_type;
 
             typedef typename ft::random_access_iterator<value_type>         iterator;
             typedef typename ft::random_access_iterator<const value_type>   const_iterator;
@@ -200,10 +200,11 @@
                     return (_begin[n]);
                 else
                 {
-                    throw std::out_of_range("vector: error: out_of_range: n (wich is "
-                    + std::string(n)
+                    //rewrite error message
+                    throw std::out_of_range("vector: error: out_of_range: n (wich is ");
+                   /*  + std::string(n)
                     + ") >= this->size() (wich is "
-                    + std::string(this->size()) + ")");
+                    + std::string(this->size()) + ")"); */
                 }
             }
 
@@ -214,10 +215,11 @@
                     return (_begin[n]);
                 else
                 {
-                    throw std::out_of_range("vector: error: out_of_range: n (wich is "
-                    + std::string(n)
+                    // rewrite error message
+                    throw std::out_of_range("vector: error: out_of_range: n (wich is ");
+                    /* + std::string(n)
                     + ") >= this->size() (wich is "
-                    + std::string(this->size()) + ")");
+                    + std::string(this->size()) + ")"); */
                 }
             }
 
