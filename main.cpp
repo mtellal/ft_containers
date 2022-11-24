@@ -123,18 +123,20 @@ int main()
 
 	{
 		ft::map<int, int> m;
-		m.my_insert(ft::pair<const int, int>(8, 6));
+		m.my_insert(ft::pair<const int, int>(3, 6));
 		m.my_insert(ft::pair<const int, int>(2, 6));
-		m.my_insert(ft::pair<const int, int>(7, 6));
-		m.my_insert(ft::pair<const int, int>(5, 6));
+		m.my_insert(ft::pair<const int, int>(1, 6));
 
 		ft::map<int, int>::iterator it = m.begin();
-
-		std::cout << *it++ << std::endl;
-		std::cout << *it << std::endl; 
-
-		//ft::map<int, int>::value_compare vc = m.value_comp(); 
 		
+		std::cout << "\n////////// PRINT MAP ///////////\n";
+
+		size_t i = 0;
+		while (i < 4)
+		{
+			std::cout << *it++ << std::endl;
+			i++;
+		}
 		//(void)vc;
 
 	}

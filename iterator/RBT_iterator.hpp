@@ -24,23 +24,25 @@ struct Node
     typedef typename T::first_type  first_type;
     typedef typename T::second_type second_type;
 
-    value_type           value;
-    node_pointer         parent;
-    node_pointer         right;
-    node_pointer         left;
-    bool                 red;
+    value_type           value;     // ft::pair<X,Y>
+    node_pointer         parent;    // parent node
+    node_pointer         right;     // right node
+    node_pointer         left;      // left node
+    bool                 red;       // color (red or !red = black)
+    bool                 l;         // node is in left from parent path
+    bool                 r;         // node is in right from parent path
 
-    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0)
+    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0), l(0), r(0)
     { 
     }
 
     Node (const value_type & v, const node_pointer & p = 0, const node_pointer & r = 0,
-        const node_pointer & l = 0, bool rd = 0):
-    value(v), parent(p), right(r), left(l), red(rd)
+        const node_pointer & l = 0, bool rd = 0, bool _l = 0, bool _r = 0):
+    value(v), parent(p), right(r), left(l), red(rd), l(_l), r(_r)
     {
     }
 
-    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red) {}
+    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red), l(x.l), r(x.r) {}
 
     Node & operator=(const Node & x)
     {
@@ -50,17 +52,20 @@ struct Node
             right = x.right;
             left = x.left;
             red = x.red;
+            l = x.l;
+            r = x.r;
         }
         return (*this);
     }
 
-
+    // debug function 
 
     friend std::ostream & operator<<(std::ostream & output, const Node & obj)
     {
         output << "\n////// NODE (" << &obj << ") /////\n";
         output << "key = " << obj.value.first << "\nvalue = " << obj.value.second << "\nparent = "
-        << obj.parent << "\nright = " << obj.right << "\nleft = " << obj.left << "\nred = " << obj.red;
+        << obj.parent << "\nright = " << obj.right << "\nleft = " << obj.left << "\nred = " << obj.red 
+        << "\nl = " << obj.l << "\nr = " << obj.r ;
         return (output);
     }
 };
@@ -103,25 +108,24 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         pair_reference   operator*(void) { return (_node->value); }
         pair*    operator->() { return &(_node->value); }
 
+
+        /*      CHANGE ITERATORS / NOT WORKING CORRECTLY */
         RedBlackTreeIterator &  operator++()
         {
             if (_node->right)
                 _node = _node->right;
-            else if (_node->parent)
+            else if (_node->parent && !_node->right)
             {
-                pointer _it(_node->parent);
-                
-                first_type node_key = _node->value.first; 
-
-                while (!_comp(_it->value.first, node_key))
+                pointer _it(_node);
+                while (_it)
                 {
-                    if (!_it->parent)
-                        return (*this);
-                    else
-                        _it = _it->parent;
+                    if (_comp(_node->value.first, _it->value.first))
+                    {
+                        _node = _it;
+                        break ;
+                    }
+                    _it = _it->parent;
                 }
-                if (_it->parent)
-                    _node = _it;
             }
             return (*this);
         }
@@ -133,21 +137,18 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
 
             if (_node->right)
                 _node = _node->right;
-            else if (_node->parent)
+            else if (_node->parent && !_node->right)
             {
-                pointer _it(_node->parent);
-                
-                first_type node_key = _node->value.first; 
-
-                while (!_comp(_it->value.first, node_key))
+                pointer _it(_node);
+                while (_it)
                 {
-                    if (!_it->parent)
-                        return (*this);
-                    else
-                        _it = _it->parent;
+                    if (_comp(_node->value.first, _it->value.first))
+                    {
+                        _node = _it;
+                        break ;
+                    }
+                    _it = _it->parent;
                 }
-                if (_it->parent)
-                    _node = _it;
             }
             return (old);
         }
@@ -156,38 +157,42 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         {
             if (_node->left)
                 _node = _node->left;
-            else if (_node->parent)
+            else if (_node->parent && !_node->left)
             {
-                pointer _it(_node->parent);
-                while (!_comp(_it->value.first, _node->value.first))
+                pointer _it(_node);
+                while (_it)
                 {
-                    if (!_it->parent)
-                        return (*this);
-                    else
-                        _it = _it->parent;
+                    if (_comp(_node->value.first, _it->value.first))
+                    {
+                        _node = _it;
+                        break ;
+                    }
+                    _it = _it->parent;
                 }
-                if (_it->parent)
-                    _node = _it;
             }
+            return (*this);
         }
 
         RedBlackTreeIterator    operator--(int)
         {
+            RedBlackTreeIterator    old(*this);
+
             if (_node->left)
                 _node = _node->left;
-            else if (_node->parent)
+            else if (_node->parent && !_node->left)
             {
-                pointer _it(_node->parent);
-                while (!_comp(_it->value.first, _node->value.first))
+                pointer _it(_node);
+                while (_it)
                 {
-                    if (!_it->parent)
-                        return (*this);
-                    else
-                        _it = _it->parent;
+                    if (_comp(_node->value.first, _it->value.first))
+                    {
+                        _node = _it;
+                        break ;
+                    }
+                    _it = _it->parent;
                 }
-                if (_it->parent)
-                    _node = _it;
             }
+            return (old);
         }
 
     private:
