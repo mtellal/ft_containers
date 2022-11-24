@@ -123,6 +123,11 @@ int main()
 
 	{
 		ft::map<int, int> m;
+		m.my_insert(ft::pair<const int, int>(8, 6));
+		m.my_insert(ft::pair<const int, int>(2, 6));
+		m.my_insert(ft::pair<const int, int>(7, 6));
+		m.my_insert(ft::pair<const int, int>(5, 6));
+
 		//ft::map<int, int>::value_compare vc = m.value_comp(); 
 		
 		//(void)vc;

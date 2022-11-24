@@ -13,6 +13,8 @@
 #ifndef REVERSE_ITERATOR_HPP
 #define REVERSE_ITERATOR_HPP
 
+// need specialisation random != bidirectional 
+
 template <class Iterator>
 class reverse_iterator
 {

@@ -202,25 +202,25 @@ bool  operator!=(const ft::pair<T1, T2> & lhs, const ft::pair<T1, T2> & rhs)
 }
 
 template< class T1, class T2 >
-bool operator<( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs )
+bool operator<( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
   return (lhs.first < rhs.first || ((lhs.first == rhs.first) && lhs.second < rhs.second));
 }
 
 template< class T1, class T2 >
-bool operator<=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs )
+bool operator<=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
   return (lhs.first <= rhs.first && lhs.second <= rhs.second);
 }
 
 template< class T1, class T2 >
-bool operator>( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs )
+bool operator>( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
   return (lhs.first > rhs.first || ((lhs.first == rhs.first) && lhs.second > rhs.second));
 }
 
 template< class T1, class T2 >
-bool operator>=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs )
+bool operator>=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
   return (lhs.first >= rhs.first && lhs.second >= rhs.second);
 }
