@@ -16,6 +16,8 @@ FLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = containers
 
+INCLUDE = -I iterator/
+
 SRC = main.cpp
 
 OBJ = $(SRC:.cpp=.o)
@@ -26,7 +28,7 @@ $(NAME): $(OBJ)
 	$(CC) $(FLAGS) -o $(NAME) $(OBJ)
 
 %.o:%.cpp
-	$(CC) $(FLAGS) -o $@ -c $<
+	$(CC) $(FLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
 	rm -rf $(OBJ)

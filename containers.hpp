@@ -29,6 +29,8 @@ namespace ft
 
 	#include "reverse_iterator.hpp"
 
+	#include "RBT_iterator.hpp"
+
 	#include "vector.hpp"
 
 	#include "map.hpp"

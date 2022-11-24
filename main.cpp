@@ -128,6 +128,11 @@ int main()
 		m.my_insert(ft::pair<const int, int>(7, 6));
 		m.my_insert(ft::pair<const int, int>(5, 6));
 
+		ft::map<int, int>::iterator it = m.begin();
+
+		std::cout << *it++ << std::endl;
+		std::cout << *it << std::endl; 
+
 		//ft::map<int, int>::value_compare vc = m.value_comp(); 
 		
 		//(void)vc;

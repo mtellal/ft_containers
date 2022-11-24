@@ -187,6 +187,12 @@ struct pair
     }
     return (*this);
   }
+
+  friend std::ostream & operator<<(std::ostream & output, const pair & obj)
+  {
+    output << "\n///// PAIR /////\n" << "first = " << obj.first << "\nsecond = " << obj.second << std::endl;
+    return (output);
+  }
 };
 
 template <class T1, class T2>
@@ -224,7 +230,6 @@ bool operator>=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
   return (lhs.first >= rhs.first && lhs.second >= rhs.second);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 /////                                 ::MAKE_PAIR                                /////
