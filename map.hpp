@@ -49,10 +49,12 @@ class   RedBlackTree
                 std::cout << "root" << *_root << std::endl;
             if (_root->left)
                 std::cout << *_root->left << std::endl;
-            if (_root->left->left)
+            if (_root->left && _root->left->left)
                 std::cout << *_root->left->left << std::endl;
             if (_root->right)
                 std::cout << *_root->right << std::endl;
+            if (_root->right && _root->right->right)
+                std::cout << *_root->right->right << std::endl;
 
             if (_nb_construct && _root)
                 destruct_himself(_root);
@@ -104,6 +106,156 @@ class   RedBlackTree
             return (min);
         }
 
+        // recolor parent / grand_parent / uncle (_current_node is red)
+        // case 1 : uncle red, recolor ascendants 
+
+        void    recolor_ascendants(node_pointer z)
+        {
+            node_pointer    p;
+            node_pointer    gp;
+            node_pointer    u;
+
+            if (z->parent && z->parent->parent)
+            {
+                p = z->parent;
+                gp = z->parent->parent;
+                if (p->l)
+                    u = gp->right;
+                else
+                    u = gp->left;
+                if (p->red == z->red)
+                {
+                    std::cout << "recolor_ascendants" << std::endl;
+                    p->red = 0;
+                    gp->red = 1;
+                    if (u)
+                        u->red = 0;
+                }
+            }
+            if (_root)
+                _root->red = 0;
+        }
+
+        // case 2: uncle black and triangle pattern
+
+        node_pointer   rotate_triangle(node_pointer z)
+        {
+            node_pointer    p;
+            node_pointer    gp;
+            node_pointer    u;
+
+            // parent in diff pos from z (parent left && z right)
+
+            if (z->parent && z->parent->parent)
+            {  
+                p = z->parent;
+                gp = p->parent;
+                if (p->l)
+                    u = gp->right;
+                else
+                    u = gp->left;
+                if ((!u || !u->red) && p->l != z->l && p->red && z->red)
+                {
+                    std::cout << "rotate triangle" << std::endl;
+                    if (p->l)
+                    {
+                        gp->left = z;
+                        p->right = z->left;
+                        z->left = p;
+                    }
+                    else
+                    {
+                        gp->right = z;
+                        p->left = z->right;
+                        z->right = p;
+                    }
+                    z->parent = gp;
+                    p->parent = z;
+                    z->l = !z->l;
+                    z->r = !z->r;
+                    return (p);
+                }
+            }
+            return (z);
+        }
+
+        // NEED RECOLOR (parent / grand_parent )
+
+        void    rotate_line(node_pointer z)
+        {
+            node_pointer    p;
+            node_pointer    gp;
+            node_pointer    u;
+
+            // parent in diff pos from z (parent left && z right)
+
+            if (z->parent && z->parent->parent)
+            {  
+                p = z->parent;
+                gp = p->parent;
+                if (p->l)
+                    u = gp->right;
+                else
+                    u = gp->left;
+                std::cout << p->l << " " << z->l << std::endl;
+                if ((!u || !u->red) && p->l == z->l && p->red && z->red)
+                {
+                    std::cout << "rotate line" << std::endl;
+                    if (gp->l)
+                    {
+                        if (gp->parent)
+                        {
+                            gp->parent->left = p;
+                            p->parent = gp->parent;
+                        }
+                        else
+                        {
+                            _root = p;
+                            p->parent = NULL;
+                            p->red = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (gp->parent)
+                        {
+                            gp->parent->right = p;
+                            p->parent = gp->parent;
+                        }
+                        else
+                        {
+                            _root = p;
+                            p->parent = NULL;
+                            p->red = 0;
+                        }
+                    }
+                    if (p->l)
+                    {
+                        gp->left = p->right;
+                        p->right = gp;
+                    }
+                    else
+                    {
+                        gp->right = p->left;
+                        p->left = gp;
+                    }
+                    gp->parent = p;
+                    gp->red = 1;
+                }
+            }
+        }
+
+        void    rotate_and_recolor(node_pointer z)
+        {
+            z = rotate_triangle(z);
+            rotate_line(z);
+            recolor_ascendants(z);
+            if (z->red && z->parent && z->parent->red)
+                z->parent->red = 0;
+            if (_root)
+                _root->red = 0;
+        }
+
         // painter(void) => recolor needed ??
 
         void    insert(const Pair & x)
@@ -131,81 +283,8 @@ class   RedBlackTree
                         else
                         {
                             _current_node->left = create_node(x, 1, 1);
-
-                            if (_current_node->red && _current_node->parent)
-                            {
-
-                                // au moins 3 noeuds 
-
-                                // is parent in left side and sibling in right side ( is red )
-
-                                ///////////////         RULE 4.B    //////////////
-                                if (_current_node->l
-                                    && _current_node->parent->right && _current_node->parent->right->red)
-                                {
-                                    _current_node->parent->right->red = 0;
-                                    if (_current_node->parent->l || _current_node->parent->r)
-                                        _current_node->parent->red = 1;
-                                    std::cout << "recolor sibling and parent node + parent's parent (!= root) " << std::endl;
-                                }
-
-                                if (_current_node->r
-                                    && _current_node->parent->left && _current_node->parent->left->red)
-                                {
-                                    _current_node->parent->left->red = 0;
-                                    if (_current_node->parent->l || _current_node->parent->r)
-                                        _current_node->parent->red = 1;
-                                    std::cout << "recolor sibling and parent node + parent's parent (!= root) " << std::endl;
-                                }
-                                ///////////////////////////////////////////////////////////////
-
-                                // parent left side from parent's parent + check if null or black sibling
-                                if (_current_node->l
-                                    && (!_current_node->parent->right || !_current_node->parent->right->red))
-                                {
-                                    node_pointer parent(_current_node->parent);
-
-                                    std::cout << "first rotation launched" << std::endl;
-                                        node_pointer m = max_elemement(_current_node);
-                                        if (m)
-                                            m->right = parent;
-                                        else
-                                            _current_node->right =  parent;
-                                        parent->left = NULL;
-
-                                        if (parent->parent)
-                                        {
-                                            _current_node->parent = parent->parent;
-                                            parent->parent = _current_node;
-                                        }
-                                        else 
-                                        {
-                                            _root = _current_node;
-                                            _current_node->red = 0;
-                                            _current_node->l = 0;
-                                            _current_node->r = 0;
-                                            parent->parent = _current_node;
-                                            _current_node->parent = NULL;
-                                        }
-                                }
-
-                                // check if parent's sibling if black or null => rotate and recolor 
-                                else if (!_current_node->parent->right
-                                    || (_current_node->parent->right != _current_node && !_current_node->parent->right->red))
-                                {
-                                    node_pointer tmp;
-
-                                    (void)tmp;
-
-                                    std::cout << "rotation needed for => \n" << *_current_node->left << std::endl; 
-
-                                }
-                                else if (_current_node->parent)
-                                {
-
-                                }
-                            }
                             _current_node->left->parent = _current_node;
+                            rotate_and_recolor(_current_node->left);
                             break ;
                         }
                     }
@@ -217,17 +296,8 @@ class   RedBlackTree
                         else
                         {
                             _current_node->right = create_node(x, 1, 0, 1);
-
-                             // check if parent's sibling if black or null => rotate and recolor 
-                            if (_current_node->parent && (!_current_node->parent->left
-                                || (_current_node->parent->left != _current_node && !_current_node->parent->left->red)
-                                || !_current_node->parent->right
-                                || (_current_node->parent->right != _current_node && !_current_node->parent->right->red)))
-                            {
-                                std::cout << "rotation needed for => \n" << *_current_node->right << std::endl; 
-                            }
-
                             _current_node->right->parent = _current_node;
+                            rotate_and_recolor(_current_node->right);
                             break ;
                         }
                     }

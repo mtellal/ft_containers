@@ -120,23 +120,27 @@ namespace p
 
 int main()
 {
-
 	{
 		ft::map<int, int> m;
-		m.my_insert(ft::pair<const int, int>(3, 6));
-		m.my_insert(ft::pair<const int, int>(2, 6));
-		m.my_insert(ft::pair<const int, int>(1, 6));
+
+		/* for (size_t i = 0; i < 4; i++)
+			m.my_insert(ft::pair<const int, int>(i, i)); */
+
+		m.my_insert(ft::pair<const int, int>(6, 0));
+		//m.my_insert(ft::pair<const int, int>(2, 1));
+		//m.my_insert(ft::pair<const int, int>(1, 2));
+		m.my_insert(ft::pair<const int, int>(9, 9));
+		m.my_insert(ft::pair<const int, int>(7, 7));
+
+
+		
 
 		ft::map<int, int>::iterator it = m.begin();
 		
 		std::cout << "\n////////// PRINT MAP ///////////\n";
 
-		size_t i = 0;
-		while (i < 4)
-		{
+		for (size_t i = 0; i < 4; i++)
 			std::cout << *it++ << std::endl;
-			i++;
-		}
 		//(void)vc;
 
 	}
