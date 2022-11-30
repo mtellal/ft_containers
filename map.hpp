@@ -108,8 +108,10 @@ class   RedBlackTree
 
         // recolor parent / grand_parent / uncle (_current_node is red)
         // case 1 : uncle red, recolor ascendants 
+        
+        /*      NEED RECLORIZATION RECURSIVELY      */
 
-        void    recolor_ascendants(node_pointer z)
+        node_pointer    recolor_ascendants(node_pointer z)
         {
             node_pointer    p;
             node_pointer    gp;
@@ -131,9 +133,11 @@ class   RedBlackTree
                     if (u)
                         u->red = 0;
                 }
+                return (gp);
             }
             if (_root)
                 _root->red = 0;
+            return (z->parent);
         }
 
         // case 2: uncle black and triangle pattern
@@ -197,7 +201,6 @@ class   RedBlackTree
                     u = gp->right;
                 else
                     u = gp->left;
-                std::cout << p->l << " " << z->l << std::endl;
                 if ((!u || !u->red) && p->l == z->l && p->red && z->red)
                 {
                     std::cout << "rotate line" << std::endl;
@@ -245,11 +248,16 @@ class   RedBlackTree
             }
         }
 
+
+                /*      NEED RECLORIZATION RECURSIVELY      */
+
         void    rotate_and_recolor(node_pointer z)
         {
             z = rotate_triangle(z);
             rotate_line(z);
-            recolor_ascendants(z);
+            z = recolor_ascendants(z);
+            while (z->parent)
+                z = recolor_ascendants(z);
             if (z->red && z->parent && z->parent->red)
                 z->parent->red = 0;
             if (_root)
@@ -270,9 +278,6 @@ class   RedBlackTree
                 while (1)
                 {
                     key_type k1 = _current_node->value.first;
-                    
-                    //std::cout << "boucle" << std::endl;
-                    //std::cout << k1 << " " << k2 << std::endl;
                     
                     if (_comp(k2, k1))
                     {
@@ -315,11 +320,10 @@ class   RedBlackTree
 
         iterator    begin()
         {
-            node_pointer    it = _root;
+            node_pointer    it(_root);
+            
             while (it->left)
-            {
                 it = it->left;
-            }
             return (it);
         }
 
@@ -380,7 +384,7 @@ class map
         };
 
     explicit    map(const key_compare & comp = key_compare(), const allocate_type & alloc = allocate_type()) :
-        _compare(comp)
+        _compare(comp), _nb_construct(0), _nb_allocate(0)
     {
         (void)comp;
         (void)alloc;
@@ -389,7 +393,7 @@ class map
 
     template < class InputIterator>
     map (InputIterator first, InputIterator last, const key_type & comp = key_compare(),
-        const allocate_type & alloc = allocate_type())
+        const allocate_type & alloc = allocate_type()) : _nb_construct(0), _nb_allocate(0)
     {
         std::cout << "map iterator constructor called" << std::endl;
         (void)first;
@@ -398,7 +402,7 @@ class map
         (void)alloc;
     }
 
-    map(const map & x)
+    map(const map & x) : _nb_construct(0), _nb_allocate(0)
     {
         (void)x;
         std::cout << "map copy constructor called" << std::endl;
@@ -430,7 +434,11 @@ class map
     void    my_insert(const value_type & val)
     {
         _tree.insert(val);
+        _nb_construct++;
+        _nb_allocate++;
     }
+
+    size_type   size() const { return (_nb_construct); }
 
     //////////////////////////////////////////////////////////////////////////////////////
     /////                                   ITERATORS                                /////

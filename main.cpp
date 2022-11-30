@@ -126,20 +126,24 @@ int main()
 		/* for (size_t i = 0; i < 4; i++)
 			m.my_insert(ft::pair<const int, int>(i, i)); */
 
-		m.my_insert(ft::pair<const int, int>(6, 0));
+		m.my_insert(ft::pair<const int, int>(8, 0));
 		//m.my_insert(ft::pair<const int, int>(2, 1));
 		//m.my_insert(ft::pair<const int, int>(1, 2));
-		m.my_insert(ft::pair<const int, int>(9, 9));
-		m.my_insert(ft::pair<const int, int>(7, 7));
+		m.my_insert(ft::pair<const int, int>(5, 9));
+		m.my_insert(ft::pair<const int, int>(15, 7));
+		m.my_insert(ft::pair<const int, int>(12, 1));
+		m.my_insert(ft::pair<const int, int>(9, 1));
+		m.my_insert(ft::pair<const int, int>(10, 1));
+		m.my_insert(ft::pair<const int, int>(2, 1));
+		m.my_insert(ft::pair<const int, int>(6, 1));
+		m.my_insert(ft::pair<const int, int>(11, 1));
 
-
-		
 
 		ft::map<int, int>::iterator it = m.begin();
 		
 		std::cout << "\n////////// PRINT MAP ///////////\n";
 
-		for (size_t i = 0; i < 4; i++)
+		for (size_t i = 0; i < m.size(); i++)
 			std::cout << *it++ << std::endl;
 		//(void)vc;
 

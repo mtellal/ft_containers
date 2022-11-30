@@ -109,11 +109,30 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         pair*    operator->() { return &(_node->value); }
 
 
+        pointer    min_element(pointer _n)
+        {
+            while (_n->left)
+                _n = _n->left;
+            return (_n);
+        }
+
+        pointer    max_element(pointer _n)
+        {
+            while (_n->right)
+                _n = _n->right;
+            return (_n);
+        }
+
         /*      CHANGE ITERATORS / NOT WORKING CORRECTLY */
         RedBlackTreeIterator &  operator++()
         {
             if (_node->right)
-                _node = _node->right;
+            {
+                if (_node->right->left)
+                    _node = min_element(_node->right->left);
+                else
+                    _node = _node->right;
+            }
             else if (_node->parent && !_node->right)
             {
                 pointer _it(_node);
@@ -136,7 +155,12 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             RedBlackTreeIterator old(*this);
 
             if (_node->right)
-                _node = _node->right;
+            {
+                if (_node->right->left)
+                    _node = min_element(_node->right->left);
+                else
+                    _node = _node->right;
+            }
             else if (_node->parent && !_node->right)
             {
                 pointer _it(_node);
@@ -156,7 +180,12 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         RedBlackTreeIterator & operator--()
         {
             if (_node->left)
-                _node = _node->left;
+            {
+                if (_node->left->right)
+                    _node = max_elemement(_node->left->right);
+                else
+                    _node = _node->left;
+            }
             else if (_node->parent && !_node->left)
             {
                 pointer _it(_node);
@@ -178,7 +207,12 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             RedBlackTreeIterator    old(*this);
 
             if (_node->left)
-                _node = _node->left;
+            {
+                if (_node->left->right)
+                    _node = max_elemement(_node->left->right);
+                else
+                    _node = _node->left;
+            }
             else if (_node->parent && !_node->left)
             {
                 pointer _it(_node);
