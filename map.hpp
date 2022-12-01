@@ -29,6 +29,8 @@
 template <class Pair, class Compare = std::less<Pair>, class Alloc = std::allocator<ft::Node<Pair> > >
 class   RedBlackTree
 {
+    public:
+
     typedef Pair                                            initial_type;
     typedef ft::Node<initial_type>                          node_type;
     typedef node_type *                                     node_pointer;
@@ -40,8 +42,6 @@ class   RedBlackTree
     typedef typename Pair::first_type                       key_type;
     typedef typename Pair::second_type                      value_type;
 
-    public:
-
         RedBlackTree() : _nb_construct(0), _nb_allocate(0) {};
         ~RedBlackTree()
         {
@@ -49,12 +49,13 @@ class   RedBlackTree
                 std::cout << "root" << *_root << std::endl;
             if (_root->left)
                 std::cout << *_root->left << std::endl;
-            if (_root->left && _root->left->left)
-                std::cout << *_root->left->left << std::endl;
             if (_root->right)
                 std::cout << *_root->right << std::endl;
-            if (_root->right && _root->right->right)
-                std::cout << *_root->right->right << std::endl;
+
+            
+            std::cout << *search(13, _root) << std::endl;
+            std::cout << *search(19, _root) << std::endl;
+            std::cout << *search(23, _root) << std::endl;
 
             if (_nb_construct && _root)
                 destruct_himself(_root);
@@ -104,6 +105,32 @@ class   RedBlackTree
             while (min->right)
                 min = min->right;
             return (min);
+        }
+
+        node_pointer    root() const { return (_root); }
+
+        node_pointer    search(key_type val, node_pointer _n)
+        {
+            node_pointer    tmp;
+
+            if (_n && _n->value.first == val)
+                return (_n);
+            else
+            {
+                if (_n->left)
+                {
+                    tmp = search(val, _n->left);
+                    if (tmp)
+                        return (tmp);
+                }    
+                if (_n->right)
+                {
+                    tmp = search(val, _n->right);
+                    if (tmp)
+                        return (tmp);
+                }
+            }
+            return (NULL);
         }
 
         // recolor parent / grand_parent / uncle (_current_node is red)
@@ -165,12 +192,16 @@ class   RedBlackTree
                     {
                         gp->left = z;
                         p->right = z->left;
+                        if (z->left)
+                            z->left->parent = p;
                         z->left = p;
                     }
                     else
                     {
                         gp->right = z;
                         p->left = z->right;
+                        if (z->right)
+                            z->right->parent = p;
                         z->right = p;
                     }
                     z->parent = gp;
@@ -210,12 +241,16 @@ class   RedBlackTree
                         {
                             gp->parent->left = p;
                             p->parent = gp->parent;
+                            p->l = 1;
+                            p->r = 0;
                         }
                         else
                         {
                             _root = p;
                             p->parent = NULL;
                             p->red = 0;
+                            p->r = 0;
+                            p->l = 0;
                         }
                     }
                     else
@@ -224,23 +259,31 @@ class   RedBlackTree
                         {
                             gp->parent->right = p;
                             p->parent = gp->parent;
+                            p->r = 1;
+                            p->l = 0;
                         }
                         else
                         {
                             _root = p;
                             p->parent = NULL;
                             p->red = 0;
+                            p->r = 0;
+                            p->l = 0;
                         }
                     }
                     if (p->l)
                     {
                         gp->left = p->right;
                         p->right = gp;
+                        gp->r = 1;
+                        gp->l = 0;
                     }
                     else
                     {
                         gp->right = p->left;
                         p->left = gp;
+                        gp->l = 1;
+                        gp->r = 0;
                     }
                     gp->parent = p;
                     gp->red = 1;
@@ -249,19 +292,40 @@ class   RedBlackTree
         }
 
 
+        void    verify_reds(node_pointer z)
+        {
+            if (z->left && z->red && z->left->red)
+            {
+                std::cout << "2 ADJACENTS RED NODES\n";
+                std::cout << *z << " " << *z->left << std::endl;
+                verify_reds(z->left);
+            }
+            if (z->right && z->red && z->right->red)
+            {
+                std::cout << "2 ADJACENTS RED NODES\n";
+                std::cout << *z << " " << *z->right << std::endl;
+                verify_reds(z->right);
+            }
+        }
+
                 /*      NEED RECLORIZATION RECURSIVELY      */
 
         void    rotate_and_recolor(node_pointer z)
         {
-            z = rotate_triangle(z);
-            rotate_line(z);
-            z = recolor_ascendants(z);
-            while (z->parent)
+            // recheck ascendant path until _root 
+            while (z != _root)
+            {
+                std::cout << "rotate_and_recolor loop called" << std::endl;
+                z = rotate_triangle(z);
+                rotate_line(z);
                 z = recolor_ascendants(z);
+            }
+
             if (z->red && z->parent && z->parent->red)
                 z->parent->red = 0;
             if (_root)
                 _root->red = 0;
+            verify_reds(z);
         }
 
         // painter(void) => recolor needed ??
@@ -321,7 +385,7 @@ class   RedBlackTree
         iterator    begin()
         {
             node_pointer    it(_root);
-            
+
             while (it->left)
                 it = it->left;
             return (it);

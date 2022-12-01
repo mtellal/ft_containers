@@ -127,16 +127,16 @@ int main()
 			m.my_insert(ft::pair<const int, int>(i, i)); */
 
 		m.my_insert(ft::pair<const int, int>(8, 0));
-		//m.my_insert(ft::pair<const int, int>(2, 1));
-		//m.my_insert(ft::pair<const int, int>(1, 2));
-		m.my_insert(ft::pair<const int, int>(5, 9));
-		m.my_insert(ft::pair<const int, int>(15, 7));
-		m.my_insert(ft::pair<const int, int>(12, 1));
-		m.my_insert(ft::pair<const int, int>(9, 1));
-		m.my_insert(ft::pair<const int, int>(10, 1));
-		m.my_insert(ft::pair<const int, int>(2, 1));
-		m.my_insert(ft::pair<const int, int>(6, 1));
-		m.my_insert(ft::pair<const int, int>(11, 1));
+		m.my_insert(ft::pair<const int, int>(5, 0));
+		m.my_insert(ft::pair<const int, int>(15, 0));
+		m.my_insert(ft::pair<const int, int>(12, 0));
+		m.my_insert(ft::pair<const int, int>(19, 0));
+		m.my_insert(ft::pair<const int, int>(9, 0));
+		m.my_insert(ft::pair<const int, int>(23, 0));
+		m.my_insert(ft::pair<const int, int>(13, 0));
+		m.my_insert(ft::pair<const int, int>(10, 0));
+
+
 
 
 		ft::map<int, int>::iterator it = m.begin();
