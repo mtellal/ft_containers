@@ -31,6 +31,8 @@ namespace ft
 
 	#include "RBT_iterator.hpp"
 
+	#include "red_black_tree.hpp"
+
 	#include "vector.hpp"
 
 	#include "map.hpp"

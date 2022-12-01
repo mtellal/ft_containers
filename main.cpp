@@ -122,12 +122,45 @@ int main()
 {
 	{
 		ft::map<int, int> m;
+		ft::map<int, int>::iterator	itm;
 
-		/* for (size_t i = 0; i < 4; i++)
-			m.my_insert(ft::pair<const int, int>(i, i)); */
+		std::map<int, int> std_m;
+		std::map<int, int>::iterator std_itm;
 
-		m.my_insert(ft::pair<const int, int>(8, 0));
-		m.my_insert(ft::pair<const int, int>(5, 0));
+		std_m.insert(std::pair<int, int>(86, 0));
+		std_m.insert(std::pair<int, int>(9, 0));
+		std_m.insert(std::pair<int, int>(12, 0));
+		std_m.insert(std::pair<int, int>(90, 0));
+
+
+		std::pair<std::map<int, int>::iterator, std::map<int, int>::iterator > spair;
+
+		spair = std_m.equal_range(91);
+
+		std::cout << "std_size = " << std_m.size() << std::endl;
+
+		std::cout << spair.first->first << " " << spair.second->first << std::endl;
+
+		std::cout << "///////////////////////////////////////////////////////\n";
+
+		m.insert(ft::pair<const int, int>(5, 0));
+		m.insert(ft::pair<const int, int>(86, 0));
+		m.insert(ft::pair<const int, int>(9, 0));
+		m.insert(ft::pair<const int, int>(12, 0));
+		m.insert(ft::pair<const int, int>(90, 0));
+
+
+		ft::pair<ft::map<int, int>::iterator, ft::map<int, int>::iterator > pair;
+
+		pair = m.equal_range(91);
+
+		std::cout << pair.first->first << " " << pair.second->first << std::endl;
+
+
+		std::cout << "///////////////\n\n\n\n";
+
+
+		/* m.my_insert(ft::pair<const int, int>(5, 0));
 		m.my_insert(ft::pair<const int, int>(15, 0));
 		m.my_insert(ft::pair<const int, int>(12, 0));
 		m.my_insert(ft::pair<const int, int>(19, 0));
@@ -135,16 +168,17 @@ int main()
 		m.my_insert(ft::pair<const int, int>(23, 0));
 		m.my_insert(ft::pair<const int, int>(13, 0));
 		m.my_insert(ft::pair<const int, int>(10, 0));
+		m.my_insert(ft::pair<const int, int>(40, 0));
+		m.my_insert(ft::pair<const int, int>(1, 0));
+		m.my_insert(ft::pair<const int, int>(96845, 0)); */
 
 
-
-
-		ft::map<int, int>::iterator it = m.begin();
+		/* ft::map<int, int>::iterator it = m.begin();
 		
 		std::cout << "\n////////// PRINT MAP ///////////\n";
 
 		for (size_t i = 0; i < m.size(); i++)
-			std::cout << *it++ << std::endl;
+			std::cout << *it++ << std::endl; */
 		//(void)vc;
 
 	}

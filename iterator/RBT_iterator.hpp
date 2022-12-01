@@ -13,63 +13,6 @@
 #ifndef RBT_ITERATOR_HPP
 #define RBT_ITERATOR_HPP
 
-template <class T>
-struct Node
-{ 
-    typedef T       value_type;
-    typedef T&      reference;
-    typedef T*      pointer;
-    typedef Node*   node_pointer;
-
-    typedef typename T::first_type  first_type;
-    typedef typename T::second_type second_type;
-
-    value_type           value;     // ft::pair<X,Y>
-    node_pointer         parent;    // parent node
-    node_pointer         right;     // right node
-    node_pointer         left;      // left node
-    bool                 red;       // color (red or !red = black)
-    bool                 l;         // node is in left from parent path
-    bool                 r;         // node is in right from parent path
-
-    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0), l(0), r(0)
-    { 
-    }
-
-    Node (const value_type & v, const node_pointer & p = 0, const node_pointer & r = 0,
-        const node_pointer & l = 0, bool rd = 0, bool _l = 0, bool _r = 0):
-    value(v), parent(p), right(r), left(l), red(rd), l(_l), r(_r)
-    {
-    }
-
-    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red), l(x.l), r(x.r) {}
-
-    Node & operator=(const Node & x)
-    {
-        if (this != &x)
-        {
-            value = x.value;
-            right = x.right;
-            left = x.left;
-            red = x.red;
-            l = x.l;
-            r = x.r;
-        }
-        return (*this);
-    }
-
-    // debug function 
-
-    friend std::ostream & operator<<(std::ostream & output, const Node & obj)
-    {
-        output << "\n////// NODE (" << &obj << ") /////\n";
-        output << "key = " << obj.value.first << "\nvalue = " << obj.value.second << "\nparent = "
-        << obj.parent << "\nright = " << obj.right << "\nleft = " << obj.left << "\nred = " << obj.red 
-        << "\nl = " << obj.l << "\nr = " << obj.r ;
-        return (output);
-    }
-};
-
 template <class Node, class Compare>
 class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag, Node>
 {
@@ -101,9 +44,10 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             return (*this);
         }
 
-        bool    operator==(const RedBlackTreeIterator & x) { return (_node->value == x._node->value); }
-        bool    operator!=(const RedBlackTreeIterator & x) { return (_node->value != x._node->value); }
+        bool    operator==(const RedBlackTreeIterator & x) { return (_node == x._node); }
+        bool    operator!=(const RedBlackTreeIterator & x) { return (_node != x._node); }
 
+        pointer    base() const { return (_node); }
 
         pair_reference   operator*(void) { return (_node->value); }
         pair*    operator->() { return &(_node->value); }
@@ -122,6 +66,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                 _n = _n->right;
             return (_n);
         }
+
+        /*      INCREMENT LAST ELEMNT => RETURN TO FIRST ELEMENT    */
 
         /*      CHANGE ITERATORS / NOT WORKING CORRECTLY */
         RedBlackTreeIterator &  operator++()
