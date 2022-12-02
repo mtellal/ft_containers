@@ -178,20 +178,36 @@ class map
                 return (ft::pair<iterator, bool>(it, false));
         }
 
+        // !!!!!!! need more tests !!!!!!!!
+
         iterator    insert(iterator position, const value_type & val)
         {
-            (void) position;
-            (void)val;
+            iterator    it;
+
+            it = _tree.insert(position, val);
+            return (it);
         }
 
         template <class InputIterator>
         void    insert(InputIterator first, InputIterator last)
         {
-            (void)first;
-            (void)last;
+            while (first != last)
+            {
+                insert(ft::make_pair(first->first, first->second));
+                first++;
+            }
         }
 
+
+        void erase (iterator position)
+        {
+            _tree.erase(position);
+        }
+
+
+
         // !!!! need more tests + fixed x errors from contexts
+
         void    clear() { _tree.clear(); }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -261,6 +277,12 @@ class map
             return (ft::make_pair(lower_bound(k), upper_bound(k)));
         }
 
+        //////////////////////////////////////////////////////////////////////////////////////
+        /////                                  DEBUGGING                                 /////
+        //////////////////////////////////////////////////////////////////////////////////////
+
+        // remove before push (util debugging)
+        void print_tree() { _tree.print_tree(); }
 
     private:
 

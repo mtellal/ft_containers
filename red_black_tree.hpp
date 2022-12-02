@@ -108,7 +108,13 @@ class   RedBlackTree
         ~RedBlackTree()
         {
             std::cout << "///////////// DESTRUCTOR RBT  /////////////\n";
-            if (_root)
+            //print_tree();
+            clear();
+        };
+
+        void    print_tree()
+        {
+             if (_root)
                 std::cout << "root" << *_root << std::endl;
             if (_root && _root->left)
                 std::cout << "\n\n=> LEFT \n" << *_root->left << std::endl;
@@ -119,13 +125,44 @@ class   RedBlackTree
                 std::cout << "\n\n=> RIGHT \n" <<  *_root->right << std::endl;
             if (_root && _root->right && _root->right->right)
             std::cout << *_root->right->right << std::endl;
-
-            clear();
-        };
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
+
+
+        node_pointer    min_element()
+        {
+            node_pointer n(_root);
+
+            while (n && n->left)
+                n = n->left;
+            return (n);
+        }
+
+        node_pointer    min_element(node_pointer n)
+        {
+            while (n && n->left)
+                n = n->left;
+            return (n);
+        }
+
+        node_pointer    max_element()
+        {
+            node_pointer n(_root);
+
+            while (n && n->right)
+                n = n->right;
+            return (n);
+        }
+
+        node_pointer    max_element(node_pointer n)
+        {
+            while (n && n->right)
+                n = n->right;
+            return (n);
+        }
 
         iterator    begin()
         {
@@ -140,17 +177,12 @@ class   RedBlackTree
 
         iterator    end()
         {
-            iterator it(_root);
-            node_pointer p(_root);
+            iterator it;
 
             if (!size())
                 return (begin());
-            while (p)
-            {
-                p = p->right;
-                it++;
-            }
-            return (it);
+            it = max_element();
+            return (++it);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -187,17 +219,6 @@ class   RedBlackTree
                 destroy_tree(x->right);
             if (x)
                 _allocator.destroy(x);
-        }
-
-        void    clear()
-        {
-            if (_root && _nb_construct)
-                destroy_tree(_root);
-            if (_root && _nb_allocate)
-                deallocate_tree(_root);
-            _root = NULL;
-            _nb_construct = 0;
-            _nb_allocate = 0;
         }
 
         node_pointer   create_node(const Pair & x, bool red = 0, bool l = 0, bool r = 0)
@@ -422,7 +443,7 @@ class   RedBlackTree
             }
         }
 
-        iterator    insert(iterator pos, const pair & x)
+        node_pointer    insert(iterator pos, const pair & x)
         {
             node_pointer   _current_node = pos->value;
             key_type    k2 = x.first;
@@ -460,6 +481,126 @@ class   RedBlackTree
             }
             return (_current_node);
         }
+
+
+        // DELETION RBT
+
+        void    _transplant(node_pointer p, node_pointer c)
+        {
+            if (!p->parent)
+            {
+                _root = c;
+                c->l = 0;
+                c->r = 0;
+            }
+            if (p->l)
+            {
+                p->parent->left = c;
+                c->r = 0;
+                c->l = 1;
+            }
+            else
+            {
+                p->parent->right = c;
+                c->r = 1;
+                c->l = 0;
+            }
+            c->parent = p->parent;
+        }
+
+        void    _delete(node_pointer p, node_pointer c)
+        {
+            node_pointer    m;
+
+            (void)c;
+
+            // r child is nil 
+            if (!p->right)
+                _transplant(p, p->left);
+            else if (!p->left)
+                _transplant(p, p->right);
+            else
+            {
+                m = min_element(p->right);
+                _transplant(m, m->right);
+                m->right = m->parent;
+                m->parent = m;
+                _transplant(p, m);
+                // neither child is nil
+
+            }
+            _root->red = 0;
+        }
+
+        void    delete_fixup(node_pointer n, node_pointer c)
+        {
+            (void)n;
+            (void)c;
+        }
+
+
+        void    erase(iterator position)
+        {
+            node_pointer    p;
+            node_pointer    gp;
+            
+            if (!_root)
+                return ;
+            p = find(position->first, _root);
+            
+            if (p->parent)
+                gp = p->parent;
+            else
+                gp = _root;
+
+            std::cout << *p << std::endl;
+            if (p->r)
+            {
+                if (p->left)
+                {
+                    gp->right = p->left;
+                    p->left->parent = gp;
+                    if (p->left->right)
+                        (max_element(p->left))->right = p->right;
+                    p->left->r = 1;
+                    p->left->l = 0;
+                }
+                else
+                    gp->right = p->right;
+            }
+            else
+            {
+                if (p->right)
+                {
+                    gp->left = p->right;
+                    p->right->parent = gp;
+                    if (p->right->left)
+                        (min_element(p->right))->left = p->left; 
+                    p->right->r = 0;
+                    p->right->l = 1;
+                }
+                else
+                    gp->left = p->left;
+            }
+            p->parent = 0;
+            p->right = 0;
+            p->left = 0;
+            _allocator.destroy(p);
+            _allocator.deallocate(p, 1);
+        }
+
+
+        void    clear()
+        {
+            if (_root && _nb_construct)
+                destroy_tree(_root);
+            if (_root && _nb_allocate)
+                deallocate_tree(_root);
+            _root = NULL;
+            _nb_construct = 0;
+            _nb_allocate = 0;
+        }
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////

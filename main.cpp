@@ -132,7 +132,7 @@ int main()
 		std_m.insert(std::pair<int, int>(12, 0));
 		std_m.insert(std::pair<int, int>(90, 0));
 
-		std::cout << "////////////////	TESTS 	////////////////\n";
+		std::cout << "\n\n////////////////	TESTS 	////////////////\n";
 
 		std::pair<std::map<int, int>::iterator, std::map<int, int>::iterator > spair;
 
@@ -146,13 +146,37 @@ int main()
 		m.insert(ft::pair<const int, int>(12, 654654));
 		m.insert(ft::pair<const int, int>(90, 0));
 
-		std::cout << (m[5] = 6546) << std::endl;
 		m[5] = 9999;
-		std::cout << m[5] << std::endl;
 
-		std::cout << "m.clear() called" << std::endl;
-		m.clear();
+		//m.print_tree();
 
+		std::cout << "\n\n";
+		ft::map<int, int> map2;
+
+		map2.insert(m.begin(), m.end());
+
+		std::cout << "\n\nsize map2 => " << map2.size() << 
+		"\nmap2.end() => " << *map2.end() <<
+		"\ndistance map2 => " << ft::distance(map2.begin(), map2.end()) << "\n\n";
+
+		//map2.print_tree();
+
+		ft::map<int, int>::iterator it;
+
+		it = map2.begin();
+		it++;
+		it++;
+		it++;
+		it++;
+		map2.erase(it);
+		//map2.print_tree();
+
+		it = map2.begin();
+		while (it != map2.end())
+		{
+			std::cout << "it = " <<  it->first << " " << it->second << std::endl;
+			it++;
+		}
 
 		std::cout << "////////////////	TESTS 	////////////////n\n\n";
 

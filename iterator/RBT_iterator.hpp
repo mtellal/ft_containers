@@ -44,6 +44,12 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             return (*this);
         }
 
+        RedBlackTreeIterator & operator=(const pointer & x)
+        {
+            _node = x;
+            return (*this);
+        }
+
         bool    operator==(const RedBlackTreeIterator & x) { return (_node == x._node); }
         bool    operator!=(const RedBlackTreeIterator & x) { return (_node != x._node); }
 
@@ -75,13 +81,19 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             if (_node->right)
             {
                 if (_node->right->left)
-                    _node = min_element(_node->right->left);
+                    _node = min_element(_node->right);
                 else
                     _node = _node->right;
             }
             else if (_node->parent && !_node->right)
             {
                 pointer _it(_node);
+
+                if (_node->r)
+                {
+                    ++_node;
+                    return (*this);
+                }
                 while (_it)
                 {
                     if (_comp(_node->value.first, _it->value.first))
@@ -91,9 +103,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                     }
                     _it = _it->parent;
                 }
-                return (_it);
             }
-            else 
+            else
                 ++_node;
             return (*this);
         }
@@ -106,7 +117,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             if (_node->right)
             {
                 if (_node->right->left)
-                    _node = min_element(_node->right->left);
+                    _node = min_element(_node->right);
                 else
                     _node = _node->right;
             }
@@ -116,8 +127,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
 
                 if (_node->r)
                 {
-                    //std::cout << _node++ << std::endl;
-                    return (_node++);
+                    _node++;
+                    return (old);
                 }
                 while (_it)
                 {
