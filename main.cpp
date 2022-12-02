@@ -150,6 +150,8 @@ int main()
 		m[5] = 9999;
 		std::cout << m[5] << std::endl;
 
+		std::cout << "m.clear() called" << std::endl;
+		m.clear();
 
 
 		std::cout << "////////////////	TESTS 	////////////////n\n\n";

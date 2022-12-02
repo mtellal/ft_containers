@@ -1,0 +1,7 @@
+
+- const_iterator:
+	a) function return const_iterator
+	b) implement iterator tag const
+
+- implement map iterator (begin, end, rbegin ..)
+

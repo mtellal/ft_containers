@@ -110,19 +110,17 @@ class   RedBlackTree
             std::cout << "///////////// DESTRUCTOR RBT  /////////////\n";
             if (_root)
                 std::cout << "root" << *_root << std::endl;
-            if (_root->left)
+            if (_root && _root->left)
                 std::cout << "\n\n=> LEFT \n" << *_root->left << std::endl;
-            if (_root->left && _root->left->left)
+            if (_root && _root->left && _root->left->left)
                 std::cout << *_root->left->left << std::endl;
 
-            if (_root->right)
+            if (_root && _root->right)
                 std::cout << "\n\n=> RIGHT \n" <<  *_root->right << std::endl;
-            if (_root->right && _root->right->right)
+            if (_root && _root->right && _root->right->right)
             std::cout << *_root->right->right << std::endl;
 
-
-            if (_nb_construct && _root)
-                destruct_himself(_root);
+            clear();
         };
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -171,21 +169,35 @@ class   RedBlackTree
         /////                                   MODIFIERS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        void    clear(void)
-        {
-            size_t  i = 0;
-            while (i < _nb_construct)
-                _allocator.destroy(_root + i);
-        }
-
-        void    destruct_himself(node_pointer x)
+        void    deallocate_tree(node_pointer x)
         {
             if (x->left)
-                destruct_himself(x->left);
+                deallocate_tree(x->left);
             if (x->right)
-                destruct_himself(x->right);
+                deallocate_tree(x->right);
             if (x)
                 _allocator.deallocate(x, 1);
+        }
+
+        void    destroy_tree(node_pointer x)
+        {
+            if (x->left)
+                destroy_tree(x->left);
+            if (x->right)
+                destroy_tree(x->right);
+            if (x)
+                _allocator.destroy(x);
+        }
+
+        void    clear()
+        {
+            if (_root && _nb_construct)
+                destroy_tree(_root);
+            if (_root && _nb_allocate)
+                deallocate_tree(_root);
+            _root = NULL;
+            _nb_construct = 0;
+            _nb_allocate = 0;
         }
 
         node_pointer   create_node(const Pair & x, bool red = 0, bool l = 0, bool r = 0)

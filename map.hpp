@@ -31,11 +31,10 @@ class map
         typedef typename Alloc::pointer                                 pointer;
         typedef typename Alloc::const_pointer                           const_pointer;
 
-        //define bidirectional_iterator for pair<const key, T>
-        typedef typename ft::RedBlackTreeIterator<ft::Node<value_type>, key_compare>         iterator;
-        /* typedef typename ft::random_access_iterator<const value_type>   const_iterator;
-        typedef typename ft::reverse_iterator<iterator>                 reverse_iterator;
-        typedef typename ft::reverse_iterator<const iterator>           const_reverse_iterator; */
+        typedef typename ft::RedBlackTreeIterator<ft::Node<value_type>, key_compare>            iterator;
+        typedef typename ft::RedBlackTreeIterator<ft::Node< const value_type>, key_compare>     const_iterator;
+        typedef typename ft::reverse_iterator<iterator>                                         reverse_iterator;
+        typedef typename ft::reverse_iterator<const_iterator>                                   const_reverse_iterator;
 
         typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
         typedef size_t                                                  size_type;
@@ -96,13 +95,23 @@ class map
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        iterator    begin() { return (_tree.begin()); }
+        /* !!!!!!!!!!!!!!!!!!!!!!  NEED MORE TESTS (CONST + REVERSE) !!!!!!!!!!!!! */
 
-        // const_iterator begin() const { return (_tree.begin()); }
+        iterator                begin() { return (_tree.begin()); }
 
-        iterator end() { return (_tree.end()) ;}
+        const_iterator          begin() const { return (_tree.begin()); }
 
-        // const_iterator end() const { return (_tree.end()) ;}
+        iterator                end() { return (_tree.end()); }
+
+        const_iterator          end() const { return (_tree.end()); }
+
+        reverse_iterator        rbegin() { return (reverse_iterator(_tree.end())); }
+        
+        const_reverse_iterator  rbegin() const { return (reverse_iterator(_tree.end())); }
+
+        reverse_iterator        rend() { return (reverse_iterator(_tree.begin())); }
+
+        const_reverse_iterator  rend() const { return (reverse_iterator(_tree.begin())); }
         
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                   CAPACITY                                 /////
@@ -182,12 +191,16 @@ class map
             (void)last;
         }
 
+        // !!!! need more tests + fixed x errors from contexts
+        void    clear() { _tree.clear(); }
+
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                  OBSERVERS                                 /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        value_compare value_comp() const { return _compare; }
+        key_compare key_comp() const { return (_compare); };
 
+        value_compare value_comp() const { return (_value_compare); }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                  OPERATIONS                                /////
@@ -198,10 +211,10 @@ class map
             return (_tree.find(k, _tree.root()));
         }
         
-        /* const_iterator  find(const key_type & k) const
+        const_iterator  find(const key_type & k) const
         {
-            void (k);
-        } */
+            return (_tree.find(k, _tree.root()));
+        }
 
         size_type    count(const key_type & k)
         {
