@@ -132,32 +132,27 @@ int main()
 		std_m.insert(std::pair<int, int>(12, 0));
 		std_m.insert(std::pair<int, int>(90, 0));
 
+		std::cout << "////////////////	TESTS 	////////////////\n";
 
 		std::pair<std::map<int, int>::iterator, std::map<int, int>::iterator > spair;
 
-		spair = std_m.equal_range(91);
+		spair = std_m.equal_range(8);
 
-		std::cout << "std_size = " << std_m.size() << std::endl;
+		std::cout << "std equal range = " << spair.first->first << " " << spair.second->first << std::endl;
 
-		std::cout << spair.first->first << " " << spair.second->first << std::endl;
 
-		std::cout << "///////////////////////////////////////////////////////\n";
-
-		m.insert(ft::pair<const int, int>(5, 0));
 		m.insert(ft::pair<const int, int>(86, 0));
 		m.insert(ft::pair<const int, int>(9, 0));
-		m.insert(ft::pair<const int, int>(12, 0));
+		m.insert(ft::pair<const int, int>(12, 654654));
 		m.insert(ft::pair<const int, int>(90, 0));
 
-
-		ft::pair<ft::map<int, int>::iterator, ft::map<int, int>::iterator > pair;
-
-		pair = m.equal_range(91);
-
-		std::cout << pair.first->first << " " << pair.second->first << std::endl;
+		std::cout << (m[5] = 6546) << std::endl;
+		m[5] = 9999;
+		std::cout << m[5] << std::endl;
 
 
-		std::cout << "///////////////\n\n\n\n";
+
+		std::cout << "////////////////	TESTS 	////////////////n\n\n";
 
 
 		/* m.my_insert(ft::pair<const int, int>(5, 0));

@@ -108,11 +108,44 @@ class map
         /////                                   CAPACITY                                 /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        size_type   size() const { return (_tree.size()); }
+        size_type       size() const { return (_tree.size()); }
+
+        bool            empty() const { return (begin() == end()); }
+
+        size_type       max_size(void) const { return (_allocator.max_size()); }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                              ELEMENT ACCESS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
+
+        // std::outofrange thrown
+        T &             at(const Key & key)
+        {
+            iterator    it;
+
+            it = find(key);
+            if (!it.base())
+                throw std::out_of_range("Element does not exists");
+            return (it->second);
+        }
+
+        const   T &     at(const Key & key) const
+        {
+            iterator    it;
+
+            it = find(key);
+            if (!it.base())
+                throw std::out_of_range("Element does not exists");
+            return (it->second);
+        }
+
+        mapped_type &   operator[](const key_type & k)
+        {
+            iterator it;
+
+            it = insert(ft::make_pair(k, mapped_type())).first;
+            return (it->second);
+        }
 
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -175,10 +208,12 @@ class map
             return (_tree.count(k, _tree.root()));
         }
 
+        /*  !!!!!!!!!!  NEED MORE TESTS (segfault with empty map) !!!!!!!!!!!!!!!!!!!*/
+
         iterator lower_bound (const key_type& k)
         {
             iterator    it;
-            
+
             it = begin();
             while (it != end())
             {
@@ -189,7 +224,10 @@ class map
             return (it);
         }
 
-        //const_iterator lower_bound (const key_type& k) const;
+        /* const_iterator lower_bound (const key_type& k) const
+        {
+            (void)k;
+        } */
 
         iterator upper_bound(const key_type& k)
         {
@@ -204,9 +242,6 @@ class map
             }
             return (it);
         }
-
-
-        ///////  NEED MORE TESTS 
 
         ft::pair<iterator,iterator> equal_range(const key_type & k)
         {

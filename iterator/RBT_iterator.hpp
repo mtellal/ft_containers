@@ -91,7 +91,10 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                     }
                     _it = _it->parent;
                 }
+                return (_it);
             }
+            else 
+                ++_node;
             return (*this);
         }
 
@@ -110,6 +113,12 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             else if (_node->parent && !_node->right)
             {
                 pointer _it(_node);
+
+                if (_node->r)
+                {
+                    //std::cout << _node++ << std::endl;
+                    return (_node++);
+                }
                 while (_it)
                 {
                     if (_comp(_node->value.first, _it->value.first))
@@ -120,6 +129,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                     _it = _it->parent;
                 }
             }
+            else
+                _node++;
             return (old);
         }
 
@@ -128,7 +139,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             if (_node->left)
             {
                 if (_node->left->right)
-                    _node = max_elemement(_node->left->right);
+                    _node = max_element(_node->left->right);
                 else
                     _node = _node->left;
             }
@@ -145,6 +156,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                     _it = _it->parent;
                 }
             }
+            else
+                --_node;
             return (*this);
         }
 
@@ -155,7 +168,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             if (_node->left)
             {
                 if (_node->left->right)
-                    _node = max_elemement(_node->left->right);
+                    _node = max_element(_node->left->right);
                 else
                     _node = _node->left;
             }
@@ -172,6 +185,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                     _it = _it->parent;
                 }
             }
+            else
+                _node--;
             return (old);
         }
 

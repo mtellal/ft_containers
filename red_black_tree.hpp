@@ -110,13 +110,16 @@ class   RedBlackTree
             std::cout << "///////////// DESTRUCTOR RBT  /////////////\n";
             if (_root)
                 std::cout << "root" << *_root << std::endl;
-           /*  if (_root->left)
-                std::cout << *_root->left << std::endl;
+            if (_root->left)
+                std::cout << "\n\n=> LEFT \n" << *_root->left << std::endl;
+            if (_root->left && _root->left->left)
+                std::cout << *_root->left->left << std::endl;
+
             if (_root->right)
-                std::cout << *_root->right << std::endl;
-            std::cout << *search(13, _root) << std::endl;
-            std::cout << *search(19, _root) << std::endl;
-            std::cout << *search(23, _root) << std::endl; */
+                std::cout << "\n\n=> RIGHT \n" <<  *_root->right << std::endl;
+            if (_root->right && _root->right->right)
+            std::cout << *_root->right->right << std::endl;
+
 
             if (_nb_construct && _root)
                 destruct_himself(_root);
@@ -131,17 +134,25 @@ class   RedBlackTree
             node_pointer    it(_root);
 
             while (it && it->left)
+            {
                 it = it->left;
-            return (iterator(it));
+            }
+            return (it);
         }
 
         iterator    end()
         {
-            node_pointer    it(_root);
+            iterator it(_root);
+            node_pointer p(_root);
 
-            while (it && it->right)
-                it = it->right;
-            return (iterator(it));
+            if (!size())
+                return (begin());
+            while (p)
+            {
+                p = p->right;
+                it++;
+            }
+            return (it);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -211,7 +222,7 @@ class   RedBlackTree
                     u = gp->left;
                 if (p->red == z->red)
                 {
-                    //std::cout << "recolor_ascendants" << std::endl;
+                    std::cout << "recolor_ascendants" << std::endl;
                     p->red = 0;
                     gp->red = 1;
                     if (u)
@@ -240,7 +251,7 @@ class   RedBlackTree
                     u = gp->left;
                 if ((!u || !u->red) && p->l != z->l && p->red && z->red)
                 {
-                    //std::cout << "rotate triangle" << std::endl;
+                    std::cout << "rotate triangle" << std::endl;
                     if (p->l)
                     {
                         gp->left = z;
@@ -261,10 +272,40 @@ class   RedBlackTree
                     p->parent = z;
                     z->l = !z->l;
                     z->r = !z->r;
+                    
                     return (p);
                 }
             }
             return (z);
+        }
+
+        void set_rotate_line_ascendants(node_pointer gp, node_pointer p)
+        {
+            if (gp->parent)
+            {
+                if (gp->l)
+                {
+                    gp->parent->left = p;
+                    p->parent = gp->parent;
+                    p->l = 1;
+                    p->r = 0;
+                }
+                else
+                {
+                    gp->parent->right = p;
+                    p->parent = gp->parent;
+                    p->r = 1;
+                    p->l = 0;
+                }
+            }
+            else
+            {
+                _root = p;
+                p->parent = NULL;
+                p->red = 0;
+                p->r = 0;
+                p->l = 0;
+            }
         }
 
         void    rotate_line(node_pointer z)
@@ -283,47 +324,13 @@ class   RedBlackTree
                     u = gp->left;
                 if ((!u || !u->red) && p->l == z->l && p->red && z->red)
                 {
-                    //std::cout << "rotate line" << std::endl;
-                    if (gp->l)
-                    {
-                        if (gp->parent)
-                        {
-                            gp->parent->left = p;
-                            p->parent = gp->parent;
-                            p->l = 1;
-                            p->r = 0;
-                        }
-                        else
-                        {
-                            _root = p;
-                            p->parent = NULL;
-                            p->red = 0;
-                            p->r = 0;
-                            p->l = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (gp->parent)
-                        {
-                            gp->parent->right = p;
-                            p->parent = gp->parent;
-                            p->r = 1;
-                            p->l = 0;
-                        }
-                        else
-                        {
-                            _root = p;
-                            p->parent = NULL;
-                            p->red = 0;
-                            p->r = 0;
-                            p->l = 0;
-                        }
-                    }
+                    std::cout << "rotate line" << std::endl;
+
                     if (p->l)
                     {
                         gp->left = p->right;
-                        p->right = gp;
+                        p->right = gp; 
+                        set_rotate_line_ascendants(gp, p);
                         gp->r = 1;
                         gp->l = 0;
                     }
@@ -331,6 +338,7 @@ class   RedBlackTree
                     {
                         gp->right = p->left;
                         p->left = gp;
+                        set_rotate_line_ascendants(gp, p);
                         gp->l = 1;
                         gp->r = 0;
                     }
