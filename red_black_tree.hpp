@@ -482,6 +482,48 @@ class   RedBlackTree
             return (_current_node);
         }
 
+        /*          ROTATIONS LEFT / RIGHT          */
+
+        void    left_rotation(node_pointer x)
+        {
+            node_pointer    y;
+
+            y = x->right;
+            x->right = y->left; 
+
+            if (y->left)
+                y->left->parent = x;
+            y->parent = x->parent;
+            if (!x->parent)
+                _root = y;
+            else if (x->l)
+                x->parent->left = y;
+            else
+                x->parent->right = y; 
+            y->left = x;
+            x->parent = y;
+        }
+
+        void right_rotation(node_pointer x)
+        {
+            node_pointer    y;
+
+            y = x->left;
+            x->left = y->right;
+            if (y->right)
+                y->right->parent = x;
+            y->parent = x->parent;
+            if (!x->parent)
+                _root = y;
+            else if (x->r)
+                x->parent->right = y;
+            else
+                x->parent->left = y;
+            y->right = x;
+            x->parent = y;
+        }
+
+
 
         // DELETION RBT
 
@@ -490,103 +532,168 @@ class   RedBlackTree
             if (!p->parent)
             {
                 _root = c;
-                c->l = 0;
-                c->r = 0;
+                if (c)
+                {
+                    c->l = 0;
+                    c->r = 0;
+                }
             }
-            if (p->l)
+            else if (p->l)
             {
                 p->parent->left = c;
-                c->r = 0;
-                c->l = 1;
+                if (c)
+                {
+                    c->r = 0;
+                    c->l = 1;
+                }
             }
             else
             {
                 p->parent->right = c;
-                c->r = 1;
-                c->l = 0;
+                if (c)
+                {
+                    c->r = 1;
+                    c->l = 0;
+                }
             }
-            c->parent = p->parent;
+            if (c)
+                c->parent = p->parent;
         }
 
-        void    _delete(node_pointer p, node_pointer c)
+        void    _delete(node_pointer p)
         {
             node_pointer    m;
+            node_pointer    c;
 
-            (void)c;
-
-            // r child is nil 
+            c = p;
             if (!p->right)
+            {
+                c = p->left;
                 _transplant(p, p->left);
+            }
             else if (!p->left)
+            {
+                c = p->right;
                 _transplant(p, p->right);
+            }
             else
             {
                 m = min_element(p->right);
-                _transplant(m, m->right);
-                m->right = m->parent;
-                m->parent = m;
+                c = m->right;
+                if (m->parent != p)
+                {
+                    _transplant(m, m->right);
+                    m->right = p->right;
+                    m->right->parent = m;
+                }
                 _transplant(p, m);
-                // neither child is nil
-
+                m->left = p->left;
+                m->left->parent = m;
             }
-            _root->red = 0;
+            if (c && !c->red)
+                delete_fixup(c);
         }
 
-        void    delete_fixup(node_pointer n, node_pointer c)
+        void    delete_fixup(node_pointer c)
         {
-            (void)n;
-            (void)c;
+            node_pointer    c2;
+            node_pointer    p;
+
+            std::cout << "fixup called()" << std::endl;
+            while (c != _root && !c->red)
+            {
+                if (c->l)
+                {
+                    p = c->parent;
+                    c2 = p->right;
+                    if (c2 && c2->red)
+                    {
+                        c2->red = 0;
+                        p->red = 1;
+                        left_rotation(p);
+                        c2 = p->right;
+                    }
+                    if (c2 &&
+                        c2->left && !c2->left->red &&
+                        c2->right && !c2->right->red)
+                    {
+                        c2->red = 1;
+                        c = p;
+                    }
+                    else
+                    {
+                        if (c2 && c2->right && !c2->right->red)
+                        {
+                            c2->left->red = 0;
+                            c2->red = 1;
+                            right_rotation(c2);
+                            c2 = p->right;
+                        }
+                        c2->red = p->red;
+                        p->red = 0;
+                        c2->right->red = 0;
+                        left_rotation(p);
+                        c = _root;
+                    }
+                }
+                else
+                {
+                    p = c->parent;
+                    c2 = p->left;
+                    if (c2 && c2->red)
+                    {
+                        c2->red = 0;
+                        p->red = 1;
+                        right_rotation(p);
+                        c2 = p->left;
+                    }
+                    if (c2 &&
+                        c2->right && !c2->right->red &&
+                        c2->left && !c2->left->red)
+                    {
+                        c2->red = 1;
+                        c = p;
+                    }
+                    else
+                    {
+                        if (c2->left && !c2->left->red)
+                        {
+                            c2->right->red = 0;
+                            c2->red = 1;
+                            left_rotation(c2);
+                            c2 = p->left;
+                        }
+                        c2->red = p->red;
+                        p->red = 0;
+                        c2->left->red = 0;
+                        right_rotation(p);
+                        c = _root;
+                    }
+                }
+            }
+            _root->red = 0;
         }
 
 
         void    erase(iterator position)
         {
             node_pointer    p;
-            node_pointer    gp;
             
             if (!_root)
                 return ;
             p = find(position->first, _root);
-            
-            if (p->parent)
-                gp = p->parent;
-            else
-                gp = _root;
-
-            std::cout << *p << std::endl;
-            if (p->r)
+            if (p)
             {
-                if (p->left)
-                {
-                    gp->right = p->left;
-                    p->left->parent = gp;
-                    if (p->left->right)
-                        (max_element(p->left))->right = p->right;
-                    p->left->r = 1;
-                    p->left->l = 0;
-                }
-                else
-                    gp->right = p->right;
+                std::cout << "erase called on => [ " << p->value.first << " ]" <<  std::endl;
+                _delete(p);
+                p->parent = 0;
+                p->right = 0;
+                p->left = 0;
+                _allocator.destroy(p);
+                _allocator.deallocate(p, 1);
+                _nb_allocate--;
+                _nb_construct--;
             }
-            else
-            {
-                if (p->right)
-                {
-                    gp->left = p->right;
-                    p->right->parent = gp;
-                    if (p->right->left)
-                        (min_element(p->right))->left = p->left; 
-                    p->right->r = 0;
-                    p->right->l = 1;
-                }
-                else
-                    gp->left = p->left;
-            }
-            p->parent = 0;
-            p->right = 0;
-            p->left = 0;
-            _allocator.destroy(p);
-            _allocator.deallocate(p, 1);
         }
 
 

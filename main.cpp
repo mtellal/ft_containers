@@ -159,24 +159,30 @@ int main()
 		"\nmap2.end() => " << *map2.end() <<
 		"\ndistance map2 => " << ft::distance(map2.begin(), map2.end()) << "\n\n";
 
-		//map2.print_tree();
 
 		ft::map<int, int>::iterator it;
 
 		it = map2.begin();
 		it++;
 		it++;
-		it++;
-		it++;
-		map2.erase(it);
+		//it++;
+		//it++;
+		map2.erase(++map2.begin(), map2.end());
 		//map2.print_tree();
 
+		
 		it = map2.begin();
-		while (it != map2.end())
+		while (it.base() && it != map2.end())
 		{
 			std::cout << "it = " <<  it->first << " " << it->second << std::endl;
 			it++;
 		}
+
+		std::cout << "\n\nsize map2 => " << map2.size() << 
+		"\nmap2.end() => " << *map2.end() <<
+		"\ndistance map2 => " << ft::distance(map2.begin(), map2.end()) << "\n\n";
+
+		//map2.print_tree();
 
 		std::cout << "////////////////	TESTS 	////////////////n\n\n";
 

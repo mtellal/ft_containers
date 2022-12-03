@@ -199,9 +199,34 @@ class map
         }
 
 
-        void erase (iterator position)
+        void        erase(iterator position)
         {
             _tree.erase(position);
+        }
+        
+        size_type   erase(const key_type & k)
+        {
+            iterator    it;
+
+            it = find(k);
+            if (it)
+            {
+               erase(it);
+                return (1);
+            }
+            return (0);
+        }
+
+        void    erase(iterator first, iterator last)
+        {
+            iterator    it;
+
+            while (first != last)
+            {
+                it = first;
+                first++;
+                erase(it);
+            }
         }
 
 
