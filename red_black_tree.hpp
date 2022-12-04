@@ -73,20 +73,26 @@ class   RedBlackTree
 {
     public:
 
-        typedef Pair                                            initial_type;
-        typedef ft::Node<initial_type>                          node_type;
-        typedef node_type *                                     node_pointer;
-        typedef node_type &                                     node_reference;
 
-        typedef ft::RedBlackTreeIterator<node_type, Compare>    iterator;
-
-        typedef size_t                                          size_type;
-
-        typedef Alloc                                           allocate_type;
+        typedef Compare                                         key_compare;                                          
         typedef Pair                                            pair;
-        typedef pair *                                          pair_pointer;
+        typedef Pair *                                          pair_pointer;
         typedef typename Pair::first_type                       key_type;
-        typedef typename Pair::second_type                      value_type;
+        typedef typename Pair::second_type                      mapped_type;
+
+        typedef ft::Node<pair>                                  node_type;
+        typedef typename node_type::node_pointer                node_pointer;
+        typedef ft::RedBlackTreeIterator<node_type, Compare>    iterator;
+        
+        typedef Alloc                                           allocator_type;
+        typedef typename Alloc::reference                       reference;
+        typedef typename Alloc::const_reference                 const_reference;
+        typedef typename Alloc::pointer                         pointer;
+        typedef typename Alloc::const_pointer                   const_pointer;
+        typedef typename Alloc::size_type                       size_type;
+
+
+
 
         RedBlackTree() : _root(0), _nb_construct(0), _nb_allocate(0) {};
 
@@ -105,7 +111,6 @@ class   RedBlackTree
                 first++;
             }
         }
-
 
         ~RedBlackTree()
         {
@@ -140,39 +145,6 @@ class   RedBlackTree
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
-
-
-        node_pointer    min_element() const
-        {
-            node_pointer n(_root);
-
-            while (n && n->left)
-                n = n->left;
-            return (n);
-        }
-
-        node_pointer    min_element(node_pointer n) const
-        {
-            while (n && n->left)
-                n = n->left;
-            return (n);
-        }
-
-        node_pointer    max_element() const
-        {
-            node_pointer n(_root);
-
-            while (n && n->right)
-                n = n->right;
-            return (n);
-        }
-
-        node_pointer    max_element(node_pointer n) const
-        {
-            while (n && n->right)
-                n = n->right;
-            return (n);
-        }
 
         iterator    begin() const
         {
@@ -211,6 +183,183 @@ class   RedBlackTree
         /////                                   MODIFIERS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
+
+        node_pointer    insert(const pair & k)
+        {
+            node_pointer    z;
+            node_pointer    y;
+            node_pointer    x;
+
+            y = NULL;
+            x = _root;
+            while (x)
+            {
+                y = x;
+                if (!_compare(k.first, x->value.first) && !_compare(x->value.first, k.first))
+                    return (x);
+                if (_compare(k.first, x->value.first))
+                    x = x->left;
+                else
+                    x = x->right;
+            }
+            z = create_node(k);
+            z->parent = y;
+            if (!y)
+                _root = z;
+            else if (_compare(k.first, y->value.first))
+                y->left = z;
+            else
+                y->right = z;
+            insert_fixup(z);
+            return (z);
+        }
+
+        void    erase(iterator position)
+        {
+            node_pointer    p;
+            
+            if (!_root)
+                return ;
+            p = find(position->first, _root);
+            if (p)
+            {
+                std::cout << "erase called on => [ " << p->value.first << " ]" <<  std::endl;
+                _delete(p);
+                p->parent = 0;
+                p->right = 0;
+                p->left = 0;
+                _allocator.destroy(p);
+                _allocator.deallocate(p, 1);
+                _nb_allocate--;
+                _nb_construct--;
+            }
+        }
+
+        void    clear()
+        {
+            if (_root && _nb_construct)
+                destroy_tree(_root);
+            if (_root && _nb_allocate)
+                deallocate_tree(_root);
+            _root = NULL;
+            _nb_construct = 0;
+            _nb_allocate = 0;
+        }
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        /////                                  OPERATIONS                                /////
+        //////////////////////////////////////////////////////////////////////////////////////
+
+        node_pointer    find(key_type val, node_pointer _n)
+        {
+            node_pointer    tmp = NULL;
+
+            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
+                return (_n);
+            else
+            {
+                if (_n->left)
+                {
+                    tmp = find(val, _n->left);
+                    if (tmp)
+                        return (tmp);
+                }    
+                if (_n->right)
+                {
+                    tmp = find(val, _n->right);
+                    if (tmp)
+                        return (tmp);
+                }
+            }
+            return (tmp);
+        }
+
+        size_type   count(const key_type & val, node_pointer _n) const
+        {
+            size_type    tmp = 0;
+
+            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
+                return (1);
+            else
+            {
+                if (_n->left)
+                    tmp += count(val, _n->left);
+                if (_n->right)
+                    tmp += count(val, _n->right);
+            }
+            return (tmp);
+        }
+
+        // remove before push 
+
+        void    verify_reds(node_pointer z)
+        {
+            if (z->left && z->red && z->left->red)
+            {
+                std::cout << "2 ADJACENTS RED NODES\n";
+                std::cout << *z << " " << *z->left << std::endl;
+                verify_reds(z->left);
+            }
+            if (z->right && z->red && z->right->red)
+            {
+                std::cout << "2 ADJACENTS RED NODES\n";
+                std::cout << *z << " " << *z->right << std::endl;
+                verify_reds(z->right);
+            }
+        }
+
+
+    private:
+
+        node_pointer        _root;
+        key_compare         _compare;
+        allocator_type      _allocator;
+        size_type           _nb_construct;
+        size_type           _nb_allocate;
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        /////                                    ALGO                                    /////
+        //////////////////////////////////////////////////////////////////////////////////////
+
+
+        node_pointer    min_element() const
+        {
+            node_pointer n(_root);
+
+            while (n && n->left)
+                n = n->left;
+            return (n);
+        }
+
+        node_pointer    min_element(node_pointer n) const
+        {
+            while (n && n->left)
+                n = n->left;
+            return (n);
+        }
+
+        node_pointer    max_element() const
+        {
+            node_pointer n(_root);
+
+            while (n && n->right)
+                n = n->right;
+            return (n);
+        }
+
+        node_pointer    max_element(node_pointer n) const
+        {
+            while (n && n->right)
+                n = n->right;
+            return (n);
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        /////                                 MOFIERS                                    /////
+        //////////////////////////////////////////////////////////////////////////////////////
+
         void    deallocate_tree(node_pointer x)
         {
             if (x->left)
@@ -245,41 +394,10 @@ class   RedBlackTree
             return (_n);
         }
 
-        node_pointer    insert(const pair & k)
-        {
-            node_pointer    z;
-            node_pointer    y;
-            node_pointer    x;
 
-            y = NULL;
-            x = _root;
-            while (x)
-            {
-                y = x;
-                if (!_compare(k.first, x->value.first) && !_compare(x->value.first, k.first))
-                    return (x);
-                if (_compare(k.first, x->value.first))
-                    x = x->left;
-                else
-                    x = x->right;
-            }
-            z = create_node(k);
-            z->parent = y;
-            if (!y)
-            {
-                _root = z;
-            }
-            else if (_compare(k.first, y->value.first))
-            {
-                y->left = z;
-            }
-            else
-            {
-                y->right = z;
-            } 
-            insert_fixup(z);
-            return (z);
-        }
+        //////////////////////////////////////////////////////////////////////////////////////
+        /////                              MOFIFIERS_UTILS                               /////
+        //////////////////////////////////////////////////////////////////////////////////////
 
         void    insert_fixup(node_pointer z)
         {
@@ -351,17 +469,11 @@ class   RedBlackTree
                 y->left->parent = x;
             y->parent = x->parent;
             if (!x->parent)
-            {
                 _root = y;
-            }
             else if (x == x->parent->left)
-            {
                 x->parent->left = y;
-            }
             else
-            {
                 x->parent->right = y; 
-            }
             y->left = x;
             x->parent = y;
         }
@@ -376,22 +488,14 @@ class   RedBlackTree
                 y->right->parent = x;
             y->parent = x->parent;
             if (!x->parent)
-            {
                 _root = y;
-            }
             else if (x == x->parent->right)
-            {
                 x->parent->right = y;
-            }
             else
-            {
                 x->parent->left = y;
-
-            }
             y->right = x;
             x->parent = y;
         }
-
 
 
         // DELETION RBT
@@ -520,116 +624,6 @@ class   RedBlackTree
             }
             _root->red = 0;
         }
-
-
-        void    erase(iterator position)
-        {
-            node_pointer    p;
-            
-            if (!_root)
-                return ;
-            p = find(position->first, _root);
-            if (p)
-            {
-                std::cout << "erase called on => [ " << p->value.first << " ]" <<  std::endl;
-                _delete(p);
-                p->parent = 0;
-                p->right = 0;
-                p->left = 0;
-                _allocator.destroy(p);
-                _allocator.deallocate(p, 1);
-                _nb_allocate--;
-                _nb_construct--;
-            }
-        }
-
-        void    clear()
-        {
-            if (_root && _nb_construct)
-                destroy_tree(_root);
-            if (_root && _nb_allocate)
-                deallocate_tree(_root);
-            _root = NULL;
-            _nb_construct = 0;
-            _nb_allocate = 0;
-        }
-
-
-
-        //////////////////////////////////////////////////////////////////////////////////////
-        /////                                  OPERATIONS                                /////
-        //////////////////////////////////////////////////////////////////////////////////////
-
-        node_pointer    find(key_type val, node_pointer _n)
-        {
-            node_pointer    tmp = NULL;
-
-            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
-                return (_n);
-            else
-            {
-                if (_n->left)
-                {
-                    tmp = find(val, _n->left);
-                    if (tmp)
-                        return (tmp);
-                }    
-                if (_n->right)
-                {
-                    tmp = find(val, _n->right);
-                    if (tmp)
-                        return (tmp);
-                }
-            }
-            return (tmp);
-        }
-
-        size_type   count(const key_type & val, node_pointer _n) const
-        {
-            size_type    tmp = 0;
-
-            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
-                return (1);
-            else
-            {
-                if (_n->left)
-                {
-                    tmp += count(val, _n->left);
-                }    
-                if (_n->right)
-                {
-                    tmp += count(val, _n->right);
-                }
-            }
-            return (tmp);
-        }
-
-        // remove before push 
-
-        void    verify_reds(node_pointer z)
-        {
-            if (z->left && z->red && z->left->red)
-            {
-                std::cout << "2 ADJACENTS RED NODES\n";
-                std::cout << *z << " " << *z->left << std::endl;
-                verify_reds(z->left);
-            }
-            if (z->right && z->red && z->right->red)
-            {
-                std::cout << "2 ADJACENTS RED NODES\n";
-                std::cout << *z << " " << *z->right << std::endl;
-                verify_reds(z->right);
-            }
-        }
-
-
-    private:
-
-        node_pointer        _root;
-        Compare             _compare;
-        allocate_type       _allocator;
-        size_type           _nb_construct;
-        size_type           _nb_allocate;
 };
 
 #endif
