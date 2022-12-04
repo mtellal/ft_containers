@@ -118,27 +118,31 @@ namespace p
 	};
 }
 
+template <class Map, class iterator, class Title>
+void	print_map(Map & m, Title s)
+{
+	iterator	it = m.begin();
+	std::cout << "\n\n////////	" << s << "	//////////\n";
+
+	while (it != m.end())
+	{
+		std::cout << "it = " <<  it->first << " " << it->second << std::endl;
+		it++;
+	}
+
+	std::cout << "size() = " << m.size() << std::endl;
+	std::cout << "////////	" << s << "	//////////\n\n";
+}
+
 int main()
 {
 	{
 		ft::map<int, int> m;
-		ft::map<int, int>::iterator	itm;
+		ft::map<int, int>::iterator	it;
 
-		std::map<int, int> std_m;
-		std::map<int, int>::iterator std_itm;
-
-		std_m.insert(std::pair<int, int>(86, 0));
-		std_m.insert(std::pair<int, int>(9, 0));
-		std_m.insert(std::pair<int, int>(12, 0));
-		std_m.insert(std::pair<int, int>(90, 0));
+		(void)it;
 
 		std::cout << "\n\n////////////////	TESTS 	////////////////\n";
-
-		std::pair<std::map<int, int>::iterator, std::map<int, int>::iterator > spair;
-
-		spair = std_m.equal_range(8);
-
-		std::cout << "std equal range = " << spair.first->first << " " << spair.second->first << std::endl;
 
 
 		m.insert(ft::pair<const int, int>(86, 0));
@@ -150,63 +154,58 @@ int main()
 
 		//m.print_tree();
 
+		/* std::cout << "print tree" << std::endl;
+		it = m.begin();
+		std::cout << *it++.base() << std::endl;
+		std::cout << *it++.base() << std::endl;
+		std::cout << *it++.base() << std::endl;
+		std::cout << *it++.base() << std::endl;
+		std::cout << *it++.base() << std::endl;
+		std::cout << *it++.base() << std::endl;
+ */
+
+		std::cout << ft::distance(m.begin(), m.end()) << " = distance" << std::endl;
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(m, "M");
+
+
+		//m.print_tree();
+
 		std::cout << "\n\n";
 		ft::map<int, int> map2;
 
+		std::cout << "map2 insert////////////////////////////////////////////////////////" << std::endl;
 		map2.insert(m.begin(), m.end());
 
-		std::cout << "\n\nsize map2 => " << map2.size() << 
-		"\nmap2.end() => " << *map2.end() <<
-		"\ndistance map2 => " << ft::distance(map2.begin(), map2.end()) << "\n\n";
-
-
-		ft::map<int, int>::iterator it;
-
-		it = map2.begin();
-		it++;
-		it++;
-		//it++;
-		//it++;
-		map2.erase(++map2.begin(), map2.end());
-		//map2.print_tree();
-
-		
-		it = map2.begin();
-		while (it.base() && it != map2.end())
-		{
-			std::cout << "it = " <<  it->first << " " << it->second << std::endl;
-			it++;
-		}
-
-		std::cout << "\n\nsize map2 => " << map2.size() << 
-		"\nmap2.end() => " << *map2.end() <<
-		"\ndistance map2 => " << ft::distance(map2.begin(), map2.end()) << "\n\n";
 
 		//map2.print_tree();
+
+		std::cout << "distance = " << ft::distance(map2.begin(), map2.end()) << std::endl;
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(map2, "MAP2");
+
+
+		ft::map<int, int>	copy(map2);
+
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
+
+
+		copy[13] = 6354;
+		copy[11] = 6;
+		copy[14] = 6354;
+
+
+		//copy.print_tree();
+		copy[321] = 56;
+
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
+
+
+		copy.swap(map2);
+
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(map2, "MAP2");
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
+
 
 		std::cout << "////////////////	TESTS 	////////////////n\n\n";
-
-
-		/* m.my_insert(ft::pair<const int, int>(5, 0));
-		m.my_insert(ft::pair<const int, int>(15, 0));
-		m.my_insert(ft::pair<const int, int>(12, 0));
-		m.my_insert(ft::pair<const int, int>(19, 0));
-		m.my_insert(ft::pair<const int, int>(9, 0));
-		m.my_insert(ft::pair<const int, int>(23, 0));
-		m.my_insert(ft::pair<const int, int>(13, 0));
-		m.my_insert(ft::pair<const int, int>(10, 0));
-		m.my_insert(ft::pair<const int, int>(40, 0));
-		m.my_insert(ft::pair<const int, int>(1, 0));
-		m.my_insert(ft::pair<const int, int>(96845, 0)); */
-
-
-		/* ft::map<int, int>::iterator it = m.begin();
-		
-		std::cout << "\n////////// PRINT MAP ///////////\n";
-
-		for (size_t i = 0; i < m.size(); i++)
-			std::cout << *it++ << std::endl; */
-		//(void)vc;
 
 	}
 

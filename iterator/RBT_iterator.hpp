@@ -89,7 +89,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             {
                 pointer _it(_node);
 
-                if (_node->r)
+                if (_node == _node->parent->right)
                 {
                     ++_node;
                     return (*this);
@@ -121,23 +121,31 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
                 else
                     _node = _node->right;
             }
-            else if (_node->parent && !_node->right)
+            else if (_node->parent && _node == _node->parent->left)
+            {
+                _node = _node->parent;
+            }
+            else if (_node->parent && _node == _node->parent->right && !_node->right)
             {
                 pointer _it(_node);
+                pointer y;
 
-                if (_node->r)
-                {
-                    _node++;
-                    return (old);
-                }
                 while (_it)
                 {
-                    if (_comp(_node->value.first, _it->value.first))
+                    y = _it;
+                    if (_comp(_node->value.first, _it->value.first) &&
+                        !_comp(_it->value.first, _node->value.first))
                     {
                         _node = _it;
                         break ;
                     }
                     _it = _it->parent;
+                }
+                if (!y->parent && y->right && 
+                    (_comp(y->right->value.first, _node->value.first) ||
+                    (!_comp(_node->value.first, y->right->value.first) && !_comp(y->right->value.first, _node->value.first))))
+                {
+                    _node++;            
                 }
             }
             else

@@ -62,33 +62,26 @@ class map
         };
 
         explicit    map(const key_compare & comp = key_compare(), const allocate_type & alloc = allocate_type()) :
-            _compare(comp), _nb_construct(0), _nb_allocate(0)
-        {
-            (void)comp;
-            (void)alloc;
-            std::cout << "map default constructor called " << std::endl;
-        }
+        _compare(comp), _allocator(alloc), _nb_construct(0), _nb_allocate(0) {}
 
         template < class InputIterator>
         map (InputIterator first, InputIterator last, const key_type & comp = key_compare(),
-            const allocate_type & alloc = allocate_type()) : _nb_construct(0), _nb_allocate(0)
+            const allocate_type & alloc = allocate_type()) :
+        _nb_construct(0), _nb_allocate(0)
         {
-            std::cout << "map iterator constructor called" << std::endl;
             (void)first;
             (void)last;
             (void)comp;
             (void)alloc;
         }
 
-        map(const map & x) : _nb_construct(0), _nb_allocate(0)
-        {
-            (void)x;
-            std::cout << "map copy constructor called" << std::endl;
-        }
+        map(const map & x) :
+        _tree(x._tree), _compare(x._compare), _value_compare(x._value_compare),
+        _allocator(x._allocator), _nb_construct(x._nb_construct), _nb_allocate(x._nb_allocate) {}
 
         ~map(void)
         {
-            std::cout << "map destructor called" << std::endl;
+            _tree.clear();
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -152,6 +145,7 @@ class map
         {
             iterator it;
 
+            std::cout << "inserted [ " << k << " ] " << std::endl; 
             it = insert(ft::make_pair(k, mapped_type())).first;
             return (it->second);
         }
@@ -170,8 +164,6 @@ class map
             it = _tree.insert(val);
             if (n + 1 == size())
             {
-                _nb_construct++;
-                _nb_allocate++;
                 return (ft::pair<iterator, bool>(it, true));
             }
             else
@@ -211,7 +203,7 @@ class map
             it = find(k);
             if (it)
             {
-               erase(it);
+                erase(it);
                 return (1);
             }
             return (0);
@@ -229,6 +221,15 @@ class map
             }
         }
 
+        void       swap(map & x)
+        {
+            map     tmp(x);
+
+            x.clear();
+            x.insert(begin(), end());
+            clear();
+            insert(tmp.begin(), tmp.end());
+        }
 
 
         // !!!! need more tests + fixed x errors from contexts
@@ -312,8 +313,6 @@ class map
     private:
 
         ft::RedBlackTree<value_type, key_compare>               _tree;
-        key_type                                                _key;
-        value_type                                              _value;
         key_compare                                             _compare;
         value_compare                                           _value_compare;
 

@@ -29,20 +29,18 @@ struct Node
     node_pointer         right;     // right node
     node_pointer         left;      // left node
     bool                 red;       // color (red or !red = black)
-    bool                 l;         // node is in left from parent path
-    bool                 r;         // node is in right from parent path
 
-    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0), l(0), r(0)
+    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0)
     { 
     }
 
     Node (const value_type & v, const node_pointer & p = 0, const node_pointer & r = 0,
-        const node_pointer & l = 0, bool rd = 0, bool _l = 0, bool _r = 0):
-    value(v), parent(p), right(r), left(l), red(rd), l(_l), r(_r)
+        const node_pointer & l = 0, bool rd = 0):
+    value(v), parent(p), right(r), left(l), red(rd)
     {
     }
 
-    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red), l(x.l), r(x.r) {}
+    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red) {}
 
     Node & operator=(const Node & x)
     {
@@ -52,8 +50,6 @@ struct Node
             right = x.right;
             left = x.left;
             red = x.red;
-            l = x.l;
-            r = x.r;
         }
         return (*this);
     }
@@ -70,18 +66,6 @@ struct Node
     }
 };
 
-
-/*
-    RULES RED-BLACK-TREES
-    1) if empty => root node black 
-    2) if not empty => new leaf node in red 
-    3) if parent of new node is black => exit
-    4) if parent new node is red => check parents sibling 
-        a) if parents sibling null or black => rotate and recolor 
-        b) if parents sibling red recolor in black &&  check if parent newnode != root => recolor parent 
-
-    https://www.youtube.com/watch?v=qA02XWRTBdw
-*/
 
 
 template <class Pair, class Compare = std::less<Pair>, class Alloc = std::allocator<ft::Node<Pair> > >
@@ -104,11 +88,27 @@ class   RedBlackTree
         typedef typename Pair::first_type                       key_type;
         typedef typename Pair::second_type                      value_type;
 
-        RedBlackTree() : _nb_construct(0), _nb_allocate(0) {};
+        RedBlackTree() : _root(0), _nb_construct(0), _nb_allocate(0) {};
+
+        RedBlackTree(const RedBlackTree & x) : 
+        _root(0), _compare(x._compare), _allocator(x._allocator),
+        _nb_construct(0), _nb_allocate(0)
+        {
+            iterator    first;
+            iterator    last;
+
+            first = x.begin();
+            last = x.end();
+            while (first != last)
+            {
+                insert(ft::make_pair(first->first, first->second));
+                first++;
+            }
+        }
+
+
         ~RedBlackTree()
         {
-            std::cout << "///////////// DESTRUCTOR RBT  /////////////\n";
-            //print_tree();
             clear();
         };
 
@@ -116,15 +116,25 @@ class   RedBlackTree
         {
              if (_root)
                 std::cout << "root" << *_root << std::endl;
+
             if (_root && _root->left)
                 std::cout << "\n\n=> LEFT \n" << *_root->left << std::endl;
+
             if (_root && _root->left && _root->left->left)
                 std::cout << *_root->left->left << std::endl;
 
+            if (_root && _root->left && _root->left->right)
+                std::cout << *_root->left->right << std::endl;
+
             if (_root && _root->right)
                 std::cout << "\n\n=> RIGHT \n" <<  *_root->right << std::endl;
+
             if (_root && _root->right && _root->right->right)
-            std::cout << *_root->right->right << std::endl;
+                std::cout << *_root->right->right << std::endl;
+
+            if (_root && _root->right && _root->right->left)
+                std::cout << *_root->right->left << std::endl;
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +142,7 @@ class   RedBlackTree
         //////////////////////////////////////////////////////////////////////////////////////
 
 
-        node_pointer    min_element()
+        node_pointer    min_element() const
         {
             node_pointer n(_root);
 
@@ -141,14 +151,14 @@ class   RedBlackTree
             return (n);
         }
 
-        node_pointer    min_element(node_pointer n)
+        node_pointer    min_element(node_pointer n) const
         {
             while (n && n->left)
                 n = n->left;
             return (n);
         }
 
-        node_pointer    max_element()
+        node_pointer    max_element() const
         {
             node_pointer n(_root);
 
@@ -157,14 +167,14 @@ class   RedBlackTree
             return (n);
         }
 
-        node_pointer    max_element(node_pointer n)
+        node_pointer    max_element(node_pointer n) const
         {
             while (n && n->right)
                 n = n->right;
             return (n);
         }
 
-        iterator    begin()
+        iterator    begin() const
         {
             node_pointer    it(_root);
 
@@ -175,14 +185,14 @@ class   RedBlackTree
             return (it);
         }
 
-        iterator    end()
+        iterator    end() const
         {
             iterator it;
 
-            if (!size())
+            if (!_nb_construct)
                 return (begin());
-            it = max_element();
-            return (++it);
+            it = max_element() + 1;
+            return (it);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -221,266 +231,112 @@ class   RedBlackTree
                 _allocator.destroy(x);
         }
 
-        node_pointer   create_node(const Pair & x, bool red = 0, bool l = 0, bool r = 0)
+        node_pointer   create_node(const Pair & x)
         {
             node_pointer   _n;
 
             _n = _allocator.allocate(1);
             _allocator.construct(_n, x);
-            if (red)
-                _n->red = 1;
-            if (l)
-                _n->l = 1;
-            if (r)
-                _n->r = 1;
+            _n->red = 1;
             _nb_construct++;
             _nb_allocate++;
+            _n->left = NULL;
+            _n->right = NULL;
             return (_n);
         }
 
-
-        node_pointer    recolor_ascendants(node_pointer z)
+        node_pointer    insert(const pair & k)
         {
-            node_pointer    p;
-            node_pointer    gp;
-            node_pointer    u;
+            node_pointer    z;
+            node_pointer    y;
+            node_pointer    x;
 
-            if (z->parent && z->parent->parent)
+            y = NULL;
+            x = _root;
+            while (x)
             {
-                p = z->parent;
-                gp = z->parent->parent;
-                if (p->l)
-                    u = gp->right;
+                y = x;
+                if (!_compare(k.first, x->value.first) && !_compare(x->value.first, k.first))
+                    return (x);
+                if (_compare(k.first, x->value.first))
+                    x = x->left;
                 else
-                    u = gp->left;
-                if (p->red == z->red)
-                {
-                    std::cout << "recolor_ascendants" << std::endl;
-                    p->red = 0;
-                    gp->red = 1;
-                    if (u)
-                        u->red = 0;
-                }
-                return (gp);
+                    x = x->right;
             }
-            if (_root)
-                _root->red = 0;
-            return (z->parent);
-        }
-
-        node_pointer   rotate_triangle(node_pointer z)
-        {
-            node_pointer    p;
-            node_pointer    gp;
-            node_pointer    u;
-
-            if (z->parent && z->parent->parent)
-            {  
-                p = z->parent;
-                gp = p->parent;
-                if (p->l)
-                    u = gp->right;
-                else
-                    u = gp->left;
-                if ((!u || !u->red) && p->l != z->l && p->red && z->red)
-                {
-                    std::cout << "rotate triangle" << std::endl;
-                    if (p->l)
-                    {
-                        gp->left = z;
-                        p->right = z->left;
-                        if (z->left)
-                            z->left->parent = p;
-                        z->left = p;
-                    }
-                    else
-                    {
-                        gp->right = z;
-                        p->left = z->right;
-                        if (z->right)
-                            z->right->parent = p;
-                        z->right = p;
-                    }
-                    z->parent = gp;
-                    p->parent = z;
-                    z->l = !z->l;
-                    z->r = !z->r;
-                    
-                    return (p);
-                }
+            z = create_node(k);
+            z->parent = y;
+            if (!y)
+            {
+                _root = z;
             }
+            else if (_compare(k.first, y->value.first))
+            {
+                y->left = z;
+            }
+            else
+            {
+                y->right = z;
+            } 
+            insert_fixup(z);
             return (z);
         }
 
-        void set_rotate_line_ascendants(node_pointer gp, node_pointer p)
+        void    insert_fixup(node_pointer z)
         {
-            if (gp->parent)
-            {
-                if (gp->l)
-                {
-                    gp->parent->left = p;
-                    p->parent = gp->parent;
-                    p->l = 1;
-                    p->r = 0;
-                }
-                else
-                {
-                    gp->parent->right = p;
-                    p->parent = gp->parent;
-                    p->r = 1;
-                    p->l = 0;
-                }
-            }
-            else
-            {
-                _root = p;
-                p->parent = NULL;
-                p->red = 0;
-                p->r = 0;
-                p->l = 0;
-            }
-        }
-
-        void    rotate_line(node_pointer z)
-        {
-            node_pointer    p;
-            node_pointer    gp;
             node_pointer    u;
 
-            if (z->parent && z->parent->parent)
-            {  
-                p = z->parent;
-                gp = p->parent;
-                if (p->l)
-                    u = gp->right;
-                else
-                    u = gp->left;
-                if ((!u || !u->red) && p->l == z->l && p->red && z->red)
+            while (z->parent && z->parent->red)
+            {
+                if (z == z->parent->parent->left)
                 {
-                    std::cout << "rotate line" << std::endl;
-
-                    if (p->l)
+                    u = z->parent->parent->right;
+                    if (u && u->red)
                     {
-                        gp->left = p->right;
-                        p->right = gp; 
-                        set_rotate_line_ascendants(gp, p);
-                        gp->r = 1;
-                        gp->l = 0;
+                        z->parent->red = 0;
+                        u->red = 0;
+                        z->parent->parent->red = 1;
+                        z = z->parent->parent;
                     }
                     else
                     {
-                        gp->right = p->left;
-                        p->left = gp;
-                        set_rotate_line_ascendants(gp, p);
-                        gp->l = 1;
-                        gp->r = 0;
-                    }
-                    gp->parent = p;
-                    gp->red = 1;
-                }
-            }
-        }
-
-        void    rotate_and_recolor(node_pointer z)
-        {
-            while (z != _root)
-            {
-                z = rotate_triangle(z);
-                rotate_line(z);
-                z = recolor_ascendants(z);
-            }
-            if (z->red && z->parent && z->parent->red)
-                z->parent->red = 0;
-            if (_root)
-                _root->red = 0;
-            verify_reds(z);
-        }
-
-        node_pointer    insert(const pair & x)
-        {
-            if (!_nb_construct)
-            {
-                _root = create_node(x);
-                return (_root);
-            }
-            else
-            {
-                node_pointer   _current_node = _root;
-                key_type    k2 = x.first;
-
-                while (1)
-                {
-                    key_type k1 = _current_node->value.first;
-                    
-                    if (!_comp(x.first, k1) && !_comp(k1, x.first))
-                        return (_current_node);
-                    else if (_comp(k2, k1))
-                    {
-                        if (_current_node->left)
-                            _current_node = _current_node->left;
-                        else
+                        if (z == z->parent->right)
                         {
-                            _current_node->left = create_node(x, 1, 1);
-                            _current_node->left->parent = _current_node;
-                            rotate_and_recolor(_current_node->left);
-                            return (_current_node->left);
+                            z = z->parent;
+                            left_rotation(z);
                         }
-                    }
-                    else
-                    {
-                        if (_current_node->right)
-                            _current_node = _current_node->right;
-                        else
-                        {
-                            _current_node->right = create_node(x, 1, 0, 1);
-                            _current_node->right->parent = _current_node;
-                            rotate_and_recolor(_current_node->right);
-                            return (_current_node->right);
-                        }
-                    }
-                }
-                return (_current_node);
-            }
-        }
-
-        node_pointer    insert(iterator pos, const pair & x)
-        {
-            node_pointer   _current_node = pos->value;
-            key_type    k2 = x.first;
-
-            while (1)
-            {
-                key_type k1 = _current_node->value.first;
-                
-                if (!_comp(x.first, k1) && !_comp(k1, x.first))
-                        return (_current_node);
-                else if (_comp(k2, k1))
-                {
-                    if (_current_node->left)
-                        _current_node = _current_node->left;
-                    else
-                    {
-                        _current_node->left = create_node(x, 1, 1);
-                        _current_node->left->parent = _current_node;
-                        rotate_and_recolor(_current_node->left);
-                        return (_current_node->left);
+                        z->parent->red = 0;
+                        z->parent->parent->red = 1;
+                        right_rotation(z->parent->parent);
                     }
                 }
                 else
                 {
-                    if (_current_node->right)
-                        _current_node = _current_node->right;
+                    u = z->parent->parent->left;
+                    if (u && u->red)
+                    {
+                        z->parent->red = 0;
+                        u->red = 0;
+                        z->parent->parent->red = 1;
+                        z = z->parent->parent;
+                    }
                     else
                     {
-                        _current_node->right = create_node(x, 1, 0, 1);
-                        _current_node->right->parent = _current_node;
-                        rotate_and_recolor(_current_node->right);
-                        return (_current_node->right);
+                        if (z == z->parent->left)
+                        {
+                            z = z->parent;
+                            right_rotation(z);
+                        }
+                        z->parent->red = 0;
+                        z->parent->parent->red = 1;
+                        left_rotation(z->parent->parent);
                     }
                 }
+                if (z == _root)
+                    break ;
             }
-            return (_current_node);
+            _root->red = 0;
         }
+
 
         /*          ROTATIONS LEFT / RIGHT          */
 
@@ -495,11 +351,17 @@ class   RedBlackTree
                 y->left->parent = x;
             y->parent = x->parent;
             if (!x->parent)
+            {
                 _root = y;
-            else if (x->l)
+            }
+            else if (x == x->parent->left)
+            {
                 x->parent->left = y;
+            }
             else
+            {
                 x->parent->right = y; 
+            }
             y->left = x;
             x->parent = y;
         }
@@ -514,11 +376,18 @@ class   RedBlackTree
                 y->right->parent = x;
             y->parent = x->parent;
             if (!x->parent)
+            {
                 _root = y;
-            else if (x->r)
+            }
+            else if (x == x->parent->right)
+            {
                 x->parent->right = y;
+            }
             else
+            {
                 x->parent->left = y;
+
+            }
             y->right = x;
             x->parent = y;
         }
@@ -530,32 +399,11 @@ class   RedBlackTree
         void    _transplant(node_pointer p, node_pointer c)
         {
             if (!p->parent)
-            {
                 _root = c;
-                if (c)
-                {
-                    c->l = 0;
-                    c->r = 0;
-                }
-            }
-            else if (p->l)
-            {
+            else if (p == p->parent->left)
                 p->parent->left = c;
-                if (c)
-                {
-                    c->r = 0;
-                    c->l = 1;
-                }
-            }
             else
-            {
                 p->parent->right = c;
-                if (c)
-                {
-                    c->r = 1;
-                    c->l = 0;
-                }
-            }
             if (c)
                 c->parent = p->parent;
         }
@@ -599,10 +447,9 @@ class   RedBlackTree
             node_pointer    c2;
             node_pointer    p;
 
-            std::cout << "fixup called()" << std::endl;
             while (c != _root && !c->red)
             {
-                if (c->l)
+                if (c == c->parent->left)
                 {
                     p = c->parent;
                     c2 = p->right;
@@ -696,7 +543,6 @@ class   RedBlackTree
             }
         }
 
-
         void    clear()
         {
             if (_root && _nb_construct)
@@ -718,7 +564,7 @@ class   RedBlackTree
         {
             node_pointer    tmp = NULL;
 
-            if (_n && !_comp(_n->value.first, val) && !_comp(val, _n->value.first))
+            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
                 return (_n);
             else
             {
@@ -742,7 +588,7 @@ class   RedBlackTree
         {
             size_type    tmp = 0;
 
-            if (_n && !_comp(_n->value.first, val) && !_comp(val, _n->value.first))
+            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
                 return (1);
             else
             {
@@ -780,7 +626,7 @@ class   RedBlackTree
     private:
 
         node_pointer        _root;
-        Compare             _comp;
+        Compare             _compare;
         allocate_type       _allocator;
         size_type           _nb_construct;
         size_type           _nb_allocate;
