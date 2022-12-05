@@ -137,8 +137,10 @@ void	print_map(Map & m, Title s)
 int main()
 {
 	{
-		ft::map<int, int> m;
-		ft::map<int, int>::iterator	it;
+		typedef ft::map<int, int>::iterator	iterator;
+
+		ft::map<int, int>	m;
+		iterator			it;
 
 		(void)it;
 
@@ -152,6 +154,10 @@ int main()
 
 		m[5] = 9999;
 
+		(void)m;
+
+
+
 		//m.print_tree();
 
 		/* std::cout << "print tree" << std::endl;
@@ -164,7 +170,7 @@ int main()
 		std::cout << *it++.base() << std::endl;
  */
 
-		std::cout << ft::distance(m.begin(), m.end()) << " = distance" << std::endl;
+		/* std::cout << ft::distance(m.begin(), m.end()) << " = distance" << std::endl;
 		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(m, "M");
 
 
@@ -187,9 +193,11 @@ int main()
 
 		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
 
-
 		copy[13] = 6354;
-		copy[11] = 6;
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY"); */
+
+
+		/* copy[11] = 6;
 		copy[14] = 6354;
 
 
@@ -202,10 +210,10 @@ int main()
 		copy.swap(map2);
 
 		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(map2, "MAP2");
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
+		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY"); */
 
 
-		std::cout << "////////////////	TESTS 	////////////////n\n\n";
+		std::cout << "////////////////	TESTS 	////////////////\n\n";
 
 	}
 

@@ -1,7 +1,16 @@
 
-- const_iterator:
-	a) function return const_iterator
-	b) implement iterator tag const
+- Map: 
+	- const_iterator: (definition + use) check if just const value or independant class 
 
-- implement map iterator (begin, end, rbegin ..)
+	- hanlde errors messages
+	
+	- insert(pos, val) (need more tests, pos before/after ??)
+
+
+
+
+
+
+ - leaks / errors context:
+
 

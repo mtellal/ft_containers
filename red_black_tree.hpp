@@ -67,23 +67,16 @@ struct Node
 };
 
 
-
 template <class Pair, class Compare = std::less<Pair>, class Alloc = std::allocator<ft::Node<Pair> > >
 class   RedBlackTree
 {
     public:
 
-
         typedef Compare                                         key_compare;                                          
         typedef Pair                                            pair;
-        typedef Pair *                                          pair_pointer;
         typedef typename Pair::first_type                       key_type;
         typedef typename Pair::second_type                      mapped_type;
 
-        typedef ft::Node<pair>                                  node_type;
-        typedef typename node_type::node_pointer                node_pointer;
-        typedef ft::RedBlackTreeIterator<node_type, Compare>    iterator;
-        
         typedef Alloc                                           allocator_type;
         typedef typename Alloc::reference                       reference;
         typedef typename Alloc::const_reference                 const_reference;
@@ -91,14 +84,20 @@ class   RedBlackTree
         typedef typename Alloc::const_pointer                   const_pointer;
         typedef typename Alloc::size_type                       size_type;
 
+        typedef ft::Node<pair>                                  node_type;
+        typedef ft::Node<const pair>                            const_node_type;        
+        typedef typename node_type::node_pointer                node_pointer;
+
+        typedef typename ft::RedBlackTreeIterator<node_type, key_compare>            iterator;
+        typedef typename ft::RedBlackTreeIterator<const_node_type, key_compare>     const_iterator;
+        typedef typename ft::reverse_iterator<iterator>                             reverse_iterator;
+        typedef typename ft::reverse_iterator<const_iterator>                       const_reverse_iterator;
 
 
-
-        RedBlackTree() : _root(0), _nb_construct(0), _nb_allocate(0) {};
+        RedBlackTree() : _root(0), _nb_element(0) {};
 
         RedBlackTree(const RedBlackTree & x) : 
-        _root(0), _compare(x._compare), _allocator(x._allocator),
-        _nb_construct(0), _nb_allocate(0)
+        _root(0), _compare(x._compare), _allocator(x._allocator), _nb_element(0)
         {
             iterator    first;
             iterator    last;
@@ -161,7 +160,7 @@ class   RedBlackTree
         {
             iterator it;
 
-            if (!_nb_construct)
+            if (!_nb_element)
                 return (begin());
             it = max_element() + 1;
             return (it);
@@ -171,7 +170,7 @@ class   RedBlackTree
         /////                                   CAPACITY                                 /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        size_t   size(void) const { return (_nb_construct); }
+        size_t   size(void) const { return (_nb_element); }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                              ELEMENT ACCESS                                /////
@@ -230,20 +229,18 @@ class   RedBlackTree
                 p->left = 0;
                 _allocator.destroy(p);
                 _allocator.deallocate(p, 1);
-                _nb_allocate--;
-                _nb_construct--;
+                _nb_element--;
             }
         }
 
         void    clear()
         {
-            if (_root && _nb_construct)
+            if (_root && _nb_element)
                 destroy_tree(_root);
-            if (_root && _nb_allocate)
+            if (_root && _nb_element)
                 deallocate_tree(_root);
             _root = NULL;
-            _nb_construct = 0;
-            _nb_allocate = 0;
+            _nb_element = 0;
         }
 
 
@@ -273,7 +270,7 @@ class   RedBlackTree
                         return (tmp);
                 }
             }
-            return (tmp);
+            return (end().base());
         }
 
         size_type   count(const key_type & val, node_pointer _n) const
@@ -311,13 +308,15 @@ class   RedBlackTree
         }
 
 
+
+        ////////////////////////////////////       PRIVATE         ////////////////////////////////////
+
     private:
 
         node_pointer        _root;
         key_compare         _compare;
         allocator_type      _allocator;
-        size_type           _nb_construct;
-        size_type           _nb_allocate;
+        size_type           _nb_element;
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                    ALGO                                    /////
@@ -387,8 +386,7 @@ class   RedBlackTree
             _n = _allocator.allocate(1);
             _allocator.construct(_n, x);
             _n->red = 1;
-            _nb_construct++;
-            _nb_allocate++;
+            _nb_element++;
             _n->left = NULL;
             _n->right = NULL;
             return (_n);
