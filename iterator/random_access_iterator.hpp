@@ -56,6 +56,8 @@
            // operator+()
            random_access_iterator        operator+(const difference_type & n) const { return (it + n); }
            random_access_iterator        operator-(const difference_type & n) const { return (it - n); }
+           difference_type               operator-(const random_access_iterator & n) const { return (it - n.it); }
+           
            random_access_iterator &      operator+=(const difference_type & n) { it += n; return (*this); }
            random_access_iterator &      operator-=(const difference_type & n) { it -= n; return (*this); }
 

@@ -16,7 +16,6 @@
 #include <map>
 #include <stack>
 
-
 template < class T >
 class  Allocator : public  std::allocator<T>
 {
@@ -134,83 +133,70 @@ void	print_map(Map & m, Title s)
 	std::cout << "////////	" << s << "	//////////\n\n";
 }
 
+template <class V>
+void printSize(const V & vector)
+{
+	size_t	i = 0;
+	std::cout << "size = " << vector.size() << 
+				"\ncapacity = " << vector.capacity() << 
+				"\nmax_size = " << vector.max_size() <<  std::endl;
+
+	while (i < vector.size())
+	{
+		std::cout << vector[i] << std::endl;
+		i++;
+	}
+	std::cout << "\n\n";
+}
+
+#include <list>
+
+template <class V>
+void	test_vector()
+{
+	typedef typename V::iterator iterator;
+	V vct(5);
+	iterator it = vct.begin(), ite = vct.end();
+
+	std::cout << "len: " << (ite - it) << std::endl;
+	for (; it != ite; ++it)
+		*it = (ite - it);
+
+	it = vct.begin();
+	V vct_range(it, --(--ite));
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 5;
+
+	it = vct.begin();
+	V vct_copy(vct);
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 7;
+	vct_copy.push_back(42);
+	vct_copy.push_back(21);
+
+	std::cout << "\t-- PART ONE --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
+
+	vct = vct_copy;
+	vct_copy = vct_range;
+	vct_range.clear();
+
+	std::cout << "\t-- PART TWO --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
+}
+
 int main()
 {
 	{
-		typedef ft::map<int, int>::iterator	iterator;
+		
 
-		ft::map<int, int>	m;
-		iterator			it;
+		std::cout << "ft" << std::endl;
+		test_vector<ft::vector<int> >();
 
-		(void)it;
-
-		std::cout << "\n\n////////////////	TESTS 	////////////////\n";
-
-
-		m.insert(ft::pair<const int, int>(86, 0));
-		m.insert(ft::pair<const int, int>(9, 0));
-		m.insert(ft::pair<const int, int>(12, 654654));
-		m.insert(ft::pair<const int, int>(90, 0));
-
-		m[5] = 9999;
-
-		(void)m;
-
-
-
-		//m.print_tree();
-
-		/* std::cout << "print tree" << std::endl;
-		it = m.begin();
-		std::cout << *it++.base() << std::endl;
-		std::cout << *it++.base() << std::endl;
-		std::cout << *it++.base() << std::endl;
-		std::cout << *it++.base() << std::endl;
-		std::cout << *it++.base() << std::endl;
-		std::cout << *it++.base() << std::endl;
- */
-
-		/* std::cout << ft::distance(m.begin(), m.end()) << " = distance" << std::endl;
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(m, "M");
-
-
-		//m.print_tree();
-
-		std::cout << "\n\n";
-		ft::map<int, int> map2;
-
-		std::cout << "map2 insert////////////////////////////////////////////////////////" << std::endl;
-		map2.insert(m.begin(), m.end());
-
-
-		//map2.print_tree();
-
-		std::cout << "distance = " << ft::distance(map2.begin(), map2.end()) << std::endl;
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(map2, "MAP2");
-
-
-		ft::map<int, int>	copy(map2);
-
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
-
-		copy[13] = 6354;
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY"); */
-
-
-		/* copy[11] = 6;
-		copy[14] = 6354;
-
-
-		//copy.print_tree();
-		copy[321] = 56;
-
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY");
-
-
-		copy.swap(map2);
-
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(map2, "MAP2");
-		print_map<ft::map<int, int>, ft::map<int, int>::iterator, std::string>(copy, "COPY"); */
 
 
 		std::cout << "////////////////	TESTS 	////////////////\n\n";
