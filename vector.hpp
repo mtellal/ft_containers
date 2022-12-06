@@ -350,7 +350,7 @@
             {
                 if (_nb_construct >= 1)
                 {
-                    allocator.destroy(--end());
+                    allocator.destroy((--end()).base());
                     _nb_construct--;
                 }
             }

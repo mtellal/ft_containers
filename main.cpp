@@ -15,6 +15,8 @@
 #include <vector>
 #include <map>
 #include <stack>
+#include <list>
+
 
 template < class T >
 class  Allocator : public  std::allocator<T>
@@ -149,35 +151,97 @@ void printSize(const V & vector)
 	std::cout << "\n\n";
 }
 
-#include <list>
+
+// --- Class foo
+template <typename T>
+class foo {
+	public:
+		typedef T	value_type;
+
+		foo(void) : value(), _verbose(false) { };
+		foo(value_type src, const bool verbose = false) : value(src), _verbose(verbose) { };
+		foo(foo const &src, const bool verbose = false) : value(src.value), _verbose(verbose) { };
+		~foo(void) { if (this->_verbose) std::cout << "~foo::foo()" << std::endl; };
+		void m(void) { std::cout << "foo::m called [" << this->value << "]" << std::endl; };
+		void m(void) const { std::cout << "foo::m const called [" << this->value << "]" << std::endl; };
+		foo &operator=(value_type src) { this->value = src; return *this; };
+		foo &operator=(foo const &src) {
+			if (this->_verbose || src._verbose)
+				std::cout << "foo::operator=(foo) CALLED" << std::endl;
+			this->value = src.value;
+			return *this;
+		};
+		value_type	getValue(void) const { return this->value; };
+		void		switchVerbose(void) { this->_verbose = !(this->_verbose); };
+
+		operator value_type(void) const {
+			return value_type(this->value);
+		}
+	private:
+		value_type	value;
+		bool		_verbose;
+};
+
+template <typename T>
+std::ostream	&operator<<(std::ostream &o, foo<T> const &bar) {
+	o << bar.getValue();
+	return o;
+}
+// --- End of class foo
+
+template <typename T>
+T	inc(T it, int n)
+{
+	while (n-- > 0)
+		++it;
+	return (it);
+}
+
+template <typename T>
+T	dec(T it, int n)
+{
+	while (n-- > 0)
+		--it;
+	return (it);
+}
+
+
+template <class T>
+void	cmp(const T &lhs, T &rhs)
+{
+	static int i = 0;
+
+	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
+	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
+	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
+	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+}
 
 template <class V>
 void	test()
 {
-	V vct(7);
+	
+	V vct(4);
+	V vct2(4);
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-	{
-		vct.at(i) = (vct.size() - i) * 3;
-		std::cout << "vct.at(): " << vct.at(i) << " | ";
-		std::cout << "vct[]: " << vct[i] << std::endl;
-	}
-	printSize(vct);
+	cmp(vct, vct);  // 0
+	cmp(vct, vct2); // 1
 
-	V const vct_c(vct);
+	vct2.resize(10);
 
-	std::cout << "front(): " << vct.front() << " " << vct_c.front() << std::endl;
-	std::cout << "back(): " << vct.back() << " " <<  vct_c.back() << std::endl;
+	cmp(vct, vct2); // 2
+	cmp(vct2, vct); // 3
 
-	try {
-		vct.at(10) = 42;
-	}
-	catch (std::out_of_range &e) {
-		std::cout << "Catch out_of_range exception!" << std::endl;
-	}
-	catch (std::exception &e) {
-		std::cout << "Catch exception: " << e.what() << std::endl;
-	}
+	vct[2] = 42;
+
+	cmp(vct, vct2); // 4
+	cmp(vct2, vct); // 5
+
+	swap(vct, vct2);
+
+	cmp(vct, vct2); // 6
+	cmp(vct2, vct); // 7
+
 }
 
 int main()
@@ -188,7 +252,7 @@ int main()
 		// std::vector<int> v;
 
 
-		test<ft::vector<int> >();
+		test<ft::vector<std::string> >();
 
 
 

@@ -97,7 +97,12 @@ long    operator-(const random_access_iterator<T> & lhs,
     return (lhs.base() - rhs.base());
 } 
 
-
+template <class T, class CT>
+long    operator+(const random_access_iterator<T> & lhs,
+                    const random_access_iterator<CT> & rhs)
+{
+    return (lhs.base() + rhs.base());
+} 
 
 
 template <class T>

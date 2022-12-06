@@ -1,0 +1,10 @@
+src/vector/it_assign_err.cpp:18:9: error: cannot assign to return value because function 'operator[]' returns a const value
+        ite[1] = 42; // < -- error
+        ~~~~~~ ^
+src/vector/it_assign_err.cpp:24:2: note: in instantiation of function template specialization 'test<ft::vector<int, std::allocator<int> > >' requested here
+        test<NAMESPACE::vector<int> >();        
+        ^
+.././iterator/random_access_iterator.hpp:86:13: note: function 'operator[]' which returns const-qualified type 'ft::random_access_iterator<const int>::reference' (aka 'const int &') declared here
+            reference operator[](const difference_type n) const { return *(it + n); }
+            ^~~~~~~~~
+1 error generated.

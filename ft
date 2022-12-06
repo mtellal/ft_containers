@@ -1,28 +1,55 @@
 ft
-Pre inc
-20 | 20
-Pre dec
-25 | 25
-Post inc
-25 | 20
-Post dec
-20 | 25
-###############################################
-5
-10
-const_ite +=: 15
-const_ite -=: 25
-(it == const_it): 0
-(const_ite - it): -3
-(ite + 3 == it): 1
-size = 5
+size = 8
 capacity = OK
-max_size = 2305843009213693951
-25
-42
-15
-21
-5
+max_size = 288230376151711743
+AAAAAAAA
+BBBBBBB
+CCCCCC
+DDDDD
+EEEE
+FFF
+GG
+H
+
+
+push_back():
+
+size = 9
+capacity = OK
+max_size = 288230376151711743
+AAAAAAAA
+BBBBBBB
+CCCCCC
+DDDDD
+EEEE
+FFF
+GG
+H
+One long string
+
+
+size = 1
+capacity = OK
+max_size = 288230376151711743
+Another long string
+
+
+size = 8
+capacity = OK
+max_size = 288230376151711743
+AAAAAAAA
+BBBBBBB
+CCCCCC
+DDDDD
+EEEE
+FFF
+GG
+H
+
+
+size = 0
+capacity = OK
+max_size = 288230376151711743
 
 
 ////////////////	TESTS 	////////////////
