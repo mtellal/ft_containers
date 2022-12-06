@@ -138,7 +138,7 @@ void printSize(const V & vector)
 {
 	size_t	i = 0;
 	std::cout << "size = " << vector.size() << 
-				"\ncapacity = " << vector.capacity() << 
+				"\ncapacity = " << (vector.capacity() ? "OK" : "KO") << 
 				"\nmax_size = " << vector.max_size() <<  std::endl;
 
 	while (i < vector.size())
@@ -152,50 +152,44 @@ void printSize(const V & vector)
 #include <list>
 
 template <class V>
-void	test_vector()
+void	test()
 {
-	typedef typename V::iterator iterator;
-	V vct(5);
-	iterator it = vct.begin(), ite = vct.end();
+	V vct(7);
 
-	std::cout << "len: " << (ite - it) << std::endl;
-	for (; it != ite; ++it)
-		*it = (ite - it);
-
-	it = vct.begin();
-	V vct_range(it, --(--ite));
-	for (int i = 0; it != ite; ++it)
-		*it = ++i * 5;
-
-	it = vct.begin();
-	V vct_copy(vct);
-	for (int i = 0; it != ite; ++it)
-		*it = ++i * 7;
-	vct_copy.push_back(42);
-	vct_copy.push_back(21);
-
-	std::cout << "\t-- PART ONE --" << std::endl;
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+	{
+		vct.at(i) = (vct.size() - i) * 3;
+		std::cout << "vct.at(): " << vct.at(i) << " | ";
+		std::cout << "vct[]: " << vct[i] << std::endl;
+	}
 	printSize(vct);
-	printSize(vct_range);
-	printSize(vct_copy);
 
-	vct = vct_copy;
-	vct_copy = vct_range;
-	vct_range.clear();
+	V const vct_c(vct);
 
-	std::cout << "\t-- PART TWO --" << std::endl;
-	printSize(vct);
-	printSize(vct_range);
-	printSize(vct_copy);
+	std::cout << "front(): " << vct.front() << " " << vct_c.front() << std::endl;
+	std::cout << "back(): " << vct.back() << " " <<  vct_c.back() << std::endl;
+
+	try {
+		vct.at(10) = 42;
+	}
+	catch (std::out_of_range &e) {
+		std::cout << "Catch out_of_range exception!" << std::endl;
+	}
+	catch (std::exception &e) {
+		std::cout << "Catch exception: " << e.what() << std::endl;
+	}
 }
 
 int main()
 {
 	{
 		
-
 		std::cout << "ft" << std::endl;
-		test_vector<ft::vector<int> >();
+		// std::vector<int> v;
+
+
+		test<ft::vector<int> >();
+
 
 
 

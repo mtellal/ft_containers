@@ -22,7 +22,7 @@ void printSize(const V & vector)
 {
 	size_t	i = 0;
 	std::cout << "size = " << vector.size() <<
-				"\ncapacity = " << vector.capacity() <<
+				"\ncapacity = " << (vector.capacity() ? "OK" : "KO") <<
 				"\nmax_size = " << vector.max_size() <<  std::endl;
 
 	while (i < vector.size())

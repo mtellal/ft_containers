@@ -15,10 +15,9 @@ exe()
 
 for file in src/vector/*
 do 
+	echo "////////////////	DIFF for " vector_$file " ////////////////////"
 	file=$(basename "${file}")
 	exe  vector $file
-	echo "////////////////	DIFF for " vector_$file " ////////////////////"
 	diff output/ft_vector_$file.output output/std_vector_$file.output
 done
 
-rm -rf output/*

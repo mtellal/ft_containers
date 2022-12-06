@@ -1,32 +1,27 @@
 ft
-size = 4
-capacity = 4
-max_size = 2305843009213693951
-3
-6
-9
-12
-
-
-size = 4
-capacity = 4
-max_size = 2305843009213693951
+Pre inc
+20 | 20
+Pre dec
+25 | 25
+Post inc
+25 | 20
+Post dec
+20 | 25
+###############################################
 5
 10
-15
-20
-
-
-size = 8
-capacity = 8
+const_ite +=: 15
+const_ite -=: 25
+(it == const_it): 0
+(const_ite - it): -3
+(ite + 3 == it): 1
+size = 5
+capacity = OK
 max_size = 2305843009213693951
-5
-10
+25
+42
 15
-20
-20
-15
-10
+21
 5
 
 
