@@ -61,22 +61,11 @@
             ////////////////////             ARITHMETIC OPRATORS       ////////////////////////
 
            // operator+()
-           random_access_iterator        operator+(const difference_type & n) const { return (it + n); }
-            friend random_access_iterator        operator+(difference_type n, random_access_iterator & x)
-            {
-                return (random_access_iterator(x.it + n));
-            }
-            
-            
-            random_access_iterator        operator-(const difference_type & n)
-            {
-                /* std::cout << *it << " " << *(it - 3) << std::endl;
-                std::cout << "iterator - " << n << " called " << std::endl; */
-                it -= n;
-                return (*this);
-            }
+            random_access_iterator   operator+(const difference_type & n) const { return (it + n); }
+            long                    operator+(const random_access_iterator & n) const { return (it + n.it); }
 
-           long               operator-(const random_access_iterator & n) const { return (it - n.it); }
+            random_access_iterator  operator-(const difference_type & n) const { return (it - n); }
+            long                     operator-(const random_access_iterator & n) const { return (it - n.it); }
            
            random_access_iterator &      operator+=(const difference_type & n) { it += n; return (*this); }
            random_access_iterator &      operator-=(const difference_type & n) { it -= n; return (*this); }
@@ -90,12 +79,26 @@
             pointer it;
     };
 
+template <class T>
+ft::random_access_iterator<T>    operator-(const typename ft::random_access_iterator<T>::difference_type & n,
+                    const ft::random_access_iterator<T> & rhs)
+{
+    return (ft::random_access_iterator<T>(rhs.base() - n));
+}
+
 template <class T, class CT>
 long    operator-(const random_access_iterator<T> & lhs,
                     const random_access_iterator<CT> & rhs)
 {
     return (lhs.base() - rhs.base());
 } 
+
+template <class T>
+ft::random_access_iterator<T>    operator+(const typename ft::random_access_iterator<T>::difference_type & n,
+                    const ft::random_access_iterator<T> & rhs)
+{
+    return (ft::random_access_iterator<T>(rhs.base() + n));
+}
 
 template <class T, class CT>
 long    operator+(const random_access_iterator<T> & lhs,

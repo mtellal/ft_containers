@@ -24,7 +24,7 @@ check_diff_files()
 	container=$1
 	diff output/ft_$1_$2.output  output/std_$1_$2.output  > diff/$file.diff
 	if [ -s diff/$file.diff ]; then
-		echo -e -n "\033[1;31m" "X" $grey
+		echo -e "\033[1;31m" "X" $grey
 		cat diff/$file.diff
 	else
 		rm output/ft_$1_$2.output  output/std_$1_$2.output 
@@ -50,8 +50,8 @@ launch_exe ()
 		file=$(basename "${argfile}")
 		exe  vector $file
 		echo -e -n "\033[1;32m" "Done" $grey
-		check_diff_files vector $file
 		check_compile_err $file
+		check_diff_files vector $file
 		echo ""
 	else
 		for file in src/vector/*
@@ -60,8 +60,8 @@ launch_exe ()
 			file=$(basename "${file}")
 			exe  vector $file
 			echo -e -n "\033[1;32m" "Done" $grey
-			check_diff_files vector $file
 			check_compile_err $file
+			check_diff_files vector $file
 			echo ""
 		done
 	fi
