@@ -284,21 +284,10 @@
                 }
                 else if (n > _nb_allocate)
                 {
-                    vector          _n(*this);
+                    size_type       diff = n - _nb_allocate;
 
-                    clear();
-                    if (n > _nb_allocate)
-                    {
-                        allocator.deallocate(_begin, _nb_allocate);
-                        while (_nb_allocate && _nb_allocate < n)
-                            _nb_allocate *= 2;
-                        _begin = allocator.allocate(_nb_allocate ? _nb_allocate : 1);
-                        _nb_construct = n;
-                    }
-                    for (size_type i = 0; i < _n._nb_construct; i++)
-                        allocator.construct(_begin + i, _n._begin[i]);
-                    for (size_type i = _n.size(); i < n; i++)
-                        allocator.construct(_begin + i, val);
+                    reserve(n);
+                    insert(end(), diff, val);
                 }
                 else if (n > _nb_construct)
                 {
@@ -324,15 +313,16 @@
                     _n = *this;
                     clear();
                     if (_begin)
-                        allocator.deallocate(_begin, _nb_allocate);
-                    if (!_nb_allocate)
-                        _nb_allocate = 1;
-                    while (n > _nb_allocate)
-                        _nb_allocate *= 2;
-                    _begin = allocator.allocate(_nb_allocate);
+                        allocator.deallocate(_begin, _n._nb_allocate);
+                    if (!_n._nb_allocate)
+                        _n._nb_allocate = 1;
+                    while (n > _n._nb_allocate)
+                        _n._nb_allocate *= 2;
+                    _begin = allocator.allocate(_n._nb_allocate);
                     _nb_construct = _n._nb_construct;
+                    _nb_allocate = _n._nb_allocate;
                     for (size_type i = 0; i < _n._nb_construct; i++)
-                        *(_begin + i) = *(_n._begin + i);
+                        allocator.construct(_begin + i, *(_n + i));
                 }
             }
            
@@ -372,6 +362,8 @@
                 iterator    it;
                 iterator    itnew;
 
+                if (!n)
+                    return ;
 
                 _new._nb_construct = _nb_construct + n;
                 _new._nb_allocate = _nb_allocate;
@@ -535,5 +527,61 @@
             
     };
 
+template< class T, class Alloc >
+bool operator==( const ft::vector<T,Alloc>& lhs,
+                 const ft::vector<T,Alloc>& rhs )
+{
+    typename ft::vector<T,Alloc>::const_iterator itl;
+    typename ft::vector<T,Alloc>::const_iterator itr;
+
+    if (lhs.size() != rhs.size())
+        return (false);
+    else
+    {
+        itl = lhs.begin();
+        itr = rhs.begin();
+        while (itl != lhs.end())
+        {
+            if (itr == rhs.end() || *itl++ != *itr++)
+                return (false);
+        }
+    }
+    return (true);
+}
+
+template< class T, class Alloc >
+bool operator!=( const ft::vector<T,Alloc>& lhs,
+                 const ft::vector<T,Alloc>& rhs )
+{
+    return (!(lhs == rhs));
+}
+
+template< class T, class Alloc >
+bool operator<( const ft::vector<T,Alloc>& lhs,
+                const ft::vector<T,Alloc>& rhs )
+{
+    return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+}
+
+template< class T, class Alloc >
+bool operator<=( const ft::vector<T,Alloc>& lhs,
+                 const ft::vector<T,Alloc>& rhs )
+{
+    return (!(rhs < lhs));
+}
+
+template< class T, class Alloc >
+bool operator>( const ft::vector<T,Alloc>& lhs,
+                 const ft::vector<T,Alloc>& rhs )
+{
+    return (rhs < lhs);
+}
+
+template< class T, class Alloc >
+bool operator>=( const ft::vector<T,Alloc>& lhs,
+                 const ft::vector<T,Alloc>& rhs )
+{
+    return (!(lhs < rhs));
+}
 
 #endif

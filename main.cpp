@@ -220,27 +220,30 @@ void	cmp(const T &lhs, T &rhs)
 template <class V>
 void	test()
 {
-	
-	V vct(4);
-	V vct2(4);
+	const int size = 5;
+	V vct(size);
+	typename V::iterator it_ = vct.begin();
+	typename V::reverse_iterator it(it_);
 
-	cmp(vct, vct);  // 0
-	cmp(vct, vct2); // 1
+	for (int i = 0; i < size; ++i)
+		vct[i] = (i + 1) * 5;
+	printSize(vct);
 
-	vct2.resize(10);
+	std::cout << (it_ == it.base()) << std::endl;
+	std::cout << (it_ == (it + 3).base()) << std::endl;
 
-	cmp(vct, vct2); // 2
-	cmp(vct2, vct); // 3
+	std::cout << *(it.base() + 1) << std::endl;
+	std::cout << *(it - 3) << std::endl;
+	std::cout << *(it - 3).base() << std::endl;
+	it -= 3;
+	std::cout << *it.base() << std::endl;
 
-	vct[2] = 42;
-
-	cmp(vct, vct2); // 4
-	cmp(vct2, vct); // 5
-
-	swap(vct, vct2);
-
-	cmp(vct, vct2); // 6
-	cmp(vct2, vct); // 7
+	std::cout << "TEST OFFSET" << std::endl;
+	std::cout << *(it) << std::endl;
+	std::cout << *(it).base() << std::endl;
+	std::cout << *(it - 0) << std::endl;
+	std::cout << *(it - 0).base() << std::endl;
+	std::cout << *(it - 1).base() << std::endl;
 
 }
 
@@ -248,12 +251,13 @@ int main()
 {
 	{
 		
-		std::cout << "ft" << std::endl;
+		std::cout << "std" << std::endl;
 		// std::vector<int> v;
 
 
-		test<ft::vector<std::string> >();
+		test<ft::vector<int> >();
 
+		//std::cout <<  << std::endl;
 
 
 
