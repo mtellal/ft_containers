@@ -59,7 +59,7 @@ class reverse_iterator
 
         pointer             operator->() const { return &(operator*()); }
         
-        iterator_type       operator[](difference_type n) { return (it[-n - 1]); }
+        reference           operator[]( difference_type n ) const { return (base()[-n - 1]); }
 
 
         reverse_iterator&   operator++() { --it; return (*this); }
@@ -76,23 +76,15 @@ class reverse_iterator
 
     private:
 
-        Iterator it;
+        iterator_type it;
 };
 
-template< class Iter >
-ft::reverse_iterator<Iter>
-    operator+( typename reverse_iterator<Iter>::difference_type n,
-               const reverse_iterator<Iter>& it )
-{
-    return (reverse_iterator<Iter>(it.base() - n));
-}
-
 template< class Iterator1, class Iterator2 >
-typename reverse_iterator<Iterator1>::difference_type
-    operator-( const reverse_iterator<Iterator1>& lhs,
+//typename reverse_iterator<Iterator1>::difference_type
+long    operator-( const reverse_iterator<Iterator1>& lhs,
                const reverse_iterator<Iterator2>& rhs )
 {
-    return (lhs.base() - rhs.base());
+    return (rhs.base() - lhs.base());
 }
 
 template <class T>

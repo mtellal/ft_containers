@@ -119,37 +119,6 @@ namespace p
 	};
 }
 
-template <class Map, class iterator, class Title>
-void	print_map(Map & m, Title s)
-{
-	iterator	it = m.begin();
-	std::cout << "\n\n////////	" << s << "	//////////\n";
-
-	while (it != m.end())
-	{
-		std::cout << "it = " <<  it->first << " " << it->second << std::endl;
-		it++;
-	}
-
-	std::cout << "size() = " << m.size() << std::endl;
-	std::cout << "////////	" << s << "	//////////\n\n";
-}
-
-template <class V>
-void printSize(const V & vector)
-{
-	size_t	i = 0;
-	std::cout << "size = " << vector.size() << 
-				"\ncapacity = " << (vector.capacity() ? "OK" : "KO") << 
-				"\nmax_size = " << vector.max_size() <<  std::endl;
-
-	while (i < vector.size())
-	{
-		std::cout << vector[i] << std::endl;
-		i++;
-	}
-	std::cout << "\n\n";
-}
 
 
 // --- Class foo
@@ -206,78 +175,132 @@ T	dec(T it, int n)
 }
 
 
-template <class T>
-void	cmp(const T &lhs, T &rhs)
-{
-	static int i = 0;
 
-	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
-	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
-	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
-	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define _pair ft::pair
+
+template <typename T>
+std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
+{
+	o << "key: " << iterator->first << " | value: " << iterator->second;
+	if (nl)
+		o << std::endl;
+	return ("");
 }
 
-template <typename Ite_1, typename Ite_2>
-void ft_eq_ope(const Ite_1 &first, const Ite_2 &second, const bool redo = 1)
+template <typename T_MAP>
+void	printSize(T_MAP const &mp, bool print_content = 1)
 {
-	std::cout << (first < second) << std::endl;
-	std::cout << (first <= second) << std::endl;
-	std::cout << (first > second) << std::endl;
-	std::cout << (first >= second) << std::endl;
-	if (redo)
-		ft_eq_ope(second, first, 0);
+	std::cout << "size: " << mp.size() << std::endl;
+	std::cout << "max_size: " << mp.max_size() << std::endl;
+	if (print_content)
+	{
+		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << printPair(it, false) << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
 }
 
-template <class V>
-void	test()
+template <typename T1, typename T2>
+void	printReverse(ft::map<T1, T2> &mp)
 {
-	
-	typedef typename V::iterator iterator;
-	V vct(5);
-	iterator it = vct.begin(), ite = vct.end();
+	typename ft::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
 
-	std::cout << "len: " << (ite - it) << std::endl;
-	for (; it != ite; ++it)
-		*it = (ite - it);
-
-	it = vct.begin();
-	V vct_range(it, --(--ite));
-	for (int i = 0; it != ite; ++it)
-		*it = ++i * 5;
-
-	it = vct.begin();
-	V vct_copy(vct);
-	for (int i = 0; it != ite; ++it)
-		*it = ++i * 7;
-	vct_copy.push_back(42);
-	vct_copy.push_back(21);
-
-	std::cout << "\t-- PART ONE --" << std::endl;
-	printSize(vct);
-	printSize(vct_range);
-	printSize(vct_copy);
-
-	vct = vct_copy;
-	vct_copy = vct_range;
-	vct_range.clear();
-
-	std::cout << "\t-- PART TWO --" << std::endl;
-	printSize(vct);
-	printSize(vct_range);
-	printSize(vct_copy);
-
+	std::cout << "printReverse:" << std::endl;
+	while (it != ite) {
+		it--;
+		std::cout << "-> " << printPair(it, false) << std::endl;
+	}
+	std::cout << "_______________________________________________" << std::endl;
 }
 
+#define T1 int
+#define T2 foo<int>
+typedef ft::map<T1, T2>::value_type T3;
+typedef ft::map<T1, T2>::iterator ft_iterator;
+typedef ft::map<T1, T2>::const_iterator ft_const_iterator;
+
+static int iter = 0;
+
+template <typename MAP>
+void	ft_bound(MAP &mp, const T1 &param)
+{
+	ft_iterator ite = mp.end(), it[2];
+	ft::pair<ft_iterator, ft_iterator> ft_range;
+
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	std::cout << "with key [" << param << "]:" << std::endl;
+	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
+	ft_range = mp.equal_range(param);
+	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
+	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
+	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
+}
+
+template <typename MAP>
+void	ft_const_bound(const MAP &mp, const T1 &param)
+{
+	ft_const_iterator ite = mp.end(), it[2];
+	ft::pair<ft_const_iterator, ft_const_iterator> ft_range;
+
+	std::cout << "\t-- [" << iter++ << "] (const) --" << std::endl;
+	std::cout << "with key [" << param << "]:" << std::endl;
+	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
+	ft_range = mp.equal_range(param);
+	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
+	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
+	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
+}
+
+int		test(void)
+{
+	std::list<T3> lst;
+	unsigned int lst_size = 10;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3(i + 1, (i + 1) * 3));
+	ft::map<T1, T2> mp(lst.begin(), lst.end());
+	printSize(mp);
+
+	ft_const_bound(mp, -10);
+	ft_const_bound(mp, 1);
+	ft_const_bound(mp, 5);
+	ft_const_bound(mp, 10);
+	ft_const_bound(mp, 50);
+
+	printSize(mp);
+
+	mp.lower_bound(3)->second = 404;
+	mp.upper_bound(7)->second = 842;
+	ft_bound(mp, 5);
+	ft_bound(mp, 7);
+
+	printSize(mp);
+	return (0);
+}
 
 int main()
 {
 	{
 		
-		std::cout << "std" << std::endl;
+		std::cout << "ft" << std::endl;
 		//std::vector<int> v(5, 5);
 		
 		
-		test<std::vector<int > >();
+		test();
 
 		//std::cout <<  << std::endl;
 

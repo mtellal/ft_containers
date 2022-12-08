@@ -37,6 +37,12 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         RedBlackTreeIterator(const pointer & x) : _node(x) {}
         ~RedBlackTreeIterator() {}
 
+
+        operator RedBlackTreeIterator<const Node, Compare>() const
+        {
+            return (RedBlackTreeIterator<const Node, Compare>(this->_node));
+        }
+
         RedBlackTreeIterator & operator=(const RedBlackTreeIterator & x)
         {
              if (this != &x)

@@ -16,7 +16,6 @@
     template < class T, class Allocator = std::allocator<T> >
     class vector
     {
-
         public:
 
             typedef T                                           value_type;
@@ -200,40 +199,24 @@
             /////                            ELEMENTS ACCES                                  /////
             //////////////////////////////////////////////////////////////////////////////////////
 
-
             pointer             operator+(const size_type n) const { return (_begin + n); }
 
-
             value_type&         operator[](size_type i) const { return (*(_begin + i)); }
-
 
             reference           at(size_type n)
             {
                 if (_begin && _nb_construct && n < _nb_construct)
                     return (_begin[n]);
                 else
-                {
-                    //rewrite error message
-                    throw std::out_of_range("vector: error: out_of_range: n (wich is ");
-                   /*  + std::string(n)
-                    + ") >= this->size() (wich is "
-                    + std::string(this->size()) + ")"); */
-                }
+                   throw std::out_of_range("vector: error: out_of_range");
             }
-
 
             const_reference     at(size_type n) const
             {
                 if (_begin && _nb_construct && n < _nb_construct)
                     return (_begin[n]);
                 else
-                {
-                    // rewrite error message
-                    throw std::out_of_range("vector: error: out_of_range: n (wich is ");
-                    /* + std::string(n)
-                    + ") >= this->size() (wich is "
-                    + std::string(this->size()) + ")"); */
-                }
+                    throw std::out_of_range("vector: error: out_of_range");
             }
 
             reference           front() { return (*_begin); }

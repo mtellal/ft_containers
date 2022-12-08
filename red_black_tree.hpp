@@ -145,7 +145,7 @@ class   RedBlackTree
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        iterator    begin() const
+        pointer    begin() const
         {
             node_pointer    it(_root);
 

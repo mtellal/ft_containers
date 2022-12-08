@@ -32,13 +32,12 @@ class map
         typedef typename Alloc::const_pointer                                               const_pointer;
 
         typedef typename ft::RedBlackTree<value_type, key_compare>::iterator                iterator;
-        typedef typename ft::RedBlackTree<const value_type, key_compare>::const_iterator    const_iterator;
+        typedef typename ft::RedBlackTree<value_type, key_compare>::const_iterator          const_iterator;
         typedef typename ft::reverse_iterator<iterator>                                     reverse_iterator;
         typedef typename ft::reverse_iterator<const_iterator>                               const_reverse_iterator;
 
         typedef typename ft::iterator_traits<iterator>::difference_type                     difference_type;
         typedef size_t                                                                      size_type;
-
 
         class value_compare
         {
@@ -61,19 +60,24 @@ class map
                 }
         };
 
-        explicit    map(const key_compare & comp = key_compare(), const allocate_type & alloc = allocate_type()) :
-        _compare(comp), _allocator(alloc) {}
+        map() {}
 
-        template < class InputIterator>
-        map (InputIterator first, InputIterator last, const key_type & comp = key_compare(),
-            const allocate_type & alloc = allocate_type()) :
-        _compare(comp), _allocator(alloc)
+        explicit map( const Compare& comp,
+              const Alloc& alloc = Alloc() ) :
+            _compare(comp), _allocator(alloc)
+        {}
+
+        template< class InputIt >
+        map( InputIt first, InputIt last,
+                const Compare& comp = Compare(),
+                const Alloc& alloc = Alloc() ) :
+            _compare(comp), _allocator(alloc)
         {
             insert(first, last);
         }
 
-        map(const map & x) :
-        _tree(x._tree), _compare(x._compare),_allocator(x._allocator)
+        map( const map& x) :
+        _tree(x._tree), _compare(x._compare), _allocator(x._allocator)
         {}
 
         ~map(void)
