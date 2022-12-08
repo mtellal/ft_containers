@@ -2,11 +2,13 @@
 
 cc="clang++"
 flags="-Wall -Wextra -Werror -std=c++98"
-include="../"
+include="../" 
 nbargs=$#
 argfile=$1
 white="\033[1;37m"
 grey="\033[0;37m"
+red="\033[1;31m"
+green="\033[1;32m"
 
 exe()
 {
@@ -19,50 +21,48 @@ exe()
 
 check_diff_files()
 {
-	echo -e -n  $white "Valid : "
+	echo -e -n  $white "DIFF :"
 	file=$2
 	container=$1
 	diff output/ft_$1_$2.output  output/std_$1_$2.output  > diff/$file.diff
 	if [ -s diff/$file.diff ]; then
-		echo -e "\033[1;31m" "X" $grey
+		echo -e $red "KO" $grey
 		cat diff/$file.diff
 	else
 		rm output/ft_$1_$2.output  output/std_$1_$2.output 
-		echo -e -n "\033[1;32m" "O" $grey
+		echo -e -n $green "OK" $grey
 	fi
 }
 
 check_compile_err()
 {
-	echo -e -n $white "Compile : "
+	echo -e -n $white "Compile :"
 	file=$1 
 	if [ -s output/err/ft_compile_vector_$1.err ]; then 
-		echo -e -n "\033[1;31m" "X" $grey
+		echo -e -n $red "KO" $grey " (if *_err.cpp = "$green"OK"$grey")"
 	else
-		echo -e -n "\033[1;32m" "O" $grey
+		echo -e -n $green  "OK" $grey
 	fi
 }
 
 launch_exe ()
 {	
 	if [[ $nbargs -eq 1 ]]; then 
-		echo "////////////////	DIFF for " vector_$argfile " ////////////////////"
+		echo -e $white $argfile $grey
 		file=$(basename "${argfile}")
 		exe  vector $file
-		echo -e -n "\033[1;32m" "Done" $grey
 		check_compile_err $file
 		check_diff_files vector $file
 		echo ""
 	else
 		for file in src/vector/*
 		do 
-			echo "////////////////	DIFF for " vector_$file " ////////////////////"
+			echo -e $white $file $grey
 			file=$(basename "${file}")
 			exe  vector $file
-			echo -e -n "\033[1;32m" "Done" $grey
 			check_compile_err $file
 			check_diff_files vector $file
-			echo ""
+			echo -e "\n"
 		done
 	fi
 }
@@ -78,7 +78,9 @@ purge_files()
 	done
 }
 
-mkdir output output/err > /dev/null
+mkdir output output/err 2> /dev/null
+
+echo -e "\n////////////////		" $white "T E S T E R" $grey "		////////////////\n"
 
 launch_exe
 

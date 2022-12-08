@@ -40,8 +40,7 @@ class reverse_iterator
         template< class U >
         reverse_iterator& operator=( const reverse_iterator<U>& other ) 
         {
-            if (this != &other)
-                it = other.base();
+            it = other.base();
             return (*this);
         }
 
@@ -152,55 +151,55 @@ template <class T>
 bool    operator>(const reverse_iterator<T> & lhs,
                     const reverse_iterator<T> & rhs)
 {
-    return (lhs.base() > rhs.base());
+    return (lhs.base() < rhs.base());
 }
 
 template <class T, class CT>
 bool    operator>(const reverse_iterator<T> & lhs,
                     const reverse_iterator<CT> & rhs)
 {
+    return (lhs.base() < rhs.base());
+}
+
+template <class T>
+bool    operator>=(const reverse_iterator<T> & lhs,
+                    const reverse_iterator<T> & rhs)
+{
+    return (lhs.base() <= rhs.base());
+}
+
+template <class T, class CT>
+bool    operator>=(const reverse_iterator<T> & lhs,
+                    const reverse_iterator<CT> & rhs)
+{
+    return (lhs.base() <= rhs.base());
+}
+
+template <class T>
+bool    operator<(const reverse_iterator<T> & lhs,
+                    const reverse_iterator<T> & rhs)
+{
+    return (lhs.base() > rhs.base());
+}
+
+template <class T, class CT>
+bool    operator<(const reverse_iterator<T> & lhs,
+                    const reverse_iterator<CT> & rhs)
+{
     return (lhs.base() > rhs.base());
 }
 
 template <class T>
-bool    operator>=(const reverse_iterator<T> & lhs,
+bool    operator<=(const reverse_iterator<T> & lhs,
                     const reverse_iterator<T> & rhs)
 {
     return (lhs.base() >= rhs.base());
 }
 
 template <class T, class CT>
-bool    operator>=(const reverse_iterator<T> & lhs,
+bool    operator<=(const reverse_iterator<T> & lhs,
                     const reverse_iterator<CT> & rhs)
 {
     return (lhs.base() >= rhs.base());
-}
-
-template <class T>
-bool    operator<(const reverse_iterator<T> & lhs,
-                    const reverse_iterator<T> & rhs)
-{
-    return (lhs.base() < rhs.base());
-}
-
-template <class T, class CT>
-bool    operator<(const reverse_iterator<T> & lhs,
-                    const reverse_iterator<CT> & rhs)
-{
-    return (lhs.base() < rhs.base());
-}
-
-template <class T>
-bool    operator<=(const reverse_iterator<T> & lhs,
-                    const reverse_iterator<T> & rhs)
-{
-    return (lhs.base() <= rhs.base());
-}
-
-template <class T, class CT>
-bool    operator<=(const reverse_iterator<T> & lhs,
-                    const reverse_iterator<CT> & rhs)
-{
-    return (lhs.base() <= rhs.base());
 }
 #endif 

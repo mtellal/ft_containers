@@ -217,37 +217,67 @@ void	cmp(const T &lhs, T &rhs)
 	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
 }
 
+template <typename Ite_1, typename Ite_2>
+void ft_eq_ope(const Ite_1 &first, const Ite_2 &second, const bool redo = 1)
+{
+	std::cout << (first < second) << std::endl;
+	std::cout << (first <= second) << std::endl;
+	std::cout << (first > second) << std::endl;
+	std::cout << (first >= second) << std::endl;
+	if (redo)
+		ft_eq_ope(second, first, 0);
+}
+
 template <class V>
 void	test()
 {
-	 V vct;
+	
+	typedef typename V::iterator iterator;
+	V vct(5);
+	iterator it = vct.begin(), ite = vct.end();
 
-        typename V::iterator it = vct.begin();
-        typename V::const_iterator cit = vct.begin();
+	std::cout << "len: " << (ite - it) << std::endl;
+	for (; it != ite; ++it)
+		*it = (ite - it);
 
-        typename V::reverse_iterator rit(it);
-        typename V::reverse_iterator rit2;
-        rit2 = rit;
+	it = vct.begin();
+	V vct_range(it, --(--ite));
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 5;
 
-        typename V::const_reverse_iterator crit(rit);
-        typename V::const_reverse_iterator crit_(it);
-        typename V::const_reverse_iterator crit_2(cit);
+	it = vct.begin();
+	V vct_copy(vct);
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 7;
+	vct_copy.push_back(42);
+	vct_copy.push_back(21);
 
-        typename V::const_reverse_iterator crit2;
-        typename V::const_reverse_iterator crit2_;
-        typename V::const_reverse_iterator crit2_2;
+	std::cout << "\t-- PART ONE --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
+
+	vct = vct_copy;
+	vct_copy = vct_range;
+	vct_range.clear();
+
+	std::cout << "\t-- PART TWO --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
 
 }
+
 
 int main()
 {
 	{
 		
-		std::cout << "ft" << std::endl;
+		std::cout << "std" << std::endl;
 		//std::vector<int> v(5, 5);
 		
 		
-		test<ft::vector<int> >();
+		test<std::vector<int > >();
 
 		//std::cout <<  << std::endl;
 
