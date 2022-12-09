@@ -87,8 +87,12 @@ class map
 
         map &   operator=(const map & x)
         {
-            clear();
-            inser(x.begin(), x.end());
+            if (this != &x)
+            {
+                clear();
+                insert(x.begin(), x.end());
+            }
+            return (*this);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -97,13 +101,13 @@ class map
 
         /* !!!!!!!!!!!!!!!!!!!!!!  NEED MORE TESTS (CONST + REVERSE) !!!!!!!!!!!!! */
 
-        iterator                begin() { return (_tree.begin()); }
+        iterator                begin() { return (iterator(_tree.begin())); }
 
-        const_iterator          begin() const { return (_tree.begin()); }
+        const_iterator          begin() const { return (const_iterator(_tree.begin())); }
 
-        iterator                end() { return (_tree.end()); }
+        iterator                end() { return (iterator(_tree.end())); }
 
-        const_iterator          end() const { return (_tree.end()); }
+        const_iterator          end() const { return (const_iterator(_tree.end())); }
 
         reverse_iterator        rbegin() { return (reverse_iterator(_tree.end())); }
         
@@ -121,7 +125,7 @@ class map
         
         size_type               size() const { return (_tree.size()); }
 
-        size_type               max_size(void) const { return (_allocator.max_size()); }
+        size_type               max_size(void) const { return (_tree.max_size()); }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                              ELEMENT ACCESS                                /////
@@ -288,7 +292,7 @@ class map
 
         const_iterator          lower_bound (const key_type& k) const
         {
-            iterator    it;
+            const_iterator    it;
 
             it = begin();
             while (it != end())
@@ -316,7 +320,7 @@ class map
 
         const_iterator          upper_bound(const key_type& k) const
         {
-            iterator    it;
+            const_iterator    it;
             
             it = begin();
             while (it != end())

@@ -13,9 +13,9 @@ green="\033[1;32m"
 exe()
 {
 	$cc $flags -I ./ -I $include -D NAMESPACE=std src/$1/$2 2> output/err/std_compile_$1_$2.err
-       ./a.out 1> output/std_$1_$2.output 2> /dev/null
+       ./a.out 1> output/std_$1_$2.output
 	$cc $flags -I ./ -I $include -D NAMESPACE=ft src/$1/$2 2> output/err/ft_compile_$1_$2.err
-       ./a.out 1> output/ft_$1_$2.output 2> /dev/null
+    	./a.out 1> output/ft_$1_$2.output
 
 }
 
@@ -26,8 +26,12 @@ check_diff_files()
 	container=$1
 	diff output/ft_$container"_"$2.output  output/std_$container"_"$2.output  > diff/$file.diff
 	if [ -s diff/$file.diff ]; then
-		echo -e $red "KO" $grey
+		echo -e $red "KO" "\n"
+		echo -e $white "////// 	" FT::$1 " output	//////" $green
+		cat output/ft_$container"_"$2.output
+		echo -e $white "\n//////	" STD::$1 " output	//////" $red
 		cat diff/$file.diff
+		echo -e $grey
 	else
 		rm output/ft_$container"_"$2.output  output/std_$container"_"$2.output 
 		echo -e -n $green "OK" $grey

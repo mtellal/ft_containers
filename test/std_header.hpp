@@ -17,8 +17,27 @@
 #include "containers.hpp"
 
 
+template <class T, bool v>
+struct container_constant {
+  typedef T value_type;
+  typedef container_constant<T,v> type;
+  static const bool value = v;
+  operator T() { return v; }
+};
+
+template <class T>  struct is_map :				  container_constant<T, false> {};
+template <class K, class V>         struct is_map<std::map<K, V> > :   container_constant<bool, true> {};
+template <class K, class V>         struct is_map<ft::map<K, V> > :   container_constant<bool, true> {};
+
+template <class T>  struct is_vector :				  container_constant<T, false> {};
+template <class V>         struct is_vector<std::vector<V> > :   container_constant<bool, true> {};
+template <class V>         struct is_vector<ft::vector<V> > :   container_constant<bool, true> {};
+
+
+
 template <class V>
-void printSize(const V & vector)
+void printSize(const V & vector,
+		typename ft::enable_if<is_vector<V>::value, int>::type = 0)
 {
 	size_t	i = 0;
 	std::cout << "size = " << vector.size() <<
@@ -87,5 +106,48 @@ T	dec(T it, int n)
 	return (it);
 }
 
+
+
+#define _pair NAMESPACE::pair
+
+template <typename T>
+std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
+{
+	o << "key: " << iterator->first << " | value: " << iterator->second;
+	if (nl)
+		o << std::endl;
+	return ("");
+}
+
+template <typename T_MAP>
+void	printSize(T_MAP const &mp, bool print_content = 1,
+		typename ft::enable_if<is_map<T_MAP>::value, int>::type = 0)
+{
+	std::cout << "size: " << mp.size() << std::endl;
+	std::cout << "max_size: " << mp.max_size() << std::endl;
+	if (print_content)
+	{
+		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+		{
+			std::cout << " - " << printPair(it, false) << std::endl;
+		}
+	}
+	std::cout << "###############################################" << std::endl;
+}
+
+template <typename T1, typename T2>
+void	printReverse(ft::map<T1, T2> &mp)
+{
+	typename ft::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
+
+	std::cout << "printReverse:" << std::endl;
+	while (it != ite) {
+		it--;
+		std::cout << "-> " << printPair(it, false) << std::endl;
+	}
+	std::cout << "_______________________________________________" << std::endl;
+}
 
 #endif

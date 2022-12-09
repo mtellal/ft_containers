@@ -13,60 +13,6 @@
 #ifndef RED_BLACK_TREE_HPP
 #define RED_BLACK_TREE_HPP
 
-template <class T>
-struct Node
-{ 
-    typedef T       value_type;
-    typedef T&      reference;
-    typedef T*      pointer;
-    typedef Node*   node_pointer;
-
-    typedef typename T::first_type  first_type;
-    typedef typename T::second_type second_type;
-
-    value_type           value;     // ft::pair<X,Y>
-    node_pointer         parent;    // parent node
-    node_pointer         right;     // right node
-    node_pointer         left;      // left node
-    bool                 red;       // color (red or !red = black)
-
-    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0)
-    { 
-    }
-
-    Node (const value_type & v, const node_pointer & p = 0, const node_pointer & r = 0,
-        const node_pointer & l = 0, bool rd = 0):
-    value(v), parent(p), right(r), left(l), red(rd)
-    {
-    }
-
-    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red) {}
-
-    Node & operator=(const Node & x)
-    {
-        if (this != &x)
-        {
-            value = x.value;
-            right = x.right;
-            left = x.left;
-            red = x.red;
-        }
-        return (*this);
-    }
-
-    // debug function 
-
-    friend std::ostream & operator<<(std::ostream & output, const Node & obj)
-    {
-        output << "\n////// NODE (" << &obj << ") /////\n";
-        output << "key = " << obj.value.first << "\nvalue = " << obj.value.second << "\nparent = "
-        << obj.parent << "\nright = " << obj.right << "\nleft = " << obj.left << "\nred = " << obj.red 
-        << "\nl = " << obj.l << "\nr = " << obj.r ;
-        return (output);
-    }
-};
-
-
 template <class Pair, class Compare = std::less<Pair>, class Alloc = std::allocator<ft::Node<Pair> > >
 class   RedBlackTree
 {
@@ -88,10 +34,10 @@ class   RedBlackTree
         typedef ft::Node<const pair>                            const_node_type;        
         typedef typename node_type::node_pointer                node_pointer;
 
-        typedef typename ft::RedBlackTreeIterator<node_type, key_compare>            iterator;
-        typedef typename ft::RedBlackTreeIterator<const_node_type, key_compare>     const_iterator;
-        typedef typename ft::reverse_iterator<iterator>                             reverse_iterator;
-        typedef typename ft::reverse_iterator<const_iterator>                       const_reverse_iterator;
+        typedef typename ft::RedBlackTreeIterator<Pair, key_compare, node_type>         iterator;
+        typedef typename ft::RedBlackTreeIterator<const Pair, key_compare, node_type>   const_iterator;
+        typedef typename ft::reverse_iterator<iterator>                                 reverse_iterator;
+        typedef typename ft::reverse_iterator<const_iterator>                           const_reverse_iterator;
 
 
         RedBlackTree() : _root(0), _nb_element(0) {};
@@ -100,11 +46,9 @@ class   RedBlackTree
         _root(0), _compare(x._compare), _allocator(x._allocator), _nb_element(0)
         {
             iterator    first;
-            iterator    last;
 
             first = x.begin();
-            last = x.end();
-            while (first != last)
+            while (first != x.end())
             {
                 insert(ft::make_pair(first->first, first->second));
                 first++;
@@ -113,6 +57,7 @@ class   RedBlackTree
 
         ~RedBlackTree()
         {
+            print_tree();
             clear();
         };
 
@@ -145,7 +90,7 @@ class   RedBlackTree
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        pointer    begin() const
+        node_pointer    begin() const
         {
             node_pointer    it(_root);
 
@@ -156,9 +101,9 @@ class   RedBlackTree
             return (it);
         }
 
-        iterator    end() const
+        node_pointer    end() const
         {
-            iterator it;
+            node_pointer it;
 
             if (!_nb_element)
                 return (begin());
@@ -172,6 +117,9 @@ class   RedBlackTree
 
         size_t   size(void) const { return (_nb_element); }
 
+        size_type               max_size(void) const { return (_allocator.max_size()); }
+
+
         //////////////////////////////////////////////////////////////////////////////////////
         /////                              ELEMENT ACCESS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
@@ -182,35 +130,35 @@ class   RedBlackTree
         /////                                   MODIFIERS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-
         node_pointer    insert(const pair & k)
         {
-            node_pointer    z;
-            node_pointer    y;
-            node_pointer    x;
+            node_pointer    child;
+            node_pointer    parent;
+            node_pointer    _current;
 
-            y = NULL;
-            x = _root;
-            while (x)
+            parent = NULL;
+            _current = _root;
+            while (_current)
             {
-                y = x;
-                if (!_compare(k.first, x->value.first) && !_compare(x->value.first, k.first))
-                    return (x);
-                if (_compare(k.first, x->value.first))
-                    x = x->left;
+                parent = _current;
+                if (!_compare(k.first, _current->value.first)
+                    && !_compare(_current->value.first, k.first))
+                    return (_current);
+                else if (_compare(k.first, _current->value.first))
+                    _current = _current->left;
                 else
-                    x = x->right;
+                    _current = _current->right;
             }
-            z = create_node(k);
-            z->parent = y;
-            if (!y)
-                _root = z;
-            else if (_compare(k.first, y->value.first))
-                y->left = z;
+            child = create_node(k);
+            child->parent = parent;
+            if (!parent)
+                _root = child;
+            else if (_compare(k.first, parent->value.first))
+                parent->left = child;
             else
-                y->right = z;
-            insert_fixup(z);
-            return (z);
+                parent->right = child;
+            insert_fixup(child);
+            return (child);
         }
 
         void    erase(iterator position)
@@ -219,10 +167,9 @@ class   RedBlackTree
             
             if (!_root)
                 return ;
-            p = find(position->first, _root);
-            if (p)
+            p = find(position->first);
+            if (p != end())
             {
-                std::cout << "erase called on => [ " << p->value.first << " ]" <<  std::endl;
                 _delete(p);
                 p->parent = 0;
                 p->right = 0;
@@ -249,28 +196,20 @@ class   RedBlackTree
         /////                                  OPERATIONS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        node_pointer    find(key_type val, node_pointer _n)
+        node_pointer    find(key_type val)
         {
-            node_pointer    tmp = NULL;
+            node_pointer    tmp = _root;
 
-            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
-                return (_n);
-            else
+            while (tmp)
             {
-                if (_n->left)
-                {
-                    tmp = find(val, _n->left);
-                    if (tmp)
-                        return (tmp);
-                }    
-                if (_n->right)
-                {
-                    tmp = find(val, _n->right);
-                    if (tmp)
-                        return (tmp);
-                }
+                if (!_compare(tmp->value.first, val) && !_compare(val, tmp->value.first))
+                    return (tmp);
+                else if (_compare(val, tmp->value.first))
+                    tmp = tmp->left;
+                else
+                    tmp = tmp->right;
             }
-            return (end().base());
+            return (end());
         }
 
         size_type   count(const key_type & val, node_pointer _n) const
@@ -397,57 +336,57 @@ class   RedBlackTree
         /////                              MOFIFIERS_UTILS                               /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        void    insert_fixup(node_pointer z)
+        void    insert_fixup(node_pointer child)
         {
             node_pointer    u;
 
-            while (z->parent && z->parent->red)
+            while (child->parent && child->parent->red)
             {
-                if (z == z->parent->parent->left)
+                if (child->parent == child->parent->parent->left)
                 {
-                    u = z->parent->parent->right;
+                    u = child->parent->parent->right;
                     if (u && u->red)
                     {
-                        z->parent->red = 0;
+                        child->parent->red = 0;
                         u->red = 0;
-                        z->parent->parent->red = 1;
-                        z = z->parent->parent;
+                        child->parent->parent->red = 1;
+                        child = child->parent->parent;
                     }
                     else
                     {
-                        if (z == z->parent->right)
+                        if (child == child->parent->right)
                         {
-                            z = z->parent;
-                            left_rotation(z);
+                            child = child->parent;
+                            left_rotation(child);
                         }
-                        z->parent->red = 0;
-                        z->parent->parent->red = 1;
-                        right_rotation(z->parent->parent);
+                        child->parent->red = 0;
+                        child->parent->parent->red = 1;
+                        right_rotation(child->parent->parent);
                     }
                 }
                 else
                 {
-                    u = z->parent->parent->left;
+                    u = child->parent->parent->left;
                     if (u && u->red)
                     {
-                        z->parent->red = 0;
+                        child->parent->red = 0;
                         u->red = 0;
-                        z->parent->parent->red = 1;
-                        z = z->parent->parent;
+                        child->parent->parent->red = 1;
+                        child = child->parent->parent;
                     }
                     else
                     {
-                        if (z == z->parent->left)
+                        if (child == child->parent->left)
                         {
-                            z = z->parent;
-                            right_rotation(z);
+                            child = child->parent;
+                            right_rotation(child);
                         }
-                        z->parent->red = 0;
-                        z->parent->parent->red = 1;
-                        left_rotation(z->parent->parent);
+                        child->parent->red = 0;
+                        child->parent->parent->red = 1;
+                        left_rotation(child->parent->parent);
                     }
                 }
-                if (z == _root)
+                if (child == _root)
                     break ;
             }
             _root->red = 0;
@@ -500,6 +439,8 @@ class   RedBlackTree
 
         void    _transplant(node_pointer p, node_pointer c)
         {
+            if (!p)
+                return ;
             if (!p->parent)
                 _root = c;
             else if (p == p->parent->left)
@@ -549,7 +490,7 @@ class   RedBlackTree
             node_pointer    c2;
             node_pointer    p;
 
-            while (c != _root && !c->red)
+            while (c != _root  && c->parent != _root && !c->red)
             {
                 if (c == c->parent->left)
                 {

@@ -4,9 +4,9 @@
 
 #define T1 int
 #define T2 foo<int>
-typedef TESTED_NAMESPACE::map<T1, T2>::value_type T3;
-typedef TESTED_NAMESPACE::map<T1, T2>::iterator ft_iterator;
-typedef TESTED_NAMESPACE::map<T1, T2>::const_iterator ft_const_iterator;
+typedef NAMESPACE::map<T1, T2>::value_type T3;
+typedef NAMESPACE::map<T1, T2>::iterator ft_iterator;
+typedef NAMESPACE::map<T1, T2>::const_iterator ft_const_iterator;
 
 static int iter = 0;
 
@@ -46,7 +46,7 @@ int		test(void)
 	unsigned int lst_size = 10;
 	for (unsigned int i = 0; i < lst_size; ++i)
 		lst.push_back(T3(i + 1, (i + 1) * 3));
-	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
+	NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
 	printSize(mp);
 
 	ft_const_bound(mp, -10);
