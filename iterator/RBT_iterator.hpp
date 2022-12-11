@@ -86,33 +86,40 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         typedef node_type *                                         node_pointer;
 
 
-        RedBlackTreeIterator() : _node(NULL) {}
-        RedBlackTreeIterator(const RedBlackTreeIterator & x) : _node(x._node) {}
-        RedBlackTreeIterator(const node_pointer & x) : _node(x) {}
-        ~RedBlackTreeIterator() {}
+        RedBlackTreeIterator() : _node(NULL), _end(NULL) {}
+
+        RedBlackTreeIterator(const RedBlackTreeIterator & x) : _node(x._node), _end(x._end) {}
+
+        RedBlackTreeIterator(const node_pointer & node, const node_pointer & end) :
+            _node(node), _end(end) {}
+
+        virtual ~RedBlackTreeIterator() {}
 
         operator RedBlackTreeIterator<const Pair, Compare, Node >() const
         {
-            return (RedBlackTreeIterator<const Pair, Compare, Node >(this->_node));
+            return (RedBlackTreeIterator<const Pair, Compare, Node >(this->_node, this->_end));
         }
 
         RedBlackTreeIterator & operator=(const RedBlackTreeIterator & x)
         {
              if (this != &x)
+            {
                 _node = x._node;
+                _end = x._end;
+            }
             return (*this);
         }
-
-        RedBlackTreeIterator & operator=(const node_pointer & x)
-        {
-            _node = x;
-            return (*this);
-        }
-
+    
         node_type    operator() () { return (*_node); }
 
-        bool    operator==(const RedBlackTreeIterator & x) { return (_node == x._node); }
-        bool    operator!=(const RedBlackTreeIterator & x) { return (_node != x._node); }
+        bool    operator==(const RedBlackTreeIterator & x)
+        {
+            return (_node == x._node);
+        }
+        bool    operator!=(const RedBlackTreeIterator & x)
+        {
+             return (_node != x._node);
+        }
 
         node_pointer    base() const { return (_node); }
 
@@ -120,200 +127,139 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         pair*    operator->() const { return &(_node->value); }
 
 
-        node_pointer    min_element(node_pointer _n)
-        {
-            while (_n->left)
-                _n = _n->left;
-            return (_n);
-        }
-
-        node_pointer    max_element(node_pointer _n)
-        {
-            while (_n->right)
-                _n = _n->right;
-            return (_n);
-        }
-
         /*      INCREMENT LAST ELEMNT => RETURN TO FIRST ELEMENT    */
 
         /*      CHANGE ITERATORS / NOT WORKING CORRECTLY */
         RedBlackTreeIterator &  operator++()
         {
-             if (_node->right)
-            {
-                if (_node->right->left)
-                    _node = min_element(_node->right);
-                else
-                    _node = _node->right;
-            }
-            else if (_node->parent && _node == _node->parent->left)
-            {
-                _node = _node->parent;
-            }
-            else if (_node->parent && _node == _node->parent->right && !_node->right)
-            {
-                node_pointer _it(_node);
-                node_pointer y;
+            node_pointer    tmp;
 
-                while (_it)
+           if (_node == _end)
+                _node = _node->parent;
+            else if (_node->right)
+                _node = min_element(_node->right);
+            else if (_node->parent)
+            {
+                tmp = _node;
+                if (_compare(_node->value.first, _node->parent->value.first))
+                    _node = _node->parent;
+                else
                 {
-                    y = _it;
-                    if (_comp(_node->value.first, _it->value.first) &&
-                        !_comp(_it->value.first, _node->value.first))
-                    {
-                        _node = _it;
-                        break ;
-                    }
-                    _it = _it->parent;
-                }
-                if (!y->parent && y->right && 
-                    (_comp(y->right->value.first, _node->value.first) ||
-                    (!_comp(_node->value.first, y->right->value.first) && !_comp(y->right->value.first, _node->value.first))))
-                {
-                    _node++;            
+                    while (tmp->parent && _compare(tmp->parent->value.first, _node->value.first))
+                        tmp = tmp->parent;
+                    if (!tmp->parent && !_compare(tmp->value.first, _node->value.first))
+                        _node = _end;
+                    else
+                        _node = tmp->parent;
                 }
             }
-            else
-                _node++;
             return (*this);
         }
 
         RedBlackTreeIterator operator++(int)
         {
-            //X++
             RedBlackTreeIterator old(*this);
+            node_pointer    tmp;
 
-            if (_node->right)
+           if (_node == _end)
             {
-                if (_node->right->left)
-                    _node = min_element(_node->right);
+                if (_node->parent)
+                    _node = _node->parent;
+            }
+            else if (_node->right)
+            {
+                _node = min_element(_node->right);
+            }
+            else if (_node->parent)
+            {
+                tmp = _node;
+                if (_compare(_node->value.first, _node->parent->value.first))
+                    _node = _node->parent;
                 else
-                    _node = _node->right;
-            }
-            else if (_node->parent && _node == _node->parent->left)
-            {
-                _node = _node->parent;
-            }
-            else if (_node->parent && _node == _node->parent->right && !_node->right)
-            {
-                node_pointer _it(_node);
-                node_pointer y;
-
-                while (_it)
                 {
-                    y = _it;
-                    if (_comp(_node->value.first, _it->value.first) &&
-                        !_comp(_it->value.first, _node->value.first))
-                    {
-                        _node = _it;
-                        break ;
-                    }
-                    _it = _it->parent;
-                }
-                if (!y->parent && y->right && 
-                    (_comp(y->right->value.first, _node->value.first) ||
-                    (!_comp(_node->value.first, y->right->value.first) && !_comp(y->right->value.first, _node->value.first))))
-                {
-                    _node++;            
+                    while (tmp->parent && _compare(tmp->parent->value.first, _node->value.first))
+                        tmp = tmp->parent;
+                    if (!tmp->parent && _compare(tmp->value.first, _node->value.first))
+                        _node = _end;
+                    else
+                        _node = tmp->parent;
                 }
             }
-            else
-                _node++;
             return (old);
         }
 
         RedBlackTreeIterator & operator--()
-        {
-            std::cout << "operator--() called" << std::endl;
-            std::cout << _node->parent->right << std::endl;
-            if (_node->left)
-            {
-                if (_node->left->right)
-                    _node = max_element(_node->left);
-                else
-                    _node = _node->left;
-            }
-            else if (_node->parent && _node == _node->parent->right)
-            {
-                _node = _node->parent;
-            }
-            else if (_node->parent && _node == _node->parent->left && !_node->left)
-            {
-                node_pointer _it(_node);
-                node_pointer y;
+        {            
+            node_pointer    tmp;
 
-                while (_it)
+            if (_node == _end)
+                _node = _node->parent;
+            else if (_node->left)
+                _node = max_element(_node->left);
+            else if (_node->parent)
+            {
+                tmp = _node;
+                if (_compare(_node->parent->value.first, _node->value.first))
+                    _node = _node->parent;
+                else
                 {
-                    y = _it;
-                    if (_comp(_node->value.first, _it->value.first) &&
-                        !_comp(_it->value.first, _node->value.first))
-                    {
-                        _node = _it;
-                        break ;
-                    }
-                    _it = _it->parent;
-                }
-                if (!y->parent && y->left && 
-                    (_comp(y->left->value.first, _node->value.first) ||
-                    (!_comp(_node->value.first, y->left->value.first)
-                        && !_comp(y->left->value.first, _node->value.first))))
-                {
-                    --_node;            
+                    while (tmp->parent && _compare(_node->value.first, tmp->parent->value.first))
+                        tmp = tmp->parent;
+                    if (!tmp->parent && _compare(_node->value.first, tmp->parent->value.first))
+                        _node = _end;
+                    else
+                        _node = tmp->parent;
                 }
             }
-            else
-                --_node;
             return (*this);
         }
 
         RedBlackTreeIterator    operator--(int)
         {
             RedBlackTreeIterator    old(*this);
+            node_pointer            tmp;
 
-            if (_node->left)
-            {
-                if (_node->left->right)
-                    _node = max_element(_node->left);
-                else
-                    _node = _node->left;
-            }
-            else if (_node->parent && _node == _node->parent->right)
-            {
+            if (_node == _end)
                 _node = _node->parent;
-            }
-            else if (_node->parent && _node == _node->parent->left && !_node->left)
+            else if (_node->left)
+                _node = max_element(_node->left);
+            else if (_node->parent)
             {
-                node_pointer _it(_node);
-                node_pointer y;
-
-                while (_it)
+                tmp = _node;
+                if (_compare(_node->parent->value.first, _node->value.first))
+                    _node = _node->parent;
+                else
                 {
-                    y = _it;
-                    if (_comp(_node->value.first, _it->value.first) &&
-                        !_comp(_it->value.first, _node->value.first))
-                    {
-                        _node = _it;
-                        break ;
-                    }
-                    _it = _it->parent;
-                }
-                if (!y->parent && y->left && 
-                    (_comp(y->left->value.first, _node->value.first) ||
-                    (!_comp(_node->value.first, y->left->value.first)
-                        && !_comp(y->left->value.first, _node->value.first))))
-                {
-                    _node--;            
+                    while (tmp->parent && _compare(_node->value.first, tmp->parent->value.first))
+                        tmp = tmp->parent;
+                    if (!tmp->parent && _compare(_node->value.first, tmp->parent->value.first))
+                        _node = _end;
+                    else
+                        _node = tmp->parent;
                 }
             }
-            else
-                _node--;
             return (old);
         }
 
     private:
 
-        node_pointer     _node;
-        Compare     _comp;     
+        node_pointer    _node;
+        node_pointer    _end;
+        Compare         _compare;     
+
+         node_pointer    min_element(node_pointer _n)
+        {
+            while (_n->left && _n->left != _end)
+                _n = _n->left;
+            return (_n);
+        }
+
+        node_pointer    max_element(node_pointer _n)
+        {
+            while (_n->right && _n->right != _end)
+                _n = _n->right;
+            return (_n);
+        }
 
 };
 

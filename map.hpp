@@ -226,9 +226,7 @@ class map
 
             while (first != last)
             {
-                it = first;
-                first++;
-                erase(it);
+                erase(first++);
             }
         }
 

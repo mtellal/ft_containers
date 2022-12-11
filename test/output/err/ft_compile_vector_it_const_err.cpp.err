@@ -1,0 +1,16 @@
+src/vector/it_const_err.cpp:12:23: error: no viable conversion from 'random_access_iterator<const ft::vector<int, std::allocator<int> >::value_type>' to 'random_access_iterator<ft::vector<int, std::allocator<int> >::value_type>'
+        typename V::iterator it = vct.begin(); // <-- error expected
+                             ^    ~~~~~~~~~~~
+src/vector/it_const_err.cpp:21:2: note: in instantiation of function template specialization 'test<ft::vector<int, std::allocator<int> > >' requested here
+        test<NAMESPACE::vector<int> >();        
+        ^
+.././iterator/random_access_iterator.hpp:26:13: note: candidate constructor not viable: no known conversion from 'ft::vector<int, std::allocator<int> >::const_iterator' (aka 'random_access_iterator<const int>') to 'ft::random_access_iterator<int>::pointer' (aka 'int *') for 1st argument
+            random_access_iterator(pointer p) : it(p) {};
+            ^
+.././iterator/random_access_iterator.hpp:27:13: note: candidate constructor not viable: no known conversion from 'ft::vector<int, std::allocator<int> >::const_iterator' (aka 'random_access_iterator<const int>') to 'const ft::random_access_iterator<int> &' for 1st argument
+            random_access_iterator(const random_access_iterator & v) : it(v.it) {};
+            ^
+.././iterator/random_access_iterator.hpp:37:13: note: candidate function
+            operator random_access_iterator<const T>() const
+            ^
+1 error generated.

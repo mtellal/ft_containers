@@ -151,60 +151,6 @@ void    printReverse(ft::map<T1, T2> &mp)
 }
 
 
-#define T1 int
-#define T2 std::string
-typedef _pair<const T1, T2> T3;
-
-static int iter = 0;
-
-template <typename MAP, typename U>
-void    ft_erase(MAP &mp, U param)
-{
-        std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-        mp.erase(param);
-        printSize(mp);
-}
-
-template <typename MAP, typename U, typename V>
-void    ft_erase(MAP &mp, U param, V param2)
-{
-        std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-        mp.erase(param, param2);
-        printSize(mp);
-}
-
-void            test(void)
-{
-        std::list<T3> lst;
-        unsigned int lst_size = 10;
-        for (unsigned int i = 0; i < lst_size; ++i)
-                lst.push_back(T3(i, std::string((lst_size - i), i + 65)));
-        NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
-        printSize(mp);
-
-        ft_erase(mp, ++mp.begin());
-
-        ft_erase(mp, mp.begin());
-
-        ft_erase(mp, --mp.end());
-
-        ft_erase(mp, mp.begin(), ++(++(++mp.begin())));
-        ft_erase(mp, --(--(--mp.end())), --mp.end());
-
-        mp[10] = "Hello";
-        mp[11] = "Hi there";
-        printSize(mp);
-        ft_erase(mp, --(--(--mp.end())), mp.end());
-
-        mp[12] = "ONE";
-        mp[13] = "TWO";
-        mp[14] = "THREE";
-        mp[15] = "FOUR";
-        printSize(mp);
-        ft_erase(mp, mp.begin(), mp.end());
-
-}
-
 int main(int argc, char **argv)
 {
 	(void)argv;
@@ -217,39 +163,7 @@ int main(int argc, char **argv)
 			std::cout << "std" << std::endl;
 		//std::vector<int> v(5, 5);
 		
-		
 		test();
-
-		/* ft::map<int, int> map;
-
-		map[5] = 9;
-		map[6] = 9;
-		map[8] = 9;
-		map[65] = 19;
-
-		std::cout << *map.end() << std::endl;
-		std::cout << map.begin().base() << " " <<  (--map.end()).base()<< std::endl; */
-
-
-		/* for (size_t i = 1; i < 9; i++)
-		{
-			std::cout << i - 1 << " = " << i * 3 << std::endl;
-			map.insert(ft::make_pair(i - 1, i * 3 ));
-		}
-		map.print_tree();
-		printSize(map); */
-
-		/* std::list<T3> lst;
-		unsigned int lst_size = 10;
-		for (unsigned int i = 0; i < lst_size; ++i)
-		{
-			std::cout << ((i + 1) * 3) << std::endl;
-			lst.push_back(T3(i + 1, (i + 1) * 3));
-		}
-		ft::map<T1, T2> mp(lst.begin(), lst.end());
-		printSize(mp); */
-
-		//std::cout <<  << std::endl;
 
 
 

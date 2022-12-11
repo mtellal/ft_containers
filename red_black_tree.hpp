@@ -40,13 +40,23 @@ class   RedBlackTree
         typedef typename ft::reverse_iterator<const_iterator>                           const_reverse_iterator;
 
 
-        RedBlackTree() : _root(0), _nb_element(0) {};
+        RedBlackTree() : _root(0), _nb_element(0)
+        {
+            _end = _allocator.allocate(1);
+            _root = _end;
+            _end->right = NULL;
+            _end->left = NULL;
+        };
 
         RedBlackTree(const RedBlackTree & x) : 
-        _root(0), _compare(x._compare), _allocator(x._allocator), _nb_element(0)
+        _compare(x._compare), _allocator(x._allocator), _nb_element(0)
         {
-            iterator    first;
+            const_iterator    first;
 
+            _end = _allocator.allocate(1);
+            _root = _end;
+            _end->right = NULL;
+            _end->left = NULL;
             first = x.begin();
             while (first != x.end())
             {
@@ -55,10 +65,15 @@ class   RedBlackTree
             }
         }
 
-        ~RedBlackTree()
+        virtual ~RedBlackTree()
         {
-            print_tree();
             clear();
+            if (_end)
+            {
+                _allocator.destroy(_end);
+                _allocator.deallocate(_end, 1);
+                _end = NULL;
+            }
         };
 
         void    print_tree()
@@ -84,31 +99,33 @@ class   RedBlackTree
             if (_root && _root->right && _root->right->left)
                 std::cout << *_root->right->left << std::endl;
 
+            if (_end)
+                std::cout << "_end" << *_end << std::endl;
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        node_pointer    begin() const
+        iterator    begin()
         {
-            node_pointer    it(_root);
-
-            while (it && it->left)
-            {
-                it = it->left;
-            }
-            return (it);
+            return (iterator(min_element(), _end));
         }
 
-        node_pointer    end() const
+        const_iterator    begin() const
         {
-            node_pointer it;
+            return (const_iterator(min_element(), _end));
+        }
 
-            if (!_nb_element)
-                return (begin());
-            it = max_element() + 1;
-            return (it);
+        iterator    end()
+        {
+            return (iterator(_end, _end));
+        }
+
+        const_iterator    end() const
+        {
+            return (const_iterator(_end, _end));
         }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -124,13 +141,13 @@ class   RedBlackTree
         /////                              ELEMENT ACCESS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        node_pointer    root() const { return (_root); }
+        //node_pointer    root() const { return (_root); }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                   MODIFIERS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        node_pointer    insert(const pair & k)
+        iterator    insert(const pair & k)
         {
             node_pointer    child;
             node_pointer    parent;
@@ -138,12 +155,12 @@ class   RedBlackTree
 
             parent = NULL;
             _current = _root;
-            while (_current)
+            while (_current && _current != _end)
             {
                 parent = _current;
                 if (!_compare(k.first, _current->value.first)
                     && !_compare(_current->value.first, k.first))
-                    return (_current);
+                    return (iterator(_current, _end));
                 else if (_compare(k.first, _current->value.first))
                     _current = _current->left;
                 else
@@ -158,25 +175,29 @@ class   RedBlackTree
             else
                 parent->right = child;
             insert_fixup(child);
-            return (child);
+            set_end();
+            return (iterator(child, _end));
         }
 
         void    erase(iterator position)
         {
-            node_pointer    p;
+            node_pointer    np;
             
-            if (!_root)
+            if (!_root || position.base() == _end)
                 return ;
-            p = find(position->first);
-            if (p != end())
+            np = find(position->first).base();
+            if (np != _end)
             {
-                _delete(p);
-                p->parent = 0;
-                p->right = 0;
-                p->left = 0;
-                _allocator.destroy(p);
-                _allocator.deallocate(p, 1);
+                if (np->right == _end)
+                    np->right = NULL;
+                _delete(np);
+                np->parent = 0;
+                np->right = 0;
+                np->left = 0;
+                _allocator.destroy(np);
+                _allocator.deallocate(np, 1);
                 _nb_element--;
+                set_end();
             }
         }
 
@@ -186,30 +207,28 @@ class   RedBlackTree
                 destroy_tree(_root);
             if (_root && _nb_element)
                 deallocate_tree(_root);
-            _root = NULL;
+            _root = _end;
             _nb_element = 0;
         }
-
-
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                  OPERATIONS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        node_pointer    find(key_type val)
+        iterator    find(key_type val)
         {
             node_pointer    tmp = _root;
 
-            while (tmp)
+            while (tmp && tmp != _end)
             {
                 if (!_compare(tmp->value.first, val) && !_compare(val, tmp->value.first))
-                    return (tmp);
+                    return (iterator(tmp, end().base()));
                 else if (_compare(val, tmp->value.first))
                     tmp = tmp->left;
                 else
                     tmp = tmp->right;
             }
-            return (end());
+            return (iterator(NULL, end().base()));
         }
 
         size_type   count(const key_type & val, node_pointer _n) const
@@ -253,6 +272,7 @@ class   RedBlackTree
     private:
 
         node_pointer        _root;
+        node_pointer        _end;
         key_compare         _compare;
         allocator_type      _allocator;
         size_type           _nb_element;
@@ -262,18 +282,36 @@ class   RedBlackTree
         //////////////////////////////////////////////////////////////////////////////////////
 
 
+        void    set_end()
+        {
+            node_pointer max;
+
+            if (_nb_element)
+            {
+                max = max_element();
+                max->right = _end;
+                _end->parent = max;
+            }
+            else
+            {
+                _root = _end; 
+                _end->parent = NULL;
+            }
+        }
+
+
         node_pointer    min_element() const
         {
             node_pointer n(_root);
 
-            while (n && n->left)
+            while (_nb_element && n && n->left)
                 n = n->left;
             return (n);
         }
 
         node_pointer    min_element(node_pointer n) const
         {
-            while (n && n->left)
+            while (_nb_element && n && n->left)
                 n = n->left;
             return (n);
         }
@@ -282,14 +320,14 @@ class   RedBlackTree
         {
             node_pointer n(_root);
 
-            while (n && n->right)
+            while (_nb_element && n && n->right != _end && n->right)
                 n = n->right;
             return (n);
         }
 
         node_pointer    max_element(node_pointer n) const
         {
-            while (n && n->right)
+            while (_nb_element && n && n->right != _end && n->right)
                 n = n->right;
             return (n);
         }
@@ -302,9 +340,9 @@ class   RedBlackTree
         {
             if (x->left)
                 deallocate_tree(x->left);
-            if (x->right)
+            if (x->right && x->right != _end)
                 deallocate_tree(x->right);
-            if (x)
+            if (x && x != _end)
                 _allocator.deallocate(x, 1);
         }
 
@@ -312,9 +350,9 @@ class   RedBlackTree
         {
             if (x->left)
                 destroy_tree(x->left);
-            if (x->right)
+            if (x->right && x->right != _end)
                 destroy_tree(x->right);
-            if (x)
+            if (x && x != _end)
                 _allocator.destroy(x);
         }
 
