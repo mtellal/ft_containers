@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RBT_iterator.hpp                                   :+:      :+:    :+:   */
+/*   RedBlackTreeIterator.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtellal <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RBT_ITERATOR_HPP
-#define RBT_ITERATOR_HPP
+#ifndef RedBlackTreeIterator_HPP
+#define RedBlackTreeIterator_HPP
 
 template <class T>
 struct Node
@@ -116,6 +116,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         {
             return (_node == x._node);
         }
+
         bool    operator!=(const RedBlackTreeIterator & x)
         {
              return (_node != x._node);
@@ -123,18 +124,15 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
 
         node_pointer    base() const { return (_node); }
 
-        pair_reference   operator*(void) const { return (_node->value); }
-        pair*    operator->() const { return &(_node->value); }
+        pair_reference      operator*(void) const { return (_node->value); }
+        pair*               operator->() const { return &(_node->value); }
 
 
-        /*      INCREMENT LAST ELEMNT => RETURN TO FIRST ELEMENT    */
-
-        /*      CHANGE ITERATORS / NOT WORKING CORRECTLY */
         RedBlackTreeIterator &  operator++()
         {
             node_pointer    tmp;
 
-           if (_node == _end)
+           if (_node == _end && _node->parent)
                 _node = _node->parent;
             else if (_node->right)
                 _node = min_element(_node->right);
@@ -161,15 +159,10 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             RedBlackTreeIterator old(*this);
             node_pointer    tmp;
 
-           if (_node == _end)
-            {
-                if (_node->parent)
-                    _node = _node->parent;
-            }
+           if (_node == _end && _node->parent)
+                _node = _node->parent;
             else if (_node->right)
-            {
                 _node = min_element(_node->right);
-            }
             else if (_node->parent)
             {
                 tmp = _node;
@@ -192,7 +185,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         {            
             node_pointer    tmp;
 
-            if (_node == _end)
+            if (_node == _end && _node->parent)
                 _node = _node->parent;
             else if (_node->left)
                 _node = max_element(_node->left);
@@ -219,7 +212,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             RedBlackTreeIterator    old(*this);
             node_pointer            tmp;
 
-            if (_node == _end)
+            if (_node == _end && _node->parent)
                 _node = _node->parent;
             else if (_node->left)
                 _node = max_element(_node->left);
@@ -263,5 +256,89 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
 
 };
 
+
+template <class P, class C, class N>
+bool    operator==(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<P, C, N> & rhs)
+{
+    return (lhs.base() == rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator==(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<const P, C, N> & rhs)
+{
+    return (lhs.base() == rhs.base());
+} 
+
+template <class P, class C, class N>
+bool    operator!=(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<P, C, N> & rhs)
+{
+    return (lhs.base() != rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator!=(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<const P, C, N> & rhs)
+{
+    return (lhs.base() != rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator>(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<P, C, N> & rhs)
+{
+    return (lhs.base() < rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator>(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<const P, C, N> & rhs)
+{
+    return (lhs.base() < rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator>=(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<P, C, N> & rhs)
+{
+    return (lhs.base() <= rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator>=(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<const P, C, N> & rhs)
+{
+    return (lhs.base() <= rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator<(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<P, C, N> & rhs)
+{
+    return (lhs.base() > rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator<(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<const P, C, N> & rhs)
+{
+    return (lhs.base() > rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator<=(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<P, C, N> & rhs)
+{
+    return (lhs.base() >= rhs.base());
+}
+
+template <class P, class C, class N>
+bool    operator<=(const RedBlackTreeIterator<P, C, N> & lhs,
+                    const RedBlackTreeIterator<const P, C, N> & rhs)
+{
+    return (lhs.base() >= rhs.base());
+}
 
 #endif

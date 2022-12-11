@@ -1,111 +1,36 @@
 std
-size: 10
-max_size: 128102389400760775
-
-Content is:
- - key: 0 | value: AAAAAAAAAA
- - key: 1 | value: BBBBBBBBB
- - key: 2 | value: CCCCCCCC
- - key: 3 | value: DDDDDDD
- - key: 4 | value: EEEEEE
- - key: 5 | value: FFFFF
- - key: 6 | value: GGGG
- - key: 7 | value: HHH
- - key: 8 | value: II
- - key: 9 | value: J
-###############################################
-	-- [0] --
-size: 9
-max_size: 128102389400760775
-
-Content is:
- - key: 0 | value: AAAAAAAAAA
- - key: 2 | value: CCCCCCCC
- - key: 3 | value: DDDDDDD
- - key: 4 | value: EEEEEE
- - key: 5 | value: FFFFF
- - key: 6 | value: GGGG
- - key: 7 | value: HHH
- - key: 8 | value: II
- - key: 9 | value: J
-###############################################
-	-- [1] --
-size: 8
-max_size: 128102389400760775
-
-Content is:
- - key: 2 | value: CCCCCCCC
- - key: 3 | value: DDDDDDD
- - key: 4 | value: EEEEEE
- - key: 5 | value: FFFFF
- - key: 6 | value: GGGG
- - key: 7 | value: HHH
- - key: 8 | value: II
- - key: 9 | value: J
-###############################################
-	-- [2] --
-size: 7
-max_size: 128102389400760775
-
-Content is:
- - key: 2 | value: CCCCCCCC
- - key: 3 | value: DDDDDDD
- - key: 4 | value: EEEEEE
- - key: 5 | value: FFFFF
- - key: 6 | value: GGGG
- - key: 7 | value: HHH
- - key: 8 | value: II
-###############################################
-	-- [3] --
-size: 4
-max_size: 128102389400760775
-
-Content is:
- - key: 5 | value: FFFFF
- - key: 6 | value: GGGG
- - key: 7 | value: HHH
- - key: 8 | value: II
-###############################################
-	-- [4] --
-size: 2
-max_size: 128102389400760775
-
-Content is:
- - key: 5 | value: FFFFF
- - key: 8 | value: II
-###############################################
-size: 4
-max_size: 128102389400760775
-
-Content is:
- - key: 5 | value: FFFFF
- - key: 8 | value: II
- - key: 10 | value: Hello
- - key: 11 | value: Hi there
-###############################################
-	-- [5] --
-size: 1
-max_size: 128102389400760775
-
-Content is:
- - key: 5 | value: FFFFF
-###############################################
-size: 5
-max_size: 128102389400760775
-
-Content is:
- - key: 5 | value: FFFFF
- - key: 12 | value: ONE
- - key: 13 | value: TWO
- - key: 14 | value: THREE
- - key: 15 | value: FOUR
-###############################################
-	-- [6] --
-size: 0
-max_size: 128102389400760775
-
-Content is:
-###############################################
+############### [0] ###############
+eq: 1 | ne: 0
+lt: 0 | le: 1
+gt: 0 | ge: 1
+############### [1] ###############
+eq: 1 | ne: 0
+lt: 0 | le: 1
+gt: 0 | ge: 1
+############### [2] ###############
+eq: 0 | ne: 1
+lt: 1 | le: 1
+gt: 0 | ge: 0
+############### [3] ###############
+eq: 0 | ne: 1
+lt: 0 | le: 0
+gt: 1 | ge: 1
+############### [4] ###############
+eq: 0 | ne: 1
+lt: 0 | le: 0
+gt: 1 | ge: 1
+############### [5] ###############
+eq: 0 | ne: 1
+lt: 1 | le: 1
+gt: 0 | ge: 0
+############### [6] ###############
+eq: 0 | ne: 1
+lt: 1 | le: 1
+gt: 0 | ge: 0
+############### [7] ###############
+eq: 0 | ne: 1
+lt: 0 | le: 0
+gt: 1 | ge: 1
 ////////////////	TESTS 	////////////////
 
 

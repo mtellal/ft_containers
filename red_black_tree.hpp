@@ -136,12 +136,13 @@ class   RedBlackTree
 
         size_type               max_size(void) const { return (_allocator.max_size()); }
 
-
         //////////////////////////////////////////////////////////////////////////////////////
         /////                              ELEMENT ACCESS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        //node_pointer    root() const { return (_root); }
+        node_pointer    getroot() const { return (_root); }
+
+        node_pointer    getend() const { return (_end); }
 
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                   MODIFIERS                                /////
@@ -177,6 +178,12 @@ class   RedBlackTree
             insert_fixup(child);
             set_end();
             return (iterator(child, _end));
+        }
+
+        iterator    insert(iterator position, const pair & k)
+        {
+            (void)position;
+            return (insert(k));
         }
 
         void    erase(iterator position)
@@ -215,20 +222,20 @@ class   RedBlackTree
         /////                                  OPERATIONS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        iterator    find(key_type val)
+        iterator    find(key_type val) const
         {
             node_pointer    tmp = _root;
 
             while (tmp && tmp != _end)
             {
                 if (!_compare(tmp->value.first, val) && !_compare(val, tmp->value.first))
-                    return (iterator(tmp, end().base()));
+                    return (iterator(tmp, _end));
                 else if (_compare(val, tmp->value.first))
                     tmp = tmp->left;
                 else
                     tmp = tmp->right;
             }
-            return (iterator(NULL, end().base()));
+            return (iterator(_end, _end));
         }
 
         size_type   count(const key_type & val, node_pointer _n) const

@@ -181,8 +181,6 @@ class map
                 return (ft::pair<iterator, bool>(it, false));
         }
 
-        // !!!!!!! NEED MORE TESTS !!!!!!!!
-
         iterator                insert(iterator position, const value_type & val)
         {
             iterator    it;
@@ -212,7 +210,7 @@ class map
             iterator    it;
 
             it = find(k);
-            if (it)
+            if (it.base() && it.base() != _tree.getend())
             {
                 erase(it);
                 return (1);
@@ -259,17 +257,17 @@ class map
 
         iterator                find(const key_type & k)
         {
-            return (_tree.find(k, _tree.root()));
+            return (_tree.find(k));
         }
         
         const_iterator          find(const key_type & k) const
         {
-            return (_tree.find(k, _tree.root()));
+            return (_tree.find(k));
         }
 
-        size_type               count(const key_type & k)
+        size_type               count(const key_type & k) const
         {
-            return (_tree.count(k, _tree.root()));
+            return (_tree.count(k, _tree.getroot()));
         }
 
         /*  !!!!!!!!!!  NEED MORE TESTS (segfault with empty map) !!!!!!!!!!!!!!!!!!!*/
@@ -356,5 +354,84 @@ class map
 
 };
 
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) &&
+                !ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<const Key,T,Compare,Alloc>& rhs )
+{
+    return (!ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) &&
+                !ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!(lhs == rhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<const Key,T,Compare,Alloc>& rhs )
+{
+    return (!(lhs == rhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs,
+                const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs,
+                const ft::map<const Key,T,Compare,Alloc>& rhs )
+{
+    return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!(rhs < lhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<const Key,T,Compare,Alloc>& rhs )
+{
+    return (!(rhs < lhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs,
+                const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!(lhs <= rhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs,
+                const ft::map<const Key,T,Compare,Alloc>& rhs )
+{
+    return (!(lhs <= rhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
+                 const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return (!(lhs < rhs));
+}
 
 #endif
