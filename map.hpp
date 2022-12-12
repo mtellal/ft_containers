@@ -230,12 +230,20 @@ class map
 
         void                    swap(map & x)
         {
-            map     tmp(x);
+            key_compare     ctmp;
+            allocate_type   atmp;
 
-            x.clear();
-            x.insert(begin(), end());
-            clear();
-            insert(tmp.begin(), tmp.end());
+            ctmp = x._compare;
+            atmp = x._allocator;
+            
+            _tree.swap(x._tree);
+            
+            x._compare = _compare;
+            x._allocator = _allocator;
+
+            _compare = ctmp;
+            _allocator = atmp;
+            
         }
 
 

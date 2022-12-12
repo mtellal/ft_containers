@@ -23,7 +23,7 @@ class   RedBlackTree
         typedef typename Pair::first_type                       key_type;
         typedef typename Pair::second_type                      mapped_type;
 
-        typedef Alloc                                           allocator_type;
+        typedef Alloc                                           allocate_type;
         typedef typename Alloc::reference                       reference;
         typedef typename Alloc::const_reference                 const_reference;
         typedef typename Alloc::pointer                         pointer;
@@ -148,6 +148,7 @@ class   RedBlackTree
         /////                                   MODIFIERS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
+
         iterator    insert(const pair & k)
         {
             node_pointer    child;
@@ -218,6 +219,33 @@ class   RedBlackTree
             _nb_element = 0;
         }
 
+        void    swap(RedBlackTree & n)
+        {
+            node_pointer    rtmp;
+            node_pointer    etmp;
+            key_compare     ctmp;
+            allocate_type   atmp;
+            size_type       ntmp;
+
+            rtmp = n._root;
+            etmp = n._end;
+            ctmp = n._compare;
+            atmp = n._allocator;
+            ntmp = n._nb_element;
+
+            n._root = _root;
+            n._end = _end;
+            n._compare = _compare;
+            n._allocator = _allocator;
+            n._nb_element = _nb_element;
+
+            _root = rtmp;
+            _end = etmp;
+            _compare = ctmp;
+            _allocator = atmp;
+            _nb_element = ntmp;
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////
         /////                                  OPERATIONS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +309,7 @@ class   RedBlackTree
         node_pointer        _root;
         node_pointer        _end;
         key_compare         _compare;
-        allocator_type      _allocator;
+        allocate_type      _allocator;
         size_type           _nb_element;
 
         //////////////////////////////////////////////////////////////////////////////////////

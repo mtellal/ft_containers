@@ -138,9 +138,9 @@ void	printSize(T_MAP const &mp, bool print_content = 1,
 }
 
 template <typename T1, typename T2>
-void	printReverse(ft::map<T1, T2> &mp)
+void	printReverse(NAMESPACE::map<T1, T2> &mp)
 {
-	typename ft::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
+	typename NAMESPACE::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
 
 	std::cout << "printReverse:" << std::endl;
 	while (it != ite) {
