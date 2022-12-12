@@ -367,9 +367,7 @@
                 itnew = _new.begin();
 
                 while (_begin && it != position) 
-                {
                     allocator.construct((itnew++).base(), *it++);
-                }
                 size_type   i = 0;
                 while (i < n)
                 {
@@ -377,9 +375,7 @@
                     i++;
                 }
                 while (it != end())
-                {
                     allocator.construct((itnew++).base(), *it++);
-                }
                *this = _new;
             }
 
@@ -400,52 +396,19 @@
                 it = begin();
                 itnew = _new.begin();
 
-                
                 while (_begin && it != position) 
-                {
                     allocator.construct((itnew++).base(), *it++);
-                }
                 while (first != last)
-                {
                     allocator.construct((itnew++).base(), *first++);
-                }
                 while (it != end())
-                {
                     allocator.construct((itnew++).base(), *it++);
-                }
                *this = _new;
             }
 
 
             iterator            erase(iterator position)
             {
-                size_type   i;
-                iterator    it;
-                iterator    itnew;
-                vector      _new;
-
-                if (position >= end())
-                    return (end());
-                if (position < begin())
-                    return (begin());
-                if (!_begin || !_nb_construct)
-                    return (begin());
-                
-                i = ft::distance(begin(), position);
-                
-                _new._begin = allocator.allocate(_nb_construct - 1);
-                _new._nb_construct = _nb_construct - 1;
-                _new._nb_allocate = _nb_construct - 1;
-
-                it = begin();
-                itnew = _new.begin();
-                while (it != position)
-                    allocator.construct((itnew++).base(), *it++);
-                it++;
-                while (it != end())
-                    allocator.construct((itnew++).base(), *it++);
-                *this = _new;
-                return (_begin + i);
+                return (erase(position, position + 1));
             }
 
             iterator            erase(iterator first, iterator last)
@@ -529,22 +492,8 @@ template< class T, class Alloc >
 bool operator==( const ft::vector<T,Alloc>& lhs,
                  const ft::vector<T,Alloc>& rhs )
 {
-    typename ft::vector<T,Alloc>::const_iterator itl;
-    typename ft::vector<T,Alloc>::const_iterator itr;
-
-    if (lhs.size() != rhs.size())
-        return (false);
-    else
-    {
-        itl = lhs.begin();
-        itr = rhs.begin();
-        while (itl != lhs.end())
-        {
-            if (itr == rhs.end() || *itl++ != *itr++)
-                return (false);
-        }
-    }
-    return (true);
+    return (!ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && 
+            !ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
 }
 
 template< class T, class Alloc >

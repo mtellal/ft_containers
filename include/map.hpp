@@ -21,7 +21,6 @@ class map
         
         typedef Key                                                                         key_type;
         typedef T                                                                           mapped_type;
-        // std::map accept std::pair<key/const key> => segfault for me 
         typedef ft::pair<const key_type, mapped_type>                                       value_type;
         typedef Compare                                                                     key_compare;                                          
 
@@ -99,8 +98,6 @@ class map
         /////                                   ITERATORS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        /* !!!!!!!!!!!!!!!!!!!!!!  NEED MORE TESTS (CONST + REVERSE) !!!!!!!!!!!!! */
-
         iterator                begin() { return (iterator(_tree.begin())); }
 
         const_iterator          begin() const { return (const_iterator(_tree.begin())); }
@@ -131,7 +128,6 @@ class map
         /////                              ELEMENT ACCESS                                /////
         //////////////////////////////////////////////////////////////////////////////////////
 
-        // std::outofrange thrown
         T &                     at(const Key & key)
         {
             iterator    it;
@@ -156,7 +152,6 @@ class map
         {
             iterator it;
 
-            //std::cout << "inserted [ " << k << " ] " << std::endl; 
             it = insert(ft::make_pair(k, mapped_type())).first;
             return (it->second);
         }
@@ -246,9 +241,6 @@ class map
             
         }
 
-
-        // !!!! need more tests + fixed x errors from contexts
-
         void                    clear() { _tree.clear(); }
 
         //////////////////////////////////////////////////////////////////////////////////////
@@ -277,8 +269,6 @@ class map
         {
             return (_tree.count(k, _tree.getroot()));
         }
-
-        /*  !!!!!!!!!!  NEED MORE TESTS (segfault with empty map) !!!!!!!!!!!!!!!!!!!*/
 
         iterator                lower_bound (const key_type& k)
         {

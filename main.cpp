@@ -16,6 +16,9 @@
 #include <map>
 #include <stack>
 #include <list>
+#include <iomanip>
+
+#include <sys/time.h>
 
 #define NAMESPACE ft
 
@@ -199,8 +202,20 @@ int main(int argc, char **argv)
 		else
 			std::cout << "std" << std::endl;
 		//std::vector<int> v(5, 5);
-		
-		test();
+
+                struct timeval begin;
+                struct timeval end;
+                
+                gettimeofday(&begin, NULL);
+
+                test();
+
+                gettimeofday(&end, NULL);
+
+                time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
+
+                std::cout << time << std::endl;
+
 
 		std::cout << "////////////////	TESTS 	////////////////\n\n";
 

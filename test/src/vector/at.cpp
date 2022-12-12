@@ -4,7 +4,7 @@
 #include "vector.hpp"
 
 template <class V>
-void	test_at()
+void	test()
 {
 	V vct(7);
 
@@ -33,6 +33,17 @@ void	test_at()
 }
 
 int main()
-{
-	test_at<NAMESPACE::vector<int> >();	
+{		
+	struct timeval begin;
+	struct timeval end;
+	double time;
+
+	gettimeofday(&begin, NULL);
+	
+	test<NAMESPACE::vector<int> >();       
+
+	gettimeofday(&end, NULL);
+
+time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
+	std::cout << time << std::endl;
 }

@@ -4,7 +4,7 @@
 #include "vector.hpp"
 
 template <class V>
-void	test_bidirect_it()
+void	test()
 {
 	std::list<int> lst;
 	std::list<int>::iterator lst_it;
@@ -26,5 +26,16 @@ void	test_bidirect_it()
 
 int main()
 {
-	test_bidirect_it<NAMESPACE::vector<int> >();	
+	struct timeval begin;
+	struct timeval end;
+	double time;
+
+	gettimeofday(&begin, NULL);
+	
+	test<NAMESPACE::vector<int> >();       
+
+	gettimeofday(&end, NULL);
+
+time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
+	std::cout << time << std::endl;
 }

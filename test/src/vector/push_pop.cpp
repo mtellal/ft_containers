@@ -34,5 +34,15 @@ void	test()
 
 int main()
 {
-	test<NAMESPACE::vector<std::string> >();	
+	struct timeval begin;
+	struct timeval end;
+	double time;
+
+	gettimeofday(&begin, NULL);
+	
+	test<NAMESPACE::vector<std::string> >();       
+
+	gettimeofday(&end, NULL);
+
+time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;	std::cout << time << std::endl;
 }

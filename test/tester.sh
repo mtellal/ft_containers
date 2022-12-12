@@ -8,6 +8,7 @@ argfile=$1
 white="\033[1;37m"
 grey="\033[0;37m"
 red="\033[1;31m"
+blue="\033[1;36m"
 green="\033[1;32m"
 
 exe()
@@ -17,6 +18,24 @@ exe()
 	$cc $flags -I ./ -I $include -D NAMESPACE=ft src/$1/$2 2> output/err/ft_compile_$1_$2.err
     	./a.out 1> output/ft_$1_$2.output
 
+}
+
+check_exec_time()
+{
+	file=$2
+	container=$1
+
+	echo -e -n  $white "STD : "
+	stdtime=$(tail -n 1  output/std_$container"_"$2.output | awk '{print $1}') 
+	echo -n -e $blue $stdtime $white
+	head -n -1 output/std_$container"_"$2.output > tmp
+	mv tmp output/std_$container"_"$2.output
+
+	echo -e -n  $white "FT : "
+	stdtime=$(tail -n 1  output/ft_$container"_"$2.output | awk '{print $1}') 
+	echo -n -e $blue $stdtime $white
+	head -n -1 output/ft_$container"_"$2.output > tmp
+	mv tmp output/ft_$container"_"$2.output
 }
 
 check_diff_files()
@@ -91,6 +110,7 @@ test_container()
 			file=$(basename "${file}")
 			exe  $container $file
 			check_compile_err $container $file
+			check_exec_time $container $file 
 			check_diff_files $container $file
 			echo -e "\n"
 		done
@@ -104,6 +124,7 @@ test_one_file()
 	echo -e $white $argfile $grey
 	exe  $container $file
 	check_compile_err $container $file
+	check_exec_time $container $file 
 	check_diff_files $container $file
 	echo ""
 }
