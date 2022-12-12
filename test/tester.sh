@@ -31,7 +31,29 @@ exe()
 
 	if [ $compileerr -eq 0 ]; then 
     	./a.out > output/std_$1_$2.output
-    	./a.out > output/ft_$1_$2.output
+    	./a.out 1> output/ft_$1_$2.output
+		valgrind ./a.out 1> /dev/null 2> output/ft_$1_$2.leak
+	fi
+}
+
+check_leak()
+{
+	file=$2
+	container=$1
+
+	echo -e -n  $white "LEAKS: "
+	line=$(cat output/ft_$1_$2.leak | grep "allocs")
+	allocs=$(echo  $line| awk '{print $5}')
+	frees=$(echo  $line | awk '{print $7}')
+
+	line2=$(cat output/ft_$1_$2.leak | grep "ERROR SUMMARY")
+	err=$(echo $line2 | awk '{print $4}')
+	
+	if [ $allocs -ne $frees ] || [ $err -ne 0 ]; then 
+		echo -e -n $red"KO" $grey "(check output/ft_$1_$2.leak)"
+	else
+		rm output/ft_$1_$2.leak
+		echo -e -n $green"OK" $grey
 	fi
 }
 
@@ -86,6 +108,7 @@ test_container()
 			if [ $compileerr -ne 1 ]; then 
 				check_exec_time $container $file 
 				check_diff_files $container $file
+				check_leak $container $file
 			fi
 			echo -e "\n"
 		done
@@ -101,6 +124,7 @@ test_one_file()
 	if [ $compileerr -ne 1 ]; then 
 		check_exec_time $container $file 
 		check_diff_files $container $file
+		check_leak $container $file
 	fi
 	echo ""
 }

@@ -55,6 +55,6 @@ int main()
 	
 	gettimeofday(&end, NULL);
 	
-time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
+	time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
 	std::cout << time << std::endl;
 }
