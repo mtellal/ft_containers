@@ -10,14 +10,29 @@ grey="\033[0;37m"
 red="\033[1;31m"
 blue="\033[1;36m"
 green="\033[1;32m"
+compileerr=0
 
 exe()
 {
-	$cc $flags -I ./ -I $include -D NAMESPACE=std src/$1/$2 2> output/err/std_compile_$1_$2.err
-       ./a.out 1> output/std_$1_$2.output
-	$cc $flags -I ./ -I $include -D NAMESPACE=ft src/$1/$2 2> output/err/ft_compile_$1_$2.err
-    	./a.out 1> output/ft_$1_$2.output
+	compileerr=0
 
+	$cc $flags -I ./ -I $include -D NAMESPACE=std src/$1/$2 2> output/err/std_compile_$1_$2.err
+	$cc $flags -I ./ -I $include -D NAMESPACE=ft src/$1/$2 2> output/err/ft_compile_$1_$2.err
+
+	echo -e -n $white "Compile: "
+	if [ -s output/err/ft_compile_$1_$2.err ] || [ -s output/err/std_compile_$1_$2.err ]; then
+		echo -e -n $red"KO" $grey "check " output/err/ft_compile_$1_$2.err - output/err/std_compile_$1_$2.err
+		compileerr=1
+	else
+		echo -e -n $green"OK" $grey
+		rm output/err/ft_compile_$1_$2.err
+		rm output/err/std_compile_$1_$2.err
+	fi
+
+	if [ $compileerr -eq 0 ]; then 
+    	./a.out > output/std_$1_$2.output
+    	./a.out > output/ft_$1_$2.output
+	fi
 }
 
 check_exec_time()
@@ -25,78 +40,37 @@ check_exec_time()
 	file=$2
 	container=$1
 
-	echo -e -n  $white "STD : "
+	echo -e -n  $white "STD: "
 	stdtime=$(tail -n 1  output/std_$container"_"$2.output | awk '{print $1}') 
-	echo -n -e $blue $stdtime $white
+	echo -n -e $blue$stdtime$white'ms'
 	head -n -1 output/std_$container"_"$2.output > tmp
 	mv tmp output/std_$container"_"$2.output
 
-	echo -e -n  $white "FT : "
+	echo -e -n  $white "FT: "
 	stdtime=$(tail -n 1  output/ft_$container"_"$2.output | awk '{print $1}') 
-	echo -n -e $blue $stdtime $white
+	echo -n -e $blue$stdtime$white'ms'
 	head -n -1 output/ft_$container"_"$2.output > tmp
 	mv tmp output/ft_$container"_"$2.output
 }
 
 check_diff_files()
 {
-	echo -e -n  $white "DIFF :"
+	echo -e -n  $white "DIFF: "
 	file=$2
 	container=$1
 	diff output/ft_$container"_"$2.output  output/std_$container"_"$2.output  > diff/$file.diff
 	if [ -s diff/$file.diff ]; then
-		echo -e $red "KO" "\n"
+		echo -e $red"KO" "\n"
 		echo -e $white "////// 	" FT::$1 " output	//////" $green
 		cat output/ft_$container"_"$2.output
 		echo -e $white "\n//////	" STD::$1 " output	//////" $red
 		cat diff/$file.diff
 		echo -e $grey
 	else
+		rm diff/$file.diff
 		rm output/ft_$container"_"$2.output  output/std_$container"_"$2.output 
-		echo -e -n $green "OK" $grey
+		echo -e -n $green"OK" $grey
 	fi
-}
-
-check_compile_err()
-{
-	echo -e -n $white "Compile :"
-	file=$2
-	container=$1
-	if [ -s output/err/ft_compile_"$container"_$file.err ]; then 
-		echo -e -n $red "KO" $grey " (if *_err.cpp = "$green"OK"$grey")"
-	else
-		echo -e -n $green  "OK" $grey
-	fi
-}
-
-test_vector()
-{
-	echo -e "\n//////	" $white "VECTOR" $grey "	//////\n"
-
-	for file in src/vector/*
-		do 
-			echo -e $white $file $grey
-			file=$(basename "${file}")
-			exe  vector $file
-			check_compile_err vector $file
-			check_diff_files vector $file
-			echo -e "\n"
-		done
-}
-
-test_map()
-{
-	echo -e "\n//////	" $white "MAP" $grey "	//////\n"
-
-	for file in src/map/*
-		do 
-			echo -e $white $file $grey
-			file=$(basename "${file}")
-			exe  map $file
-			check_compile_err map $file
-			check_diff_files map $file
-			echo -e "\n"
-		done
 }
 
 test_container()
@@ -109,9 +83,10 @@ test_container()
 			echo -e $white $file $grey
 			file=$(basename "${file}")
 			exe  $container $file
-			check_compile_err $container $file
-			check_exec_time $container $file 
-			check_diff_files $container $file
+			if [ $compileerr -ne 1 ]; then 
+				check_exec_time $container $file 
+				check_diff_files $container $file
+			fi
 			echo -e "\n"
 		done
 }
@@ -123,9 +98,10 @@ test_one_file()
 	echo -e "\n//////	" $white "$container" $grey "	//////\n"
 	echo -e $white $argfile $grey
 	exe  $container $file
-	check_compile_err $container $file
-	check_exec_time $container $file 
-	check_diff_files $container $file
+	if [ $compileerr -ne 1 ]; then 
+		check_exec_time $container $file 
+		check_diff_files $container $file
+	fi
 	echo ""
 }
 
@@ -153,9 +129,7 @@ purge_files()
 	folder=$1
 	for files in $folder/*
 	do 
-		if [ ! -s $files ]; then
-			rm $files
-		fi
+		rm $files 2> /dev/null
 	done
 }
 
@@ -163,11 +137,13 @@ mkdir output output/err 2> /dev/null
 
 echo -e "\n////////////////		" $white "T E S T E R" $grey "		////////////////\n"
 
+purge_files output
+purge_files output/err
+purge_files diff
+
 launch_exe
 
 rm a.out 2> /dev/null
-purge_files diff
-purge_files output/err
 
 
 

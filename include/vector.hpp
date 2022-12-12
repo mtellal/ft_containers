@@ -405,7 +405,6 @@
                *this = _new;
             }
 
-
             iterator            erase(iterator position)
             {
                 return (erase(position, position + 1));
