@@ -37,6 +37,8 @@ namespace ft
 
 	#include "map.hpp"
 
+	#include "stack.hpp"
+
 }
 
 #endif

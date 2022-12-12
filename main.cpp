@@ -17,7 +17,7 @@
 #include <stack>
 #include <list>
 
-#define NAMESPACE std
+#define NAMESPACE ft
 
 template <class T, bool v>
 struct container_constant {
@@ -136,7 +136,7 @@ void    printSize(T_MAP const &mp, bool print_content = 1)
         std::cout << "###############################################" << std::endl;
 }
 
-template <typename T1, typename T2>
+/* template <typename T1, typename T2>
 void    printReverse(NAMESPACE::map<T1, T2> &mp)
 {
         typename NAMESPACE::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
@@ -147,10 +147,46 @@ void    printReverse(NAMESPACE::map<T1, T2> &mp)
                 std::cout << "-> " << printPair(it, false) << std::endl;
         }
         std::cout << "_______________________________________________" << std::endl;
+} */
+
+template <typename T_STACK>
+void	printSize(T_STACK &stck, bool print_content = 1)
+{
+	std::cout << "size: " << stck.size() << std::endl;
+	if (print_content)
+	{
+		std::cout << std::endl << "Content was:" << std::endl;
+		while (stck.size() != 0) {
+			std::cout << "- " << stck.top() << std::endl;
+			stck.pop();
+		}
+	}
+	std::cout << "###############################################" << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+
+#define TESTED_TYPE foo<int>
+#define t_stack_ NAMESPACE::stack
+typedef t_stack_<TESTED_TYPE>::container_type container_type;
+
+void test()
+{
+        NAMESPACE::stack<TESTED_TYPE> stck;
+
+	std::cout << "empty: " << stck.empty() << std::endl;
+	std::cout << "size: " << stck.size() << std::endl;
+
+	stck.push(41);
+	stck.push(29);
+	stck.push(10);
+	stck.push(42);
+	std::cout << "Added some elements" << std::endl;
+
+	std::cout << "empty: " << stck.empty() << std::endl;
+	printSize(stck);
+}
 
 int main(int argc, char **argv)
 {
@@ -165,8 +201,6 @@ int main(int argc, char **argv)
 		//std::vector<int> v(5, 5);
 		
 		test();
-
-
 
 		std::cout << "////////////////	TESTS 	////////////////\n\n";
 

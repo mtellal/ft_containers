@@ -2,7 +2,7 @@
 
 cc="clang++"
 flags="-Wall -Wextra -Werror -std=c++98"
-include="../" 
+include="../include/" # path for containers (default in include/ from repo) 
 nbargs=$#
 argfile=$1
 white="\033[1;37m"
