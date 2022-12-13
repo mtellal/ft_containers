@@ -145,6 +145,7 @@ launch_exe ()
 	else
 		test_container vector
 		test_container map
+		test_container stack
 	fi
 }
 

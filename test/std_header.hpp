@@ -34,6 +34,11 @@ template <class T>  struct is_vector :				  container_constant<T, false> {};
 template <class V>         struct is_vector<std::vector<V> > :   container_constant<bool, true> {};
 template <class V>         struct is_vector<ft::vector<V> > :   container_constant<bool, true> {};
 
+template <class T>  struct is_stack :				  container_constant<T, false> {};
+template <class V, class C>         struct is_stack<std::stack<V, C> > :   container_constant<bool, true> {};
+template <class V>         struct is_stack<std::stack<V> > :   container_constant<bool, true> {};
+template <class V, class C>         struct is_stack<ft::stack<V, C> > :   container_constant<bool, true> {};
+template <class V>         struct is_stack<ft::stack<V> > :   container_constant<bool, true> {};
 
 
 template <class V>
@@ -53,6 +58,22 @@ void printSize(const V & vector,
 	std::cout << "\n\n";
 }
 
+
+template <typename T_STACK>
+void	printSize(T_STACK &stck, bool print_content = 1,
+		typename ft::enable_if<is_stack<T_STACK>::value, int>::type = 0)
+{
+	std::cout << "size: " << stck.size() << std::endl;
+	if (print_content)
+	{
+		std::cout << std::endl << "Content was:" << std::endl;
+		while (stck.size() != 0) {
+			std::cout << "- " << stck.top() << std::endl;
+			stck.pop();
+		}
+	}
+	std::cout << "###############################################" << std::endl;
+}
 
 // --- Class foo
 template <typename T>
