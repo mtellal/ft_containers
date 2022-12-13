@@ -158,58 +158,73 @@ void	printReverse(NAMESPACE::map<T1, T2> &mp)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-template <class V>
-void	test()
+#define T1 int
+#define T2 std::string
+
+NAMESPACE::map<T1, T2> mp;
+NAMESPACE::map<T1, T2>::iterator it = mp.end();
+
+void	ft_find(T1 const &k)
 {
-	V vct(7);
-	V vct_two(4);
-	V vct_three;
-	V vct_four;
+	NAMESPACE::map<T1, T2>::iterator ret = mp.find(k);
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-			vct[i] = (vct.size() - i) * 3;
-	for (unsigned long int i = 0; i < vct_two.size(); ++i)
-		vct_two[i] = (vct_two.size() - i) * 5;
+	if (ret != it)
+		printPair(ret);
+	else
+		std::cout << "map::find(" << k << ") returned end()" << std::endl;
+}
 
-	printSize(vct);
-	printSize(vct_two);
+void	ft_count(T1 const &k)
+{
+	std::cout << "map::count(" << k << ")\treturned [" << mp.count(k) << "]" << std::endl;
+}
 
-	vct_three.assign(vct.begin(), vct.end());
-	vct.assign(vct_two.begin(), vct_two.end());
-	vct_two.assign(2, 42);
-	vct_four.assign(4, 21);
+void		test(void)
+{
+	mp[42] = "fgzgxfn";
+	mp[25] = "funny";
+	mp[80] = "hey";
+	mp[12] = "no";
+	mp[27] = "bee";
+	mp[90] = "8";
+	printSize(mp);
 
-	std::cout << "\t### After assign(): ###" << std::endl;
+	std::cout << "\t-- FIND --" << std::endl;
+	ft_find(12);
+	ft_find(3);
+	ft_find(35);
+	ft_find(90);
+	ft_find(100);
 
-	printSize(vct);
-	printSize(vct_two);
-	printSize(vct_three);
-	printSize(vct_four);
+	std::cout << "\t-- COUNT --" << std::endl;
+	ft_count(-3);
+	ft_count(12);
+	ft_count(3);
+	ft_count(35);
+	ft_count(90);
+	ft_count(100);
 
-	vct_four.assign(6, 84);
-	printSize(vct_four);
+	mp.find(27)->second = "newly inserted mapped_value";
 
-	std::cout << "\t### assign() on enough capacity and low size: ###" << std::endl;
+	printSize(mp);
 
-	vct.assign(5, 53);
-	vct_two.assign(vct_three.begin(), vct_three.begin() + 3);
-
-	printSize(vct);
-	printSize(vct_two);
+	NAMESPACE::map<T1, T2> const c_map(mp.begin(), mp.end());
+	std::cout << "const map.find(" << 42 << ")->second: [" << c_map.find(42)->second << "]" << std::endl;
+	std::cout << "const map.count(" << 80 << "): [" << c_map.count(80) << "]" << std::endl;
 }
 
 int main()
 {
 	struct timeval begin;
-        struct timeval end;
+	struct timeval end;
 	double time;
 
-        gettimeofday(&begin, NULL);
+	gettimeofday(&begin, NULL);
 	
-	test<NAMESPACE::vector<int> >();	
-	
+	test();       
+
 	gettimeofday(&end, NULL);
-	
+
 	time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
-	std::cout << time << std::endl;
+	std::cout << time << std::endl;	
 }

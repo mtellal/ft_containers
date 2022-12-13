@@ -136,13 +136,13 @@
                         if (_begin)
                             allocator.deallocate(_begin, n);
                         _begin = allocator.allocate(nv._nb_allocate);
-                        _nb_allocate = nv._nb_construct;
+                        _nb_allocate = nv._nb_allocate;
                     }
                     i = 0;
                     _nb_construct = nv._nb_construct;
                     while (_begin && i < _nb_construct)
                     {
-                        allocator.construct(_begin + i, nv.at(i));
+                        allocator.construct(_begin + i, *(nv._begin + i));
                         i++;
                     }
                 }
@@ -266,26 +266,27 @@
                 }
                 else if (n > _nb_allocate)
                 {
-                    vector          old(*this);
-                    size_type       i = 0;
+                    vector          _new;
+                    size_type       size;
+                    size_type       i;
 
-                    clear();
-                    if (_begin)
-                        allocator.deallocate(_begin, _nb_allocate);
-                    if (!_nb_allocate && n)
-                        _nb_allocate = 1;
-                    while (_nb_allocate < n)
-                        _nb_allocate *= 2;
-                    _begin = allocator.allocate(_nb_allocate);
-
-                    while (i < old.size())
+                    i = 0;
+                    size = _nb_allocate;
+                    if (!size)
+                        size = 1;
+                    while (size < n)
+                        size *= 2;
+                    _new._begin = allocator.allocate(size);
+                    _new._nb_allocate = size;
+                    while (i < _nb_construct)
                     {
-                        allocator.construct(_begin + i, old[i]);
+                        allocator.construct(_new + i, *(_begin + i));
                         i++;
                     }
                     while (i < n)
-                        allocator.construct(_begin + i++, val);
-                    _nb_construct = n;
+                        allocator.construct(_new + i++, val);
+                    _new._nb_construct = n;
+                    *this = _new;
                 }
                 else if (n > _nb_construct)
                 {
@@ -384,18 +385,17 @@
             void                insert(iterator position, InputIterator first, InputIterator last, 
                     typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0)
             {
-                vector      _new;
+                vector      _new(*this);
                 iterator    it;
                 iterator    itnew;
 
                 if (first == last)
                     return ;
-
                 _new.resize(_nb_construct + ft::distance(first, last));
-
                 it = begin();
                 itnew = _new.begin();
 
+                std::cout << *_new.begin() << std::endl;
                 while (_begin && it != position) 
                     allocator.construct((itnew++).base(), *it++);
                 while (first != last)
@@ -425,11 +425,11 @@
                 else if (first > last)
                     return (last);
                 
-                
                 l = ft::distance(begin(), first);
                 i = _nb_construct - ft::distance(first, last);
 
-                _new._begin = allocator.allocate(i);
+                if (i)
+                    _new._begin = allocator.allocate(i);
                 _new._nb_construct = i;
                 _new._nb_allocate = i;
 

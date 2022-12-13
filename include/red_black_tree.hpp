@@ -70,7 +70,6 @@ class   RedBlackTree
             clear();
             if (_end)
             {
-                _allocator.destroy(_end);
                 _allocator.deallocate(_end, 1);
                 _end = NULL;
             }
@@ -272,7 +271,9 @@ class   RedBlackTree
         {
             size_type    tmp = 0;
 
-            if (_n && !_compare(_n->value.first, val) && !_compare(val, _n->value.first))
+            if (!_n || _n == _end)
+                return (0);
+            if (!_compare(_n->value.first, val) && !_compare(val, _n->value.first))
                 return (1);
             else
             {
@@ -375,9 +376,9 @@ class   RedBlackTree
 
         void    deallocate_tree(node_pointer x)
         {
-            if (x->left)
+            if (x && x->left)
                 deallocate_tree(x->left);
-            if (x->right && x->right != _end)
+            if (x && x->right && x->right != _end)
                 deallocate_tree(x->right);
             if (x && x != _end)
                 _allocator.deallocate(x, 1);
@@ -385,9 +386,9 @@ class   RedBlackTree
 
         void    destroy_tree(node_pointer x)
         {
-            if (x->left)
+            if (x && x->left)
                 destroy_tree(x->left);
-            if (x->right && x->right != _end)
+            if (x && x->right && x->right != _end)
                 destroy_tree(x->right);
             if (x && x != _end)
                 _allocator.destroy(x);
@@ -403,6 +404,7 @@ class   RedBlackTree
             _nb_element++;
             _n->left = NULL;
             _n->right = NULL;
+            _n->parent = NULL;
             return (_n);
         }
 
@@ -420,7 +422,7 @@ class   RedBlackTree
                 if (child->parent == child->parent->parent->left)
                 {
                     u = child->parent->parent->right;
-                    if (u && u->red)
+                    if (u && u != _end && u->red)
                     {
                         child->parent->red = 0;
                         u->red = 0;
@@ -464,7 +466,8 @@ class   RedBlackTree
                 if (child == _root)
                     break ;
             }
-            _root->red = 0;
+            if (_root)
+                _root->red = 0;
         }
 
 
@@ -474,19 +477,25 @@ class   RedBlackTree
         {
             node_pointer    y;
 
-            y = x->right;
-            x->right = y->left; 
+            if (!x)
+                return ;
 
-            if (y->left)
+            y = x->right;
+            if (y)
+                x->right = y->left; 
+
+            if (y && y->left)
                 y->left->parent = x;
-            y->parent = x->parent;
+            if (y)
+                y->parent = x->parent;
             if (!x->parent)
                 _root = y;
-            else if (x == x->parent->left)
+            else if (x->parent && x == x->parent->left)
                 x->parent->left = y;
-            else
+            else if (x->parent)
                 x->parent->right = y; 
-            y->left = x;
+            if (y)
+                y->left = x;
             x->parent = y;
         }
 
@@ -494,18 +503,24 @@ class   RedBlackTree
         {
             node_pointer    y;
 
+            if (!x)
+                return ;
+
             y = x->left;
-            x->left = y->right;
-            if (y->right)
+            if (y)
+                x->left = y->right;
+            if (y && y->right)
                 y->right->parent = x;
-            y->parent = x->parent;
+            if (y)
+                y->parent = x->parent;
             if (!x->parent)
                 _root = y;
-            else if (x == x->parent->right)
+            else if (x->parent && x == x->parent->right)
                 x->parent->right = y;
-            else
+            else if (x->parent)
                 x->parent->left = y;
-            y->right = x;
+            if (y)
+                y->right = x;
             x->parent = y;
         }
 

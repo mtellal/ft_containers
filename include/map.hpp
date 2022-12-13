@@ -150,10 +150,10 @@ class map
 
         mapped_type &           operator[](const key_type & k)
         {
-            iterator it;
+            pair<iterator, bool>    pair;
 
-            it = insert(ft::make_pair(k, mapped_type())).first;
-            return (it->second);
+            pair = insert(ft::make_pair(k, mapped_type()));
+            return (pair.first->second);
         }
 
 

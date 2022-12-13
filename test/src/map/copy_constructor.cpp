@@ -1,8 +1,6 @@
 
 #include "std_header.hpp"
 
-
-
 #define T1 int
 #define T2 int
 typedef _pair<const T1, T2> T3;
