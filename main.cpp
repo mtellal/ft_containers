@@ -399,14 +399,13 @@ int main()
 	for (size_t i = 0; i < erase_in_me.size(); i++)
 		std::cout << erase_in_me.at(i).front() << ' ';
 	std::cout << '\n';
-	std::cout << "debug" << std::endl;
 
 	erase_in_me.erase(erase_in_me.begin() + 2, erase_in_me.begin() + 6);
 	for (size_t i = 0; i < erase_in_me.size(); i++)
 		std::cout << erase_in_me.at(i).front() << ' ';
 	std::cout << '\n';
 
-	/*//SWAP
+	//SWAP
 	std::cout << "\nSWAP\n";
 	john_reserve = 4;
 	JOHN.reserve(john_reserve);
@@ -522,6 +521,6 @@ int main()
 		std::cout << (*it).front() << " ";
 	std::cout << '\n';
 
-	std::cout << std::endl;*/
+	std::cout << std::endl;
 	return (0);
 }
