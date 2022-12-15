@@ -189,15 +189,6 @@ struct pair
     }
     return (*this);
   }
-
-  // don't forget to REMOVE overload *pair => doesn't exist in std 
-
- /*  friend std::ostream & operator<<(std::ostream & output, const pair & obj)
-  {
-    output << "\n///// PAIR /////\n" << "first = " << obj.first << "\nsecond = " << obj.second << std::endl;
-    return (output);
-  } */
-
 };
 
 template <class T1, class T2>
@@ -245,7 +236,6 @@ pair<T1, T2>  make_pair(T1 x, T2 y)
 {
   return (ft::pair<T1, T2>(x, y));
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 /////                          OTHER FUNCTIONS FROM STD                          /////

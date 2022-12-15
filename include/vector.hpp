@@ -43,7 +43,7 @@
 
             explicit vector(size_type n, const value_type& val = value_type(),
                 const allocator_type& alloc = allocator_type()) :
-            allocator(alloc), _begin(NULL), _nb_construct(n), _nb_allocate(n)
+            allocator(alloc), _begin(NULL), _nb_construct(0), _nb_allocate(0)
             {
                 size_type   i;
 
@@ -51,8 +51,10 @@
                 {
                     i = 0;
                     _begin = allocator.allocate(n);
+                    _nb_allocate = n;
                     while (i < n)
                         allocator.construct(_begin + i++, val);
+                    _nb_construct = n;
                 }
             }
 
@@ -76,17 +78,12 @@
             vector(const vector& x) :
             allocator(x.allocator), _begin(NULL), _nb_construct(0), _nb_allocate(0)
             {
-                const_iterator  first;
-                iterator        it;
-
-                if (this != &x)
+                if (this != &x && x.capacity())
                 {
                     _begin = allocator.allocate(x.capacity());
                     _nb_allocate = x.capacity();
-                    it = begin();
-                    first = x.begin();
-                    while (first != x.end())
-                        allocator.construct(it++.base(), *first++);
+                    for (size_t i = 0; i < x._nb_construct; i++)
+                        allocator.construct(_begin + i, x[i]);
                     _nb_construct = x.size();
                 }
             }
@@ -277,99 +274,83 @@
             
             iterator            insert(iterator position, const value_type & val)
             {
+                vector old(*this);
                 size_type i;
-                size_type l;
+                size_type pos;
 
                 i = 0;
-                l =  ft::distance(begin(), position);
-                if (_nb_construct + 1 > _nb_allocate)
-                    insert(position, 1, val);
-                else
-                {
-                    while (_begin + i < position.base() && i < _nb_construct)
-                        i++;
-                    for (size_type j = _nb_construct; j > i; j--)
-                        _begin[j] = _begin[j - 1];
-                    allocator.construct(_begin + i, val);
-                    _nb_construct++;
-                }
-                return (_begin + l);
+                pos = ft::distance(begin(), position);
+                reserve(_nb_construct + 1);
+
+                for (size_t i = pos; i < old._nb_construct; i++)
+                    allocator.destroy(_begin + i);
+
+                allocator.construct(_begin + pos, val);
+                _nb_construct++;
+
+                for (size_t i = pos; i < old._nb_construct; i++)
+                    allocator.construct(_begin + i + 1, old[i]);
+                return (_begin + pos);
             }
 
             iterator                insert(iterator position, size_type n, const value_type & val)
             {
-                vector      _new(*this);
-                size_type   i;
-                iterator    it;
-                iterator    itnew;
-                size_type   l;
-
-                if (!n)
-                    return (position);
-
-                l = ft::distance(begin(), position);
-                _new.resize(_nb_construct + n);
-
-                it = begin();
-                itnew = _new.begin();
-
-                while (_begin && it != position) 
-                    allocator.construct((itnew++).base(), *it++);
+                vector old(*this);
+                size_type i;
+                size_type pos;
 
                 i = 0;
-                while (i < n)
+                pos = ft::distance(begin(), position);
+                reserve(_nb_construct + n);
+
+                for (size_t i = pos; i < old._nb_construct; i++)
+                    allocator.destroy(_begin + i);
+
+                for (size_t i = 0; i < n; i++)
                 {
-                    allocator.construct((itnew++).base(), val);
-                    i++;
+                    allocator.construct(_begin + pos + i, val);
+                    _nb_construct++;
                 }
 
-                while (it != end())
-                    allocator.construct((itnew++).base(), *it++);
-
-               *this = _new;
-               return (_begin + l);
+                for (size_t i = pos; i < old._nb_construct; i++)
+                    allocator.construct(_begin + i + n, old[i]);
+                return (_begin + pos);
             }
 
             template <class InputIterator>
             iterator                insert(iterator position, InputIterator first, InputIterator last, 
                     typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0)
             {
-                vector      _new(*this);
-                iterator    it;
-                iterator    itnew;
-                size_type   l;
+                vector      old(*this);
+                size_type   i;
+                size_type   pos;
+                size_type   sup;
 
-                if (first == last)
-                    return (position);
+                i = 0;
+                pos = ft::distance(begin(), position);
+                sup = ft::distance(first, last);
+                reserve(_nb_construct + sup);
 
-                l = ft::distance(begin(), position);
-                _new.resize(_nb_construct + ft::distance(first, last));
+                for (size_t i = pos; i < old._nb_construct; i++)
+                    allocator.destroy(_begin + i);
 
-                it = begin();
-                itnew = _new.begin();
+                for (size_t i = 0; i < sup && first != last; i++)
+                {
+                    allocator.construct(_begin + pos + i, *first);
+                    first++;
+                    _nb_construct++;
+                }
 
-                while (_begin && it != position) 
-                    allocator.construct((itnew++).base(), *it++);
-
-                while (first != last)
-                    allocator.construct((itnew++).base(), *first++);
-
-                while (it != end())
-                    allocator.construct((itnew++).base(), *it++);
-
-               *this = _new;
-                return (_begin + l);
+                for (size_t i = pos; i < old._nb_construct; i++)
+                    allocator.construct(_begin + i + sup, old[i]);
+                return (_begin + pos);
             }
 
             void                push_back(const value_type & val)
             {
-                if (_nb_construct + 1 > _nb_allocate)
-                    insert(end(), 1, val);
-                else
-                {
-                    allocator.construct(_begin + _nb_construct, val);
-                    _nb_construct++;
-                }
+                reserve(_nb_construct + 1);
+                allocator.construct(_begin + _nb_construct, val);
+                _nb_construct++;
             }
 
             void                pop_back(void)
@@ -384,7 +365,8 @@
             iterator            erase(iterator position)
             {
                 size_type   i;
-                iterator    it = position;
+                size_type   d;
+                size_type   l;
 
                 if (position == end())
                     return (end());
@@ -392,54 +374,47 @@
                     return (position);
 
                 i = 0;
-                allocator.destroy(position.base());
-                _nb_construct--;
-                while (_begin + i < position.base() && i < _nb_construct)
-                    i++;
-                while (i < _nb_construct)
+                d = ft::distance(begin(), position);
+                l = d;
+                while (d < _nb_construct && d + 1 < _nb_allocate)
                 {
-                    _begin[i] = _begin[i + 1]; 
-                    i++;
+                    if (_begin + d == position.base())
+                        _nb_construct--;
+                    allocator.destroy(_begin + d);
+                    allocator.construct(_begin + d, *(_begin + d + 1));
+                    d++;
                 }
-                return (it);
+                return (_begin + l);
             }
 
             iterator            erase(iterator first, iterator last)
             {
                 size_type   i;
+                size_type   b;
                 size_type   l;
-                iterator    it;
-                iterator    itnew;
-                vector      _new;
+                size_type   pos;
 
-                if (first < begin())
+               if (first < begin())
                     first = begin();
                 else if (first == last)
                     return (last);
                 else if (first > last)
                     return (begin());
 
-                l = ft::distance(begin(), first);
-                i = _nb_construct - ft::distance(first, last);
-
-                if (i)
-                    _new._begin = allocator.allocate(i);
-                _new._nb_construct = i;
-                _new._nb_allocate = i;
-
-                it = begin();   
-                itnew = _new.begin();
-                while (it != first)
-                    allocator.construct((itnew++).base(), *it++);
-
-                while (it != last)
-                    it++;
-
-                while (it != end())
-                    allocator.construct((itnew++).base(), *it++);
-
-                *this = _new;
-                return (_begin + l);
+                i = 0;
+                b = ft::distance(begin(), first);
+                pos = b;
+                l = ft::distance(first, last);
+                while (b < _nb_construct && b + l < _nb_allocate)
+                {
+                    if (first < last)
+                        _nb_construct--;
+                    allocator.destroy(_begin + b);
+                    allocator.construct(_begin + b, *(_begin + b + l));
+                    b++;
+                    first++;
+                }
+                return (_begin + pos);
             }
 
             void                resize(size_type n, value_type val = value_type())
