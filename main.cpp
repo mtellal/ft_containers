@@ -20,7 +20,7 @@
 
 #include <sys/time.h>
 
-#define NAMESPACE ft
+#define NAMESPACE std
 
 template <class T, bool v>
 struct container_constant {
@@ -155,49 +155,31 @@ void	printReverse(NAMESPACE::map<T1, T2> &mp)
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-
 template <class V>
 void	test()
 {
-	V vct(10);
+	V vct(5);
 	V vct2;
-	V vct3;
+	const int cut = 3;
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
+		vct[i] = (vct.size() - i) * 7;
 	printSize(vct);
 
-	vct2.insert(vct2.end(), 42);
-	vct2.insert(vct2.begin(), 2, 21);
+	vct2.insert(vct2.begin(), vct.begin(), vct.begin() + cut);
+	printSize(vct2);
+	vct2.insert(vct2.begin(), vct.begin() + cut, vct.end());
+	printSize(vct2);
+	vct2.insert(vct2.end(), vct.begin(), vct.begin() + cut);
 	printSize(vct2);
 
-	vct2.insert(vct2.end() - 2, 42);
+	std::cout << "insert return:" << std::endl;
+
+	std::cout << *vct2.insert(vct2.end(), 42) << std::endl;
+	std::cout << *vct2.insert(vct2.begin() + 5, 84) << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+
 	printSize(vct2);
-
-	vct2.insert(vct2.end(), 2, 84);
-	printSize(vct2);
-
-	vct2.resize(4);
-	printSize(vct2);
-
-	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
-	vct.clear();
-	printSize(vct2);
-
-	printSize(vct);
-
-	for (int i = 0; i < 5; ++i)
-		vct3.insert(vct3.end(), i);
-	vct3.insert(vct3.begin() + 1, 2, 111);
-	printSize(vct3);
-}
-
-void	test_perf(size_t n)
-{
-	NAMESPACE::vector<int> v;
-
-	for (size_t i = 0; i < n; i++)
-		v.insert(v.begin(), i);
 }
 
 int main()
@@ -208,16 +190,13 @@ int main()
 
 	gettimeofday(&begin, NULL);
 	
-	test<NAMESPACE::vector<int> >();      
+	//test<NAMESPACE::vector<int> >();       
 
-	test_perf(1000);
+	std::vector<int> v(1);
+
+	v.erase(v.begin(), v.end());
 
 	gettimeofday(&end, NULL);
 
-	double uend = (double)end.tv_usec / 1000;
-	double ubegin = (double)begin.tv_usec / 1000;
-
-	time = (uend - ubegin);
-
-	std::cout << time << std::endl;
+time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;	std::cout << time << std::endl;	
 }
