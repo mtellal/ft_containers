@@ -16,8 +16,8 @@ exe()
 {
 	compileerr=0
 
-	$cc $flags -I ./ -I $include -D NAMESPACE=std src/$1/$2 2> output/err/std_compile_$1_$2.err
-	$cc $flags -I ./ -I $include -D NAMESPACE=ft src/$1/$2 2> output/err/ft_compile_$1_$2.err
+	$cc $flags -o std -I ./ -I $include -D NAMESPACE=std src/$1/$2 2> output/err/std_compile_$1_$2.err
+	$cc $flags -o ft -I ./ -I $include -D NAMESPACE=ft src/$1/$2 2> output/err/ft_compile_$1_$2.err
 
 	echo -e -n $white "Compile: "
 	if [ -s output/err/ft_compile_$1_$2.err ] || [ -s output/err/std_compile_$1_$2.err ]; then
@@ -30,9 +30,9 @@ exe()
 	fi
 
 	if [ $compileerr -eq 0 ]; then 
-    	./a.out > output/std_$1_$2.output
-    	./a.out 1> output/ft_$1_$2.output
-		valgrind ./a.out 1> /dev/null 2> output/ft_$1_$2.leak
+    	./std > output/std_$1_$2.output    	
+		./ft 1> output/ft_$1_$2.output
+		valgrind ./ft 1> /dev/null 2> output/ft_$1_$2.leak
 	fi
 }
 
@@ -49,7 +49,7 @@ check_leak()
 	line2=$(cat output/ft_$1_$2.leak | grep "ERROR SUMMARY")
 	err=$(echo $line2 | awk '{print $4}')
 	
-	if [ $allocs -ne $frees ] || [ $err -ne 0 ]; then 
+	if [ "$allocs" != "$frees" ] || [ $err -ne 0 ]; then 
 		echo -e -n $red"KO" $grey "(check output/ft_$1_$2.leak)"
 	else
 		rm output/ft_$1_$2.leak
@@ -168,7 +168,7 @@ purge_files diff
 
 launch_exe
 
-rm a.out 2> /dev/null
+rm ft std 2> /dev/null
 
 
 

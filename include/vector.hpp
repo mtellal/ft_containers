@@ -18,55 +18,48 @@
     {
         public:
 
-            typedef T                                           value_type;
+            typedef T                                               value_type;
 
-            typedef Allocator                               allocator_type;
-            typedef typename Allocator::reference           reference;
-            typedef typename Allocator::const_reference     const_reference;
-            typedef typename Allocator::pointer             pointer;
-            typedef typename Allocator::const_pointer       const_pointer;
-
-            typedef typename Allocator::difference_type     difference_type;
-            typedef size_t                                  size_type;
+            typedef Allocator                                       allocator_type;
+            typedef typename Allocator::reference                   reference;
+            typedef typename Allocator::const_reference             const_reference;
+            typedef typename Allocator::pointer                     pointer;
+            typedef typename Allocator::const_pointer               const_pointer;
+            typedef typename Allocator::difference_type             difference_type;
+            typedef typename Allocator::size_type                   size_type;
 
             typedef  ft::random_access_iterator<value_type>         iterator;
             typedef  ft::random_access_iterator<const value_type>   const_iterator;
             typedef  ft::reverse_iterator<iterator>                 reverse_iterator;
             typedef  ft::reverse_iterator<const_iterator>           const_reverse_iterator;
 
-
             //////////////////////////////////////////////////////////////////////////////////////
             /////                         CONSTRUCTORS / DESTRUCTOR                          /////
             //////////////////////////////////////////////////////////////////////////////////////
 
-
-            explicit vector(const allocator_type& alloc = allocator_type()) : allocator(alloc),
-                _begin(NULL), _nb_construct(0), _nb_allocate(0)
+            explicit vector(const allocator_type& alloc = allocator_type()) :
+            allocator(alloc), _begin(NULL), _nb_construct(0), _nb_allocate(0)
             {}
-
 
             explicit vector(size_type n, const value_type& val = value_type(),
                 const allocator_type& alloc = allocator_type()) :
-            
             allocator(alloc), _begin(NULL), _nb_construct(n), _nb_allocate(n)
-
             {
-                size_type   i = 0;
+                size_type   i;
 
-                if (n > 0)
+                if (n)
                 {
+                    i = 0;
                     _begin = allocator.allocate(n);
                     while (i < n)
                         allocator.construct(_begin + i++, val);
                 }
             }
 
-
             template <class InputIterator>
             vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0) 
-                
-                : allocator(alloc)
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0) :
+            allocator(alloc)
             {
                 size_type       l;
                 size_type       i;
@@ -77,19 +70,14 @@
                 _nb_allocate = l;
                 i = 0;
                 while (first != last)
-                {
-                    allocator.construct(_begin + i, *first++);
-                    i++;
-                }
+                    allocator.construct(_begin + i++, *first++);
             }
 
-
-            vector(const vector& x) : allocator(x.allocator),
-                _begin(NULL), _nb_construct(0), _nb_allocate(0)
-
+            vector(const vector& x) :
+            allocator(x.allocator), _begin(NULL), _nb_construct(0), _nb_allocate(0)
             {
-                const_iterator    first;
-                iterator    it;
+                const_iterator  first;
+                iterator        it;
 
                 if (this != &x)
                 {
@@ -98,9 +86,7 @@
                     it = begin();
                     first = x.begin();
                     while (first != x.end())
-                    {
                         allocator.construct(it++.base(), *first++);
-                    }
                     _nb_construct = x.size();
                 }
             }
@@ -110,45 +96,33 @@
                 if (_nb_construct && _begin)
                     clear();
                 if (_nb_allocate && _begin)
-                {
                     allocator.deallocate(_begin, _nb_allocate);
-                }
             }
 
-
-
-            //////////////////////////////////////////////////////////////////////////////////////
-            /////                            MEMBERS FUNCTIONS                               /////
-            //////////////////////////////////////////////////////////////////////////////////////
-
-
-            vector<value_type, Allocator> & operator=(const vector<value_type, Allocator> & nv)
+            vector &    operator=(const vector & x)
             {
                 size_type   i;
-                size_type   n;
 
-                if (this != &nv)
+                if (this != &x)
                 {
-                    n = _nb_construct;
                     clear();
-                    if (nv._nb_construct > n)
+                    if (x._nb_construct > _nb_allocate)
                     {
                         if (_begin)
-                            allocator.deallocate(_begin, n);
-                        _begin = allocator.allocate(nv._nb_allocate);
-                        _nb_allocate = nv._nb_allocate;
+                            allocator.deallocate(_begin, _nb_allocate);
+                        _begin = allocator.allocate(x._nb_allocate);
+                        _nb_allocate = x._nb_allocate;
                     }
                     i = 0;
-                    _nb_construct = nv._nb_construct;
+                    _nb_construct = x._nb_construct;
                     while (_begin && i < _nb_construct)
                     {
-                        allocator.construct(_begin + i, *(nv._begin + i));
+                        allocator.construct(_begin + i, *(x._begin + i));
                         i++;
                     }
                 }
                 return (*this);
             }
-
 
             template <class InputIterator>
             void                assign(InputIterator first, InputIterator last,
@@ -172,7 +146,6 @@
                     *it++ = *first++;
             }
 
-
             void                assign(size_type n, const value_type & val)
             {
                 size_type   i;
@@ -191,17 +164,15 @@
                     allocator.construct(_begin + i++, val);
             }
 
-
-            allocator_type      get_allocator(void) const { return (allocator); }
-
+            allocator_type      get_allocator() const { return (allocator); }
 
             //////////////////////////////////////////////////////////////////////////////////////
             /////                            ELEMENTS ACCES                                  /////
             //////////////////////////////////////////////////////////////////////////////////////
 
-            pointer             operator+(const size_type n) const { return (_begin + n); }
+            reference           operator[] (size_type n) { return (*(_begin + n)); }
 
-            value_type&         operator[](size_type i) const { return (*(_begin + i)); }
+            const_reference     operator[] (size_type n) const { return (*(_begin + n)); }
 
             reference           at(size_type n)
             {
@@ -220,14 +191,15 @@
             }
 
             reference           front() { return (*_begin); }
+
             const_reference     front() const { return (*_begin); }
 
-
             reference           back() { return (*(end() - 1)); }
-            const_reference     back() const { return (*(end() - 1)); }
-            
+
+            const_reference     back() const { return (*(end() - 1)); }            
 
             pointer             data() { return (_begin); }
+
             const_pointer       data() const { return (_begin); }
 
 
@@ -236,69 +208,30 @@
             //////////////////////////////////////////////////////////////////////////////////////
 
             iterator            begin() { return (_begin); }
+
             const_iterator      begin() const { return (_begin); }
 
             iterator            end()  { return (_begin + size()); }
+
             const_iterator      end() const { return (_begin + size()); }
               
-            reverse_iterator    rbegin() { return (reverse_iterator(end())); }
+            reverse_iterator        rbegin() { return (reverse_iterator(end())); }
+
             const_reverse_iterator  rbegin() const { return (const_reverse_iterator(end())); }
 
-            reverse_iterator    rend() { return (reverse_iterator(begin())); }
+            reverse_iterator        rend() { return (reverse_iterator(begin())); }
+
             const_reverse_iterator  rend() const { return (const_reverse_iterator(begin())); }
 
             //////////////////////////////////////////////////////////////////////////////////////
             /////                               CAPACITY                                     /////
             //////////////////////////////////////////////////////////////////////////////////////
 
+            bool                empty() const { return (!_nb_construct); }
+
             size_type           size() const { return (_nb_construct); }
 
             size_type           max_size() const { return (allocator.max_size()); }
-
-            void                resize(size_type n, value_type val = value_type())
-            {
-                if (n == _nb_construct)
-                    return ;
-                if (n < _nb_construct)
-                {
-                    for (size_type i = n; i < _nb_construct; i++)
-                        allocator.destroy(_begin + i);
-                }
-                else if (n > _nb_allocate)
-                {
-                    vector          _new;
-                    size_type       size;
-                    size_type       i;
-
-                    i = 0;
-                    size = _nb_allocate;
-                    if (!size)
-                        size = 1;
-                    while (size < n)
-                        size *= 2;
-                    _new._begin = allocator.allocate(size);
-                    _new._nb_allocate = size;
-                    while (i < _nb_construct)
-                    {
-                        allocator.construct(_new + i, *(_begin + i));
-                        i++;
-                    }
-                    while (i < n)
-                        allocator.construct(_new + i++, val);
-                    _new._nb_construct = n;
-                    *this = _new;
-                }
-                else if (n > _nb_construct)
-                {
-                    for (size_type i = _nb_construct; i < n; i++)
-                        allocator.construct(_begin + i, val);
-                }
-                _nb_construct = n;
-            }
-
-            size_type           capacity() const { return (_nb_allocate) ;}
-
-            bool                empty() const { return (!_nb_construct); }
 
             void                reserve(size_type n)
             {
@@ -306,7 +239,7 @@
 
                 if (n > max_size())
                 {
-                    throw std::length_error("vector::reverse()");
+                    throw std::length_error("vector::reserve");
                 }
                 else if (n > _nb_allocate)
                 {
@@ -322,38 +255,48 @@
                     _nb_construct = _n._nb_construct;
                     _nb_allocate = _n._nb_allocate;
                     for (size_type i = 0; i < _n._nb_construct; i++)
-                        allocator.construct(_begin + i, *(_n + i));
+                        allocator.construct(_begin + i, *(_n._begin + i));
                 }
             }
-           
+
+            size_type           capacity() const { return (_nb_allocate) ;}
+
             //////////////////////////////////////////////////////////////////////////////////////
             /////                               MODIFIERS                                    /////
             //////////////////////////////////////////////////////////////////////////////////////
-
-            void                push_back(const value_type & val)
+            
+            void                clear(void)
             {
-                insert(end(), 1, val);
+                size_type   i;
+
+                i = 0;
+                while (i < _nb_construct && _begin)
+                    allocator.destroy(_begin + i++);
+                _nb_construct = 0;
             }
-
-
-            void                pop_back(void)
-            {
-                if (_nb_construct >= 1)
-                {
-                    allocator.destroy((--end()).base());
-                    _nb_construct--;
-                }
-            }
-
+            
             iterator            insert(iterator position, const value_type & val)
             {
                 size_type i;
+                size_type l;
 
-                i = ft::distance(begin(), position);
-                insert(position, 1, val);
-                return (_begin + i);
+                i = 0;
+                l =  ft::distance(begin(), position);
+                if (_nb_construct + 1 > _nb_allocate)
+                    insert(position, 1, val);
+                else
+                {
+                    while (_begin + i < position.base() && i < _nb_construct)
+                        i++;
+                    for (size_type j = _nb_construct; j > i; j--)
+                    {
+                        _begin[j] = _begin[j - 1];
+                    }
+                    allocator.construct(_begin + i, val);
+                    _nb_construct++;
+                }
+                return (position);
             }
-
 
             void                insert(iterator position, size_type n, const value_type & val)
             {
@@ -380,7 +323,6 @@
                *this = _new;
             }
 
-
             template <class InputIterator>
             void                insert(iterator position, InputIterator first, InputIterator last, 
                     typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type = 0)
@@ -395,7 +337,6 @@
                 it = begin();
                 itnew = _new.begin();
 
-                std::cout << *_new.begin() << std::endl;
                 while (_begin && it != position) 
                     allocator.construct((itnew++).base(), *it++);
                 while (first != last)
@@ -405,9 +346,46 @@
                *this = _new;
             }
 
+            void                push_back(const value_type & val)
+            {
+                if (_nb_construct + 1 > _nb_allocate)
+                    insert(end(), 1, val);
+                else
+                {
+                    allocator.construct(_begin + _nb_construct, val);
+                    _nb_construct++;
+                }
+            }
+
+            void                pop_back(void)
+            {
+                if (_nb_construct >= 1)
+                {
+                    allocator.destroy((--end()).base());
+                    _nb_construct--;
+                }
+            }
+
             iterator            erase(iterator position)
             {
-                return (erase(position, position + 1));
+                size_type   i;
+                iterator    it = position;
+
+                if (position == end())
+                    return (end());
+                else if (position < begin() || position > end())
+                    return (position);
+                i = 0;
+                allocator.destroy(position.base());
+                _nb_construct--;
+                while (_begin + i < position.base() && i < _nb_construct)
+                    i++;
+                while (i < _nb_construct)
+                {
+                    _begin[i] = _begin[i + 1]; 
+                    i++;
+                }
+                return (it);
             }
 
             iterator            erase(iterator first, iterator last)
@@ -418,13 +396,13 @@
                 iterator    itnew;
                 vector      _new;
 
-                if (first >= end())
-                    return (end());
-                else if (last < begin())
-                    return (begin());
-                else if (first > last)
+                if (first < begin())
+                    first = begin();
+                else if (first == last)
                     return (last);
-                
+                else if (first > last)
+                    return (begin());
+
                 l = ft::distance(begin(), first);
                 i = _nb_construct - ft::distance(first, last);
 
@@ -443,6 +421,47 @@
                     allocator.construct((itnew++).base(), *it++);
                 *this = _new;
                 return (_begin + l);
+            }
+
+            void                resize(size_type n, value_type val = value_type())
+            {
+                if (n == _nb_construct)
+                    return ;
+                if (n < _nb_construct)
+                {
+                    for (size_type i = n; i < _nb_construct; i++)
+                        allocator.destroy(_begin + i);
+                }
+                else if (n > _nb_allocate)
+                {
+                    vector          _new;
+                    size_type       size;
+                    size_type       i;
+
+                    i = 0;
+                    size = _nb_allocate;
+                    if (!size)
+                        size = 1;
+                    while (size < n)
+                        size *= 2;
+                    _new._begin = allocator.allocate(size);
+                    _new._nb_allocate = size;
+                    while (i < _nb_construct)
+                    {
+                        allocator.construct(_new._begin + i, *(_begin + i));
+                        i++;
+                    }
+                    while (i < n)
+                        allocator.construct(_new._begin + i++, val);
+                    _new._nb_construct = n;
+                    *this = _new;
+                }
+                else if (n > _nb_construct)
+                {
+                    for (size_type i = _nb_construct; i < n; i++)
+                        allocator.construct(_begin + i, val);
+                }
+                _nb_construct = n;
             }
 
             void                swap(vector & x)
@@ -468,15 +487,6 @@
                 _nb_allocate = alloctmp;
             }
 
-            void                clear(void)
-            {
-                size_type   i;
-
-                i = 0;
-                while (i < _nb_construct && _begin)
-                    allocator.destroy(_begin + i++);
-                _nb_construct = 0;
-            }
 
         private:
 
@@ -528,6 +538,13 @@ bool operator>=( const ft::vector<T,Alloc>& lhs,
                  const ft::vector<T,Alloc>& rhs )
 {
     return (!(lhs < rhs));
+}
+
+template< class T, class Alloc >
+void swap( ft::vector<T,Alloc>& lhs,
+           ft::vector<T,Alloc>& rhs )
+{
+    return (lhs.swap(rhs));
 }
 
 #endif

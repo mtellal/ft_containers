@@ -111,8 +111,6 @@ T	dec(T it, int n)
 	return (it);
 }
 
-
-
 #define _pair NAMESPACE::pair
 
 template <typename T>
@@ -158,59 +156,48 @@ void	printReverse(NAMESPACE::map<T1, T2> &mp)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#define T1 int
-#define T2 std::string
-
-NAMESPACE::map<T1, T2> mp;
-NAMESPACE::map<T1, T2>::iterator it = mp.end();
-
-void	ft_find(T1 const &k)
+template <class V>
+void	test()
 {
-	NAMESPACE::map<T1, T2>::iterator ret = mp.find(k);
+	V vct(10);
+	V vct2;
+	V vct3;
 
-	if (ret != it)
-		printPair(ret);
-	else
-		std::cout << "map::find(" << k << ") returned end()" << std::endl;
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+		vct[i] = (vct.size() - i) * 3;
+	printSize(vct);
+
+	vct2.insert(vct2.end(), 42);
+	vct2.insert(vct2.begin(), 2, 21);
+	printSize(vct2);
+
+	vct2.insert(vct2.end() - 2, 42);
+	printSize(vct2);
+
+	vct2.insert(vct2.end(), 2, 84);
+	printSize(vct2);
+
+	vct2.resize(4);
+	printSize(vct2);
+
+	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
+	vct.clear();
+	printSize(vct2);
+
+	printSize(vct);
+
+	for (int i = 0; i < 5; ++i)
+		vct3.insert(vct3.end(), i);
+	vct3.insert(vct3.begin() + 1, 2, 111);
+	printSize(vct3);
 }
 
-void	ft_count(T1 const &k)
+void	test_perf(size_t n)
 {
-	std::cout << "map::count(" << k << ")\treturned [" << mp.count(k) << "]" << std::endl;
-}
+	NAMESPACE::vector<int> v;
 
-void		test(void)
-{
-	mp[42] = "fgzgxfn";
-	mp[25] = "funny";
-	mp[80] = "hey";
-	mp[12] = "no";
-	mp[27] = "bee";
-	mp[90] = "8";
-	printSize(mp);
-
-	std::cout << "\t-- FIND --" << std::endl;
-	ft_find(12);
-	ft_find(3);
-	ft_find(35);
-	ft_find(90);
-	ft_find(100);
-
-	std::cout << "\t-- COUNT --" << std::endl;
-	ft_count(-3);
-	ft_count(12);
-	ft_count(3);
-	ft_count(35);
-	ft_count(90);
-	ft_count(100);
-
-	mp.find(27)->second = "newly inserted mapped_value";
-
-	printSize(mp);
-
-	NAMESPACE::map<T1, T2> const c_map(mp.begin(), mp.end());
-	std::cout << "const map.find(" << 42 << ")->second: [" << c_map.find(42)->second << "]" << std::endl;
-	std::cout << "const map.count(" << 80 << "): [" << c_map.count(80) << "]" << std::endl;
+	for (size_t i = 0; i < n; i++)
+		v.insert(v.begin(), i);
 }
 
 int main()
@@ -221,10 +208,16 @@ int main()
 
 	gettimeofday(&begin, NULL);
 	
-	test();       
+	test<NAMESPACE::vector<int> >();      
+
+	test_perf(1000);
 
 	gettimeofday(&end, NULL);
 
-	time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
-	std::cout << time << std::endl;	
+	double uend = (double)end.tv_usec / 1000;
+	double ubegin = (double)begin.tv_usec / 1000;
+
+	time = (uend - ubegin);
+
+	std::cout << time << std::endl;
 }

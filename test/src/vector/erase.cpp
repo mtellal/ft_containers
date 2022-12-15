@@ -47,6 +47,19 @@ void	test()
 	checkErase(vct, vct.erase(vct.begin(), vct.end()));
 }
 
+void	test_perf(size_t n)
+{
+	NAMESPACE::vector<int> v(n);
+	
+	for (size_t i = 0; i < n; i++)
+		v.erase(v.begin());
+
+	NAMESPACE::vector<int> v2(n);
+
+	v2.erase(v2.begin(), v2.end());
+	
+}
+
 int main()
 {
 	struct timeval begin;
@@ -56,9 +69,15 @@ int main()
 	gettimeofday(&begin, NULL);
 	
 	test<NAMESPACE::vector<std::string> >();       
+	
+	test_perf(1000);
 
 	gettimeofday(&end, NULL);
 
-time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
+	double uend = (double)end.tv_usec / 1000;
+	double ubegin = (double)begin.tv_usec / 1000;
+
+	time = ((double)(uend - ubegin));
+	
 	std::cout << time << std::endl;
 }

@@ -39,6 +39,14 @@ void	test()
 	printSize(vct3);
 }
 
+void	test_perf(size_t n)
+{
+	NAMESPACE::vector<int> v;
+
+	for (size_t i = 0; i < n; i++)
+		v.insert(v.begin(), i);
+}
+
 int main()
 {
 	struct timeval begin;
@@ -47,10 +55,16 @@ int main()
 
 	gettimeofday(&begin, NULL);
 	
-	test<NAMESPACE::vector<int> >();       
+	test<NAMESPACE::vector<int> >();      
+
+	test_perf(1000);
 
 	gettimeofday(&end, NULL);
 
-time = ((double)(end.tv_usec - begin.tv_usec)) / 1000;
+	double uend = (double)end.tv_usec / 1000;
+	double ubegin = (double)begin.tv_usec / 1000;
+
+	time = (uend - ubegin);
+
 	std::cout << time << std::endl;
 }

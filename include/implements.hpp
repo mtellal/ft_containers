@@ -84,7 +84,7 @@ struct integral_constant {
   operator T() { return v; }
 };
 
-template <class T>  struct is_integral :               public     ft::integral_constant<T, false> {};
+template <class T>  struct is_integral :                            ft::integral_constant<T, false> {};
 template <>         struct is_integral<bool> :                    ft::integral_constant<bool, true> {};
 template <>         struct is_integral<char> :                    ft::integral_constant<bool, true> {};
 template <>         struct is_integral<wchar_t> :                 ft::integral_constant<bool, true> {};
