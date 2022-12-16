@@ -24,7 +24,6 @@
 
 using namespace NAMESPACE;
 
-
 template <class T, bool v>
 struct container_constant {
   typedef T value_type;

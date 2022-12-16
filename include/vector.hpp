@@ -364,7 +364,6 @@
 
             iterator            erase(iterator position)
             {
-                vector      old(*this);
                 size_type   pos;
 
                 if (position == end())
@@ -374,22 +373,19 @@
 
                 pos = ft::distance(begin(), position);
 
-                for (size_type i = pos; i < old._nb_construct; i++)
-                {
-                    allocator.destroy(_begin + i);
-                    if (_begin + i == position.base())
-                        _nb_construct--;
-                }
+                allocator.destroy(_begin + pos);
+                _nb_construct--;
 
-                for (size_type i = pos; i + 1 < old._nb_construct; i++)
-                    allocator.construct(_begin + i, *(old._begin + i + 1));
-                
+                for (size_type i = pos; i < _nb_construct; i++)
+                {
+                    allocator.construct(_begin + i, _begin[i + 1]);
+                    allocator.destroy(_begin + i);
+                }
                 return (_begin + pos);
             }
 
             iterator            erase(iterator first, iterator last)
             {
-                vector      old(*this);
                 size_type   pos;
                 size_type   sup;
 
@@ -403,18 +399,17 @@
                 pos = ft::distance(begin(), first);
                 sup = ft::distance(first, last);
 
-                for (size_type i = pos; i < old._nb_construct; i++)
+                while (first != last)
+                    allocator.destroy(first++.base());
+                
+                _nb_construct -= sup;
+
+                for (size_type i = pos; i < _nb_construct; i++)
                 {
-                    allocator.destroy(_begin + i);
-                    if (_begin + i >= first.base() && _begin + i < last.base())
-                    {
-                        _nb_construct--;
-                    }
+                    allocator.construct(_begin + i, _begin[i + sup]);
+                    allocator.destroy(_begin + i + sup);
                 }
 
-                for (size_type i = pos; i + sup < old._nb_construct; i++)
-                    allocator.construct(_begin + i, *(old._begin + i + sup));
-                
                 return (_begin + pos);
             }
 
