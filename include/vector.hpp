@@ -274,37 +274,36 @@
             
             iterator            insert(iterator position, const value_type & val)
             {
-                vector old(*this);
-                size_type i;
                 size_type pos;
 
-                i = 0;
                 pos = ft::distance(begin(), position);
+
                 reserve(_nb_construct + 1);
 
-                for (size_t i = pos; i < old._nb_construct; i++)
-                    allocator.destroy(_begin + i);
+                for (size_t i = _nb_construct; i > pos; i--)
+                {
+                    allocator.construct(_begin + i, _begin[i - 1]);
+                    allocator.destroy(_begin + i - 1);
+                }
 
                 allocator.construct(_begin + pos, val);
                 _nb_construct++;
 
-                for (size_t i = pos; i < old._nb_construct; i++)
-                    allocator.construct(_begin + i + 1, old[i]);
                 return (_begin + pos);
             }
 
             iterator                insert(iterator position, size_type n, const value_type & val)
             {
-                vector old(*this);
-                size_type i;
                 size_type pos;
 
-                i = 0;
                 pos = ft::distance(begin(), position);
                 reserve(_nb_construct + n);
-
-                for (size_type i = pos; i < old._nb_construct; i++)
-                    allocator.destroy(_begin + i);
+               
+                for (size_t i = _nb_construct; i > pos; i--)
+                {
+                    allocator.construct(_begin + i + n - 1, _begin[i - 1]);
+                    allocator.destroy(_begin + i - 1);
+                }
 
                 for (size_type i = 0; i < n; i++)
                 {
@@ -312,8 +311,6 @@
                     _nb_construct++;
                 }
 
-                for (size_type i = pos; i < old._nb_construct; i++)
-                    allocator.construct(_begin + i + n, old[i]);
                 return (_begin + pos);
             }
 
@@ -373,14 +370,16 @@
 
                 pos = ft::distance(begin(), position);
 
-                allocator.destroy(_begin + pos);
+                for (size_type i = pos; i < _nb_allocate; i++)
+                {
+                    if (i < _nb_construct)
+                        allocator.destroy(_begin + i);
+                    if (i + 1 < _nb_construct)
+                        allocator.construct(_begin + i, _begin[i + 1]);
+                }
+
                 _nb_construct--;
 
-                for (size_type i = pos; i < _nb_construct; i++)
-                {
-                    allocator.construct(_begin + i, _begin[i + 1]);
-                    allocator.destroy(_begin + i);
-                }
                 return (_begin + pos);
             }
 
@@ -399,16 +398,15 @@
                 pos = ft::distance(begin(), first);
                 sup = ft::distance(first, last);
 
-                while (first != last)
-                    allocator.destroy(first++.base());
-                
-                _nb_construct -= sup;
-
-                for (size_type i = pos; i < _nb_construct; i++)
+                for (size_type i = pos; i < _nb_allocate; i++)
                 {
-                    allocator.construct(_begin + i, _begin[i + sup]);
-                    allocator.destroy(_begin + i + sup);
+                    if (i < _nb_construct)
+                        allocator.destroy(_begin + i);
+                    if (i + sup < _nb_construct)
+                        allocator.construct(_begin + i, _begin[i + sup]);
                 }
+
+                _nb_construct -= sup;
 
                 return (_begin + pos);
             }
