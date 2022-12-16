@@ -18,7 +18,7 @@
     {
         public:
 
-            typedef  size_t                          difference_type;
+            typedef  size_t                             difference_type;
             typedef  T*                                  pointer;
             typedef  T&                                reference;
 

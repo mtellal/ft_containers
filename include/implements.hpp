@@ -99,7 +99,6 @@ template <>         struct is_integral<unsigned int> :            ft::integral_c
 template <>         struct is_integral<unsigned long int> :       ft::integral_constant<bool, true> {};
 template <>         struct is_integral<unsigned long long int> :  ft::integral_constant<bool, true> {};
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 /////                                 ::EQUAL                                    /////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -241,20 +240,18 @@ pair<T1, T2>  make_pair(T1 x, T2 y)
 /////                          OTHER FUNCTIONS FROM STD                          /////
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 template <class InputIterator>
-typename ft::iterator_traits<InputIterator>::difference_type
-  distance(InputIterator first, InputIterator last)
-{
-  typename InputIterator::difference_type l = 0;
+	typename ft::iterator_traits<InputIterator>::difference_type
+	distance(InputIterator first, InputIterator last)	{
+	size_t l = 0;
 
-    while (first != last)
-    {
-        first++;
-        l++;
-    }
-    return (l);
-}
+		while (first != last)
+		{
+			first++;
+			l++;
+		}
+		return (l);
+	}
 
 template<class Iterator>
 Iterator copy(Iterator first, Iterator last, Iterator result)

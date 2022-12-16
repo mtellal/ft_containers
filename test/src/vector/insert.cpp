@@ -43,8 +43,13 @@ void	test_perf(size_t n)
 {
 	NAMESPACE::vector<int> v;
 
-	for (size_t i = 0; i < n; i++)
+	for (size_t i = 0; i < n / 10; i++)
 		v.insert(v.begin(), i);
+
+	NAMESPACE::vector<int> v2;
+
+	v2.insert(v2.begin(), v.size(), *v.begin());
+	v2.insert(v2.begin(), v.begin(), v.end());
 }
 
 int main()
