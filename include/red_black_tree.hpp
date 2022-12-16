@@ -547,21 +547,21 @@ class   RedBlackTree
             node_pointer    c;
 
             c = p;
-            if (!p->right)
+            if (p && !p->right)
             {
                 c = p->left;
                 _transplant(p, p->left);
             }
-            else if (!p->left)
+            else if (p && !p->left)
             {
                 c = p->right;
                 _transplant(p, p->right);
             }
-            else
+            else if (p)
             {
                 m = min_element(p->right);
                 c = m->right;
-                if (m->parent != p)
+                if (m && m->parent != p)
                 {
                     _transplant(m, m->right);
                     m->right = p->right;
@@ -571,7 +571,7 @@ class   RedBlackTree
                 m->left = p->left;
                 m->left->parent = m;
             }
-            if (c && !c->red)
+            if (c && c != _end && !c->red)
                 delete_fixup(c);
         }
 

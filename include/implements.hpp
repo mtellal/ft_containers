@@ -253,6 +253,7 @@ template <class InputIterator>
 		return (l);
 	}
 
+
 template<class Iterator>
 Iterator copy(Iterator first, Iterator last, Iterator result)
 {

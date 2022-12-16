@@ -17,257 +17,148 @@
 #include <stack>
 #include <list>
 #include <iomanip>
+#include <sstream>
 
 #include <sys/time.h>
 
-#define NAMESPACE ft
+#define NAMESPACE std
 
 using namespace NAMESPACE;
 
-template <class T, bool v>
-struct container_constant {
-  typedef T value_type;
-  typedef container_constant<T,v> type;
-  static const bool value = v;
-  operator T() { return v; }
-};
-
-template <class T>  struct is_map :				  container_constant<T, false> {};
-template <class K, class V>         struct is_map<std::map<K, V> > :   container_constant<bool, true> {};
-template <class K, class V>         struct is_map<ft::map<K, V> > :   container_constant<bool, true> {};
-
-template <class T>  struct is_vector :				  container_constant<T, false> {};
-template <class V>         struct is_vector<std::vector<V> > :   container_constant<bool, true> {};
-template <class V>         struct is_vector<ft::vector<V> > :   container_constant<bool, true> {};
-
-
-
-template <class V>
-void printSize(const V & vector,
-		typename ft::enable_if<is_vector<V>::value, int>::type = 0)
+namespace ft
 {
-	size_t	i = 0;
-	std::cout << "size = " << vector.size() <<
-				"\ncapacity = " << (vector.capacity() ? "OK" : "KO") <<
-				"\nmax_size = " << vector.max_size() <<  std::endl;
+	//static std::ostream& 									cout = std::cout;
+	typedef std::string										string;
 
-	while (i < vector.size())
+
+# ifndef TO_STRING
+#  define TO_STRING
+	string	to_string(size_t n)
 	{
-		std::cout << vector[i] << std::endl;
-		i++;
+		std::stringstream tmp;
+
+		tmp << n;
+
+		return tmp.str();
 	}
-	std::cout << "\n\n";
+# endif
 }
 
 
-// --- Class foo
-template <typename T>
-class foo {
-	public:
-		typedef T	value_type;
-
-		foo(void) : value(), _verbose(false) { };
-		foo(value_type src, const bool verbose = false) : value(src), _verbose(verbose) { };
-		foo(foo const &src, const bool verbose = false) : value(src.value), _verbose(verbose) { };
-		~foo(void) { if (this->_verbose) std::cout << "~foo::foo()" << std::endl; };
-		void m(void) { std::cout << "foo::m called [" << this->value << "]" << std::endl; };
-		void m(void) const { std::cout << "foo::m const called [" << this->value << "]" << std::endl; };
-		foo &operator=(value_type src) { this->value = src; return *this; };
-		foo &operator=(foo const &src) {
-			if (this->_verbose || src._verbose)
-				std::cout << "foo::operator=(foo) CALLED" << std::endl;
-			this->value = src.value;
-			return *this;
-		};
-		value_type	getValue(void) const { return this->value; };
-		void		switchVerbose(void) { this->_verbose = !(this->_verbose); };
-
-		operator value_type(void) const {
-			return value_type(this->value);
-		}
-	private:
-		value_type	value;
-		bool		_verbose;
-};
-
-template <typename T>
-std::ostream	&operator<<(std::ostream &o, foo<T> const &bar) {
-	o << bar.getValue();
-	return o;
-}
-// --- End of class foo
-
-template <typename T>
-T	inc(T it, int n)
+template <class Key, class T>
+void	print(map<Key, T>& lst)
 {
-	while (n-- > 0)
-		++it;
-	return (it);
+	for (typename map<Key, T>::iterator it = lst.begin(); it != lst.end(); it++)
+		std::cout << it->first << " => " << it->second << '\n';
 }
 
-template <typename T>
-T	dec(T it, int n)
+int main ()
 {
-	while (n-- > 0)
-		--it;
-	return (it);
-}
+  map<char,int> foo,bar;
 
-#define _pair NAMESPACE::pair
+  foo['x']=100;
+  foo['y']=200;
 
-template <typename T>
-std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
-{
-	o << "key: " << iterator->first << " | value: " << iterator->second;
-	if (nl)
-		o << std::endl;
-	return ("");
-}
+  bar['a']=11;
+  bar['b']=22;
+  bar['c']=33;
 
-template <typename T_MAP>
-void	printSize(T_MAP const &mp, bool print_content = 1,
-		typename ft::enable_if<is_map<T_MAP>::value, int>::type = 0)
-{
-	std::cout << "size: " << mp.size() << std::endl;
-	std::cout << "max_size: " << mp.max_size() << std::endl;
-	if (print_content)
+
+  map<char, int>::const_iterator tmp = foo.begin(); //tmp iterates through foo
+  map<char, int>::const_iterator tmp2 = bar.begin(); //tmp2 iterates through bar
+
+  swap(bar, foo); //tmp iterates through bar
+				//tmp2 iterates through foo
+
+
+  print(bar);
+  print(foo);
+
+  map<char, int>	other;
+
+  other['1'] = 73;
+  other['2'] = 173;
+  other['3'] = 763;
+  other['4'] = 73854;
+  other['5'] = 74683;
+  other['6'] = 753;
+
+  map<char, int>::const_iterator tmp3 = other.begin(); // tmp3 iterates through other
+
+  (void)tmp3;
+  std::cout << "foo contains:\n";
+  for (map<char,int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+    std::cout << it->first << " => " << it->second << '\n';
+
+  std::cout << "bar contains:\n";
+  for (map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
+    std::cout << it->first << " => " << it->second << '\n';
+
+	while(tmp != bar.end())
 	{
-		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
-		std::cout << std::endl << "Content is:" << std::endl;
-		for (; it != ite; ++it)
-		{
-			std::cout << " - " << printPair(it, false) << std::endl;
-		}
+		std::cout << tmp->first << " => " << tmp->second << '\n';
+		tmp++;
 	}
-	std::cout << "###############################################" << std::endl;
-}
+	tmp--;
 
-template <typename T1, typename T2>
-void	printReverse(NAMESPACE::map<T1, T2> &mp)
-{
-	typename NAMESPACE::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
-
-	std::cout << "printReverse:" << std::endl;
-	while (it != ite) {
-		it--;
-		std::cout << "-> " << printPair(it, false) << std::endl;
-	}
-	std::cout << "_______________________________________________" << std::endl;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-#include <iostream>
-#include <string>
-#include <deque>
-#if 1 //CREATE A REAL STL EXAMPLE
-	#include <map>
-	#include <stack>
-	#include <vector>
-#else
-	#include <map.hpp>
-	#include <stack.hpp>
-	#include <vector.hpp>
-#endif
-
-#include <stdlib.h>
-
-#define MAX_RAM 4294967296
-#define BUFFER_SIZE 4096
-struct Buffer
-{
-	int idx;
-	char buff[BUFFER_SIZE];
-};
-
-
-#define COUNT (MAX_RAM / (int)sizeof(Buffer))
-
-template<typename T>
-class MutantStack : public NAMESPACE::stack<T>
-{
-public:
-	MutantStack() {}
-	MutantStack(const MutantStack<T>& src) { *this = src; }
-	MutantStack<T>& operator=(const MutantStack<T>& rhs) 
+	while(tmp2 != foo.end())
 	{
-		this->c = rhs.c;
-		return *this;
+		std::cout << tmp2->first << " => " << tmp2->second << '\n';
+		tmp2++;
 	}
-	~MutantStack() {}
+	tmp2--;
 
-	typedef typename NAMESPACE::stack<T>::container_type::iterator iterator;
-
-	iterator begin() { return this->c.begin(); }
-	iterator end() { return this->c.end(); }
-};
-
-int main(int argc, char** argv) {
-	if (argc != 2)
+	swap(other, foo); //tmp2 iterates through other
+					//tmp3 iterates throught foo
+	print(other);
+	print(foo);
+	print(bar);
+	while(tmp != bar.begin())
 	{
-		std::cerr << "Usage: ./test seed" << std::endl;
-		std::cerr << "Provide a seed please" << std::endl;
-		std::cerr << "Count value:" << COUNT << std::endl;
-		return 1;
+		std::cout << tmp->first << " => " << tmp->second << '\n';
+		tmp--;
 	}
-	const int seed = atoi(argv[1]);
-	srand(seed);
+	std::cout << tmp->first << " => " << tmp->second << '\n';
 
-	NAMESPACE::vector<std::string> vector_str;
-	NAMESPACE::vector<int> vector_int;
-	NAMESPACE::stack<int> stack_int;
-	NAMESPACE::vector<Buffer> vector_buffer;
-	NAMESPACE::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
-	NAMESPACE::map<int, int> map_int;
+	while(tmp2 != other.begin())
+	{
+		std::cout << tmp2->first << " => " << tmp2->second << '\n';
+		tmp2--;
+	}
+	std::cout << tmp2->first << " => " << tmp2->second << '\n';
 
-	for (int i = 0; i < COUNT; i++)
+	while(tmp3 != foo.end())
 	{
-		vector_buffer.push_back(Buffer());
+		std::cout << tmp3->first << " => " << tmp3->second << '\n';
+		tmp3++;
 	}
+	tmp3--;
 
-	for (int i = 0; i < COUNT; i++)
-	{
-		const int idx = rand() % COUNT;
-		vector_buffer[idx].idx = 5;
-	}
-	NAMESPACE::vector<Buffer>().swap(vector_buffer);
+	swap(bar, foo);
+	swap(foo, bar);
+	swap(bar, foo); //tmp3 iterates through bar
+				//tmp iterates through foo
 
-	try
+	print(other);
+	print(foo);
+	print(bar);
+
+	while(tmp != foo.end())
 	{
-		for (int i = 0; i < COUNT; i++)
-		{
-			const int idx = rand() % COUNT;
-			vector_buffer.at(idx);
-			std::cerr << "Error: THIS VECTOR SHOULD BE EMPTY!!" <<std::endl;
-		}
-	}
-	catch(const std::exception& e)
-	{
-		//NORMAL ! :P
-	}
-	
-	for (int i = 0; i < COUNT; ++i)
-	{
-		map_int.insert(NAMESPACE::make_pair(rand(), rand()));
+		std::cout << tmp->first << " => " << tmp->second << '\n';
+		tmp++;
 	}
 
-	int sum = 0;
-	for (int i = 0; i < 10000; i++)
+	while(tmp2 != other.end())
 	{
-		int access = rand();
-		sum += map_int[access];
+		std::cout << tmp2->first << " => " << tmp2->second << '\n';
+		tmp2++;
 	}
-	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
+	while(tmp3 != bar.begin())
 	{
-		NAMESPACE::map<int, int> copy = map_int;
+		std::cout << tmp3->first << " => " << tmp3->second << '\n';
+		tmp3--;
 	}
-	MutantStack<char> iterable_stack;
-	for (char letter = 'a'; letter <= 'z'; letter++)
-		iterable_stack.push(letter);
-	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
-	{
-		std::cout << *it;
-	}
-	std::cout << std::endl;
-	return (0);
+	std::cout << tmp3->first << " => " << tmp3->second << '\n';
 }

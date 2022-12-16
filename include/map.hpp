@@ -215,11 +215,9 @@ class map
 
         void                    erase(iterator first, iterator last)
         {
-            iterator    it;
-
             while (first != last)
             {
-                erase(first++);
+                _tree.erase(first++);
             }
         }
 
@@ -278,7 +276,7 @@ class map
             while (it != end())
             {
                 if (!_compare(it->first, k))
-                    return (it);
+                   return (it);
                 it++;
             }
             return (it);
@@ -430,6 +428,13 @@ bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
                  const ft::map<Key,T,Compare,Alloc>& rhs )
 {
     return (!(lhs < rhs));
+}
+
+template< class Key, class T, class Compare, class Alloc >
+void swap( ft::map<Key,T,Compare,Alloc>& lhs,
+           ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    lhs.swap(rhs);
 }
 
 #endif

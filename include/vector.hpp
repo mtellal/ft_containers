@@ -246,7 +246,7 @@
             {
                 size_type pos;
 
-                pos = ft::distance(begin(), position);
+                pos = ft::distance(iterator(_begin), position);
 
                 reserve(_nb_construct + 1);
 
@@ -266,7 +266,7 @@
             {
                 size_type pos;
 
-                pos = ft::distance(begin(), position);
+                pos = ft::distance(iterator(_begin), position);
                 
                 reserve(_nb_construct + n);
                
@@ -295,7 +295,7 @@
                 size_type   sup;
 
                 i = 0;
-                pos = ft::distance(begin(), position);
+                pos = ft::distance(iterator(_begin), position);
                 sup = ft::distance(first, last);
                 
                reserve(_nb_construct + sup);
@@ -338,7 +338,7 @@
                 else if (position < begin() || position > end())
                     return (position);
 
-                pos = ft::distance(begin(), position);
+                pos = ft::distance(iterator(_begin), position);
 
                 for (size_type i = pos; i < _nb_allocate; i++)
                 {
@@ -365,7 +365,7 @@
                 else if (first > last)
                     return (begin());
 
-                pos = ft::distance(begin(), first);
+                pos = ft::distance(iterator(_begin), first);
                 sup = ft::distance(first, last);
 
                 for (size_type i = pos; i < _nb_allocate; i++)
