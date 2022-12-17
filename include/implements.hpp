@@ -76,7 +76,7 @@ template <class T>                    struct enable_if<true, T> { typedef T type
 /////                               ::IS_INTEGRAL                                /////
 //////////////////////////////////////////////////////////////////////////////////////
 
-template <class T, bool v>
+template <class T, T v>
 struct integral_constant {
   typedef T value_type;
   typedef integral_constant<T,v> type;
@@ -84,7 +84,7 @@ struct integral_constant {
   operator T() { return v; }
 };
 
-template <class T>  struct is_integral :                            ft::integral_constant<T, false> {};
+template <class T>  struct is_integral :                          ft::integral_constant<bool, false> {};
 template <>         struct is_integral<bool> :                    ft::integral_constant<bool, true> {};
 template <>         struct is_integral<char> :                    ft::integral_constant<bool, true> {};
 template <>         struct is_integral<wchar_t> :                 ft::integral_constant<bool, true> {};
@@ -174,10 +174,11 @@ struct pair
 
   pair() : first(), second() {}
 
+  pair (const first_type & a, const second_type & b) : first(a), second(b) {}
+  
   template <class U, class V>
   pair (const pair<U, V> & pr) : first(pr.first), second(pr.second) {}
 
-  pair (const first_type & a, const second_type & b) : first(a), second(b) {}
 
   pair & operator=(const pair & pr)
   {
@@ -199,7 +200,7 @@ bool  operator==(const ft::pair<T1, T2> & lhs, const ft::pair<T1, T2> & rhs)
 template <class T1, class T2>
 bool  operator!=(const ft::pair<T1, T2> & lhs, const ft::pair<T1, T2> & rhs)
 {
-  return (lhs.first != rhs.first && lhs.second != rhs.second);
+  return (!(lhs == rhs));
 }
 
 template< class T1, class T2 >
@@ -211,19 +212,19 @@ bool operator<( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 template< class T1, class T2 >
 bool operator<=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
-  return (lhs.first <= rhs.first && lhs.second <= rhs.second);
+  return (!(rhs < lhs));
 }
 
 template< class T1, class T2 >
 bool operator>( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
-  return (lhs.first > rhs.first || ((lhs.first == rhs.first) && lhs.second > rhs.second));
+  return (rhs < lhs);
 }
 
 template< class T1, class T2 >
 bool operator>=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 {
-  return (lhs.first >= rhs.first && lhs.second >= rhs.second);
+  return (!(lhs < rhs));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +232,7 @@ bool operator>=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs )
 //////////////////////////////////////////////////////////////////////////////////////
 
 template <class T1, class T2>
-pair<T1, T2>  make_pair(T1 x, T2 y)
+ft::pair<T1, T2>  make_pair(T1 x, T2 y)
 {
   return (ft::pair<T1, T2>(x, y));
 }

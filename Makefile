@@ -10,11 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
+SHELL := /bin/bash
+
 CC = clang++
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
-
-NAME = containers
 
 SRC = main.cpp
 
@@ -22,18 +22,32 @@ OBJ = $(SRC:.cpp=.o)
 
 HEADERS = -I ./include
 
-all: $(NAME)
+all: STD FT
 
-$(NAME): $(OBJ)
-	$(CC) $(FLAGS) -o $(NAME) $(OBJ)
+	@echo "execute std test"
+	@./exestd 100 > tmp_std
+	
+	@echo "execute ft test"
+	@./exeft 100 > tmp_ft
+	
+	@rm exeft exestd
 
-%.o:%.cpp
-	$(CC) $(FLAGS) $(HEADERS) -o $@ -c $<
+	@diff tmp_ft tmp_std > tmp_diff 
+
+	@echo -n "DIFF: "
+	@if [ ! -s tmp_diff ]; then echo -e "\033[1;32m" "OK" "\033[0;37m"; else cat tmp_diff; fi
+	
+
+STD: $(SRC)
+	$(CC) $(FLAGS) $(HEADERS) -D NAMESPACE=std -o exestd $(SRC)
+
+FT: $(SRC)
+	$(CC) $(FLAGS) $(HEADERS) -D NAMESPACE=ft -o exeft $(SRC)
 
 clean:
+	rm -rf tmp_ft tmp_std tmp_diff
 	rm -rf $(OBJ)
 
 fclean: clean 
-	rm -rf $(NAME)
 
 re: fclean all
