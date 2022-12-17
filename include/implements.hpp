@@ -265,4 +265,44 @@ Iterator copy(Iterator first, Iterator last, Iterator result)
   return result;
 }
 
+template <class T>
+struct Node
+{ 
+    typedef T       value_type;
+    typedef T&      reference;
+    typedef T*      pointer;
+    typedef Node*   node_pointer;
+
+    typedef typename T::first_type  first_type;
+    typedef typename T::second_type second_type;
+
+    value_type           value;    
+    node_pointer         parent;    
+    node_pointer         right;    
+    node_pointer         left;      
+    bool                 red;       
+
+    Node () : value(T()), parent(NULL), right(NULL), left(NULL), red(0) {}
+
+    Node (const value_type & v, const node_pointer & p = 0, const node_pointer & r = 0,
+        const node_pointer & l = 0, bool rd = 0):
+    value(v), parent(p), right(r), left(l), red(rd) {}
+
+    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red) {}
+
+    ~Node() {}
+
+    Node & operator=(const Node & x)
+    {
+        if (this != &x)
+        {
+            value = x.value;
+            right = x.right;
+            left = x.left;
+            red = x.red;
+        }
+        return (*this);
+    }
+};
+
 #endif

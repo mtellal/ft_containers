@@ -13,63 +13,9 @@
 #ifndef RedBlackTreeIterator_HPP
 #define RedBlackTreeIterator_HPP
 
-template <class T>
-struct Node
-{ 
-    typedef T       value_type;
-    typedef T&      reference;
-    typedef T*      pointer;
-    typedef Node*   node_pointer;
-
-    typedef typename T::first_type  first_type;
-    typedef typename T::second_type second_type;
-
-    value_type           value;     // ft::pair<X,Y>
-    node_pointer         parent;    // parent node
-    node_pointer         right;     // right node
-    node_pointer         left;      // left node
-    bool                 red;       // color (red or !red = black)
-
-    Node (void) : value(T()), parent(NULL), right(NULL), left(NULL), red(0)
-    { 
-    }
-
-    Node (const value_type & v, const node_pointer & p = 0, const node_pointer & r = 0,
-        const node_pointer & l = 0, bool rd = 0):
-    value(v), parent(p), right(r), left(l), red(rd)
-    {
-    }
-
-    Node (const Node & x) : value(x.value), right(x.right), left(x.left), red(x.red) {}
-
-    Node & operator=(const Node & x)
-    {
-        if (this != &x)
-        {
-            value = x.value;
-            right = x.right;
-            left = x.left;
-            red = x.red;
-        }
-        return (*this);
-    }
-
-    // debug function 
-
-    friend std::ostream & operator<<(std::ostream & output, const Node & obj)
-    {
-        output << "\n////// NODE (" << &obj << ") /////\n";
-        output << "key = " << obj.value.first << "\nvalue = " << obj.value.second << "\nparent = "
-        << obj.parent << "\nright = " << obj.right << "\nleft = " << obj.left << "\nred = " << obj.red;
-        return (output);
-    }
-};
-
-
 template < class Pair, class Compare = std::less<Pair>, class Node = ft::Node<Pair> >
 class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag, Pair >
 {
-
     public:
 
         typedef ft::iterator<ft::bidirectional_iterator_tag, Pair>  iterator;
@@ -95,7 +41,7 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         RedBlackTreeIterator(const node_pointer & node, const node_pointer & end) :
             _node(node), _end(end) {}
 
-        virtual ~RedBlackTreeIterator() {}
+        ~RedBlackTreeIterator() {}
 
         operator RedBlackTreeIterator<const Pair, Compare, Node >() const
         {
@@ -111,24 +57,22 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
             }
             return (*this);
         }
-    
-        node_type    operator() () { return (*_node); }
-
-        bool    operator==(const RedBlackTreeIterator & x)
-        {
-            return (_node == x._node);
-        }
-
-        bool    operator!=(const RedBlackTreeIterator & x)
-        {
-             return (_node != x._node);
-        }
 
         node_pointer    base() const { return (_node); }
+    
+        ////////////////////             EQUAL/NOT EQUAL OPRATORS       ////////////////////////
 
-        pair_reference      operator*(void) const { return (_node->value); }
-        pair*               operator->() const { return &(_node->value); }
+        bool            operator==(const RedBlackTreeIterator & x) { return (_node == x._node); }
 
+        bool            operator!=(const RedBlackTreeIterator & x) { return (_node != x._node); }
+
+        ////////////////////             DEREFERENCEMENT OPRATORS       ////////////////////////
+
+        pair_reference  operator*() const { return (_node->value); }
+
+        pair*           operator->() const { return &(_node->value); }
+
+        ////////////////////             IN/DECREMENTATION OPRATORS       ////////////////////////
 
         RedBlackTreeIterator &  operator++()
         {
@@ -258,7 +202,6 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
 
 };
 
-
 template <class P, class C, class N>
 bool    operator==(const RedBlackTreeIterator<P, C, N> & lhs,
                     const RedBlackTreeIterator<P, C, N> & rhs)
@@ -285,62 +228,6 @@ bool    operator!=(const RedBlackTreeIterator<P, C, N> & lhs,
                     const RedBlackTreeIterator<const P, C, N> & rhs)
 {
     return (lhs.base() != rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator>(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<P, C, N> & rhs)
-{
-    return (lhs.base() < rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator>(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<const P, C, N> & rhs)
-{
-    return (lhs.base() < rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator>=(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<P, C, N> & rhs)
-{
-    return (lhs.base() <= rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator>=(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<const P, C, N> & rhs)
-{
-    return (lhs.base() <= rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator<(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<P, C, N> & rhs)
-{
-    return (lhs.base() > rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator<(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<const P, C, N> & rhs)
-{
-    return (lhs.base() > rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator<=(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<P, C, N> & rhs)
-{
-    return (lhs.base() >= rhs.base());
-}
-
-template <class P, class C, class N>
-bool    operator<=(const RedBlackTreeIterator<P, C, N> & lhs,
-                    const RedBlackTreeIterator<const P, C, N> & rhs)
-{
-    return (lhs.base() >= rhs.base());
 }
 
 #endif

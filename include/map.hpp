@@ -353,23 +353,8 @@ bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
 }
 
 template< class Key, class T, class Compare, class Alloc >
-bool operator==( const ft::map<Key,T,Compare,Alloc>& lhs,
-                 const ft::map<const Key,T,Compare,Alloc>& rhs )
-{
-    return (!ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) &&
-                !ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
-}
-
-template< class Key, class T, class Compare, class Alloc >
 bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs,
                  const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (!(lhs == rhs));
-}
-
-template< class Key, class T, class Compare, class Alloc >
-bool operator!=( const ft::map<Key,T,Compare,Alloc>& lhs,
-                 const ft::map<const Key,T,Compare,Alloc>& rhs )
 {
     return (!(lhs == rhs));
 }
@@ -382,22 +367,8 @@ bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs,
 }
 
 template< class Key, class T, class Compare, class Alloc >
-bool operator<( const ft::map<Key,T,Compare,Alloc>& lhs,
-                const ft::map<const Key,T,Compare,Alloc>& rhs )
-{
-    return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-}
-
-template< class Key, class T, class Compare, class Alloc >
 bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs,
                  const ft::map<Key,T,Compare,Alloc>& rhs )
-{
-    return (!(rhs < lhs));
-}
-
-template< class Key, class T, class Compare, class Alloc >
-bool operator<=( const ft::map<Key,T,Compare,Alloc>& lhs,
-                 const ft::map<const Key,T,Compare,Alloc>& rhs )
 {
     return (!(rhs < lhs));
 }
@@ -410,27 +381,11 @@ bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs,
 }
 
 template< class Key, class T, class Compare, class Alloc >
-bool operator>( const ft::map<Key,T,Compare,Alloc>& lhs,
-                const ft::map<const Key,T,Compare,Alloc>& rhs )
-{
-    return (!(lhs <= rhs));
-}
-
-template< class Key, class T, class Compare, class Alloc >
 bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
                  const ft::map<Key,T,Compare,Alloc>& rhs )
 {
     return (!(lhs < rhs));
 }
-
-template< class Key, class T, class Compare, class Alloc >
-bool operator>=( const ft::map<Key,T,Compare,Alloc>& lhs,
-                 const ft::map<const Key,T,Compare,Alloc>& rhs )
-{
-    return (!(lhs < rhs));
-}
-
-// overload comparizon just for iterator not for containers !!!!!!!
 
 template< class Key, class T, class Compare, class Alloc >
 void swap( ft::map<Key,T,Compare,Alloc>& lhs,
