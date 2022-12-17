@@ -26,11 +26,11 @@ namespace ft
 {
 	#include "implements.hpp"
 
-	#include "./iterator/random_access_iterator.hpp"
+	#include "random_access_iterator.hpp"
 
-	#include "./iterator/reverse_iterator.hpp"
+	#include "reverse_iterator.hpp"
 
-	#include "./iterator/RBT_iterator.hpp"
+	#include "red_black_tree_iterator.hpp"
 
 	#include "red_black_tree.hpp"
 

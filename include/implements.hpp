@@ -241,7 +241,7 @@ pair<T1, T2>  make_pair(T1 x, T2 y)
 //////////////////////////////////////////////////////////////////////////////////////
 
 template <class InputIterator>
-	typename ft::iterator_traits<InputIterator>::difference_type
+	size_t
 	distance(InputIterator first, InputIterator last)	{
 	size_t l = 0;
 

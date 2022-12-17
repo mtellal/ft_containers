@@ -33,9 +33,6 @@
             typedef  ft::reverse_iterator<iterator>                 reverse_iterator;
             typedef  ft::reverse_iterator<const_iterator>           const_reverse_iterator;
 
-            //////////////////////////////////////////////////////////////////////////////////////
-            /////                         CONSTRUCTORS / DESTRUCTOR                          /////
-            //////////////////////////////////////////////////////////////////////////////////////
 
             explicit vector(const allocator_type& alloc = allocator_type()) :
             allocator(alloc), _begin(NULL), _nb_construct(0), _nb_allocate(0)

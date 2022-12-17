@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RedBlackTreeIterator.hpp                                   :+:      :+:    :+:   */
+/*   red_black_tree_iterator.hpp                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtellal <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -78,6 +78,8 @@ class RedBlackTreeIterator : public ft::iterator<ft::bidirectional_iterator_tag,
         typedef typename iterator::pointer                          pointer;
         typedef typename iterator::reference                        reference;
         typedef typename iterator::iterator_category                iterator_category;
+
+        typedef size_t                                              size_type;
 
         typedef Pair                                                pair;
         typedef Pair &                                              pair_reference;
